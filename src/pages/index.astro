@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BlogPost from '../components/BlogPost.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+const pages = await getCollection('pages', ({ id }) => id === 'index.md');
+const { Content } = await pages[0].render();
+---
+
+<Layout title="Welcome to my blog">
+  <Content />
+  
+  <h2>Recent Posts</h2>
+  <div class="posts">
+    {posts.map((post) => (
+      <BlogPost 
+        title={post.data.title || post.slug}
+        url={`/blog/${post.slug}`}
+        pubDate={post.data.pubDate}
+      />
+    ))}
+  </div>
+</Layout>

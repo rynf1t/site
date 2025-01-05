@@ -1,0 +1,48 @@
+---
+interface Props {
+  title: string;
+  url: string;
+  pubDate: Date;
+}
+
+const { title, url, pubDate } = Astro.props;
+
+// Replace hyphens with spaces and capitalize words
+const formattedTitle = title.replace(/-/g, ' ');
+---
+
+<article class="post-preview">
+  <a href={url}>
+    <span class="title">{formattedTitle}</span>
+    <span class="date">
+      {pubDate.toLocaleDateString('en-us', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })}
+    </span>
+  </a>
+</article>
+
+<style>
+  .post-preview {
+    margin-bottom: 1rem;
+  }
+  .post-preview a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.2rem;
+    padding: 0.5rem 0;
+  }
+  .post-preview a:hover {
+    text-decoration: underline;
+  }
+  .date {
+    color: #666;
+    font-style: italic;
+    font-size: 0.9em;
+  }
+</style>

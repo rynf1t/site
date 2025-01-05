@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+
+const pages = await getCollection('pages');
+const links = pages.map(page => ({
+  href: `/${page.id.replace('.md', '')}`,
+  text: page.data.title,
+  order: page.data.order || 99
+}));
+
+// Sort by order first, then alphabetically
+links.sort((a, b) => {
+  return a.order - b.order || a.text.localeCompare(b.text);
+});
+---
+
+<nav>
+  <div class="nav-links">
+    {links.map(link => (
+      <a href={link.href}>{link.text}</a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  nav {
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #ddd;
+  }
+  .nav-links {
+    display: flex;
+    gap: 1rem;
+  }
+  .nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.2rem;
+  }
+  .nav-links a:hover {
+    text-decoration: underline;
+  }
+</style>
