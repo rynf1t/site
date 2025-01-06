@@ -1,19 +1,36 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import BlogPost from '../components/BlogPost.astro';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
   return pages.map((page) => ({
     params: { slug: page.id.replace('.md', '') },
-    props: { page },
+    props: { page }
   }));
 }
 
 const { page } = Astro.props;
 const { Content } = await page.render();
+
+// Only fetch posts if we're on the writing page
+const posts = page.id === 'writing.md' 
+  ? await getCollection('blog')
+  : [];
 ---
 
 <Layout title={page.data.title}>
   <Content />
+  {posts.length > 0 && (
+    <div class="posts">
+      {posts.map((post) => (
+        <BlogPost 
+          title={post.data.title || post.slug}
+          url={`/blog/${post.slug}`}
+          pubDate={post.data.pubDate}
+        />
+      ))}
+    </div>
+  )}
 </Layout>
