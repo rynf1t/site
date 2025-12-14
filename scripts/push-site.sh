@@ -9,6 +9,12 @@ if git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --other
     exit 0
 fi
 
+# Auto-generate descriptions for tools without .md files
+if command -v python3 &> /dev/null && python3 -c "import subprocess; subprocess.run(['llm', '--version'], capture_output=True, check=True)" 2>/dev/null; then
+    echo "Auto-generating descriptions for tools without .md files..."
+    python3 scripts/generate-docs.py 2>/dev/null || true
+fi
+
 # Stage all changes
 git add .
 
