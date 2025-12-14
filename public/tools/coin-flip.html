@@ -5,41 +5,238 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coin Flip</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: "Times New Roman", Times, serif;
-            max-width: 800px;
+            font-family: "Press Start 2P", monospace;
+            max-width: 600px;
             margin: 0 auto;
             padding: 20px;
             text-align: center;
+            background: #ffffff;
+            color: #000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
-        button {
-            padding: 1rem 2rem;
+        
+        h1 {
             font-size: 1.5rem;
-            font-family: "Times New Roman", Times, serif;
-            background: #1a1a1a;
-            color: white;
-            border: none;
-            cursor: pointer;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 0px #000;
+            color: #000;
         }
-        #result {
+        
+        .display {
+            background: #f5f5f5;
+            border: 4px solid #000;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 
+                inset 0 0 20px rgba(0, 0, 0, 0.1),
+                0 0 30px rgba(0, 0, 0, 0.1);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.02) 0px,
+                    transparent 1px,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.02) 3px
+                );
+            pointer-events: none;
+        }
+        
+        .result {
             font-size: 3rem;
-            margin-top: 2rem;
-            min-height: 4rem;
+            text-shadow: 2px 2px 0px #000;
+            position: relative;
+            z-index: 1;
+            animation: glitch 0.3s;
+            color: #000;
+        }
+        
+        .result.flashing {
+            animation: flash 0.1s infinite;
+        }
+        
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        
+        button {
+            font-family: "Press Start 2P", monospace;
+            font-size: 0.8rem;
+            padding: 1rem 2rem;
+            background: #fff;
+            color: #000;
+            border: 3px solid #000;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 
+                0 4px 0 #000,
+                inset 0 0 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        button:hover {
+            background: #000;
+            color: #fff;
+            box-shadow: 
+                0 4px 0 #666,
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #000;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: 0 2px 0 #999;
+        }
+        
+        button:disabled:hover {
+            background: #fff;
+            color: #000;
+        }
+        
+        .choices {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        
+        .choice {
+            font-size: 1.2rem;
+            padding: 0.5rem 1rem;
+            background: #fff;
+            border: 2px solid #000;
+            color: #000;
+            opacity: 0.3;
+            transition: all 0.3s;
+        }
+        
+        .choice.active {
+            opacity: 1;
+            text-shadow: 2px 2px 0px #000;
+            box-shadow: 0 4px 0 #000;
+            background: #000;
+            color: #fff;
+        }
+        
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(0, 0, 0, 0.3);
+            animation: scan 3s linear infinite;
+            z-index: 2;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { top: 100%; opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <h1>Coin Flip</h1>
-    <p>Click the button to flip a coin!</p>
-
-    <button onclick="flip()">Flip Coin</button>
-
-    <div id="result"></div>
+    <h1>COIN FLIP</h1>
+    
+    <div class="display" id="display">
+        <div class="scanline"></div>
+        <div class="result" id="result">?</div>
+    </div>
+    
+    <button id="flipButton" onclick="flip()">FLIP</button>
+    
+    <div class="choices">
+        <div class="choice" id="headsChoice">HEADS</div>
+        <div class="choice" id="tailsChoice">TAILS</div>
+    </div>
 
     <script>
+        const resultDiv = document.getElementById('result');
+        const flipButton = document.getElementById('flipButton');
+        const headsChoice = document.getElementById('headsChoice');
+        const tailsChoice = document.getElementById('tailsChoice');
+        let isFlipping = false;
+
         function flip() {
-            const result = Math.random() < 0.5 ? 'HEADS' : 'TAILS';
-            document.getElementById('result').textContent = result;
+            if (isFlipping) return;
+            
+            isFlipping = true;
+            flipButton.disabled = true;
+            headsChoice.classList.remove('active');
+            tailsChoice.classList.remove('active');
+            
+            // Flash random letters/numbers during flip
+            const chars = ['?', 'H', 'T', '!', '*', '#', '$', '%'];
+            let flashCount = 0;
+            const maxFlashes = 20;
+            
+            resultDiv.classList.add('flashing');
+            
+            const flashInterval = setInterval(() => {
+                resultDiv.textContent = chars[Math.floor(Math.random() * chars.length)];
+                flashCount++;
+                
+                if (flashCount >= maxFlashes) {
+                    clearInterval(flashInterval);
+                    
+                    // Determine final result
+                    const result = Math.random() < 0.5 ? 'HEADS' : 'TAILS';
+                    
+                    resultDiv.textContent = result;
+                    resultDiv.classList.remove('flashing');
+                    
+                    // Highlight the result
+                    if (result === 'HEADS') {
+                        headsChoice.classList.add('active');
+                    } else {
+                        tailsChoice.classList.add('active');
+                    }
+                    
+                    isFlipping = false;
+                    flipButton.disabled = false;
+                }
+            }, 100);
         }
     </script>
 </body>

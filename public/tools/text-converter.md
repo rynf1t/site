@@ -1,1 +1,0 @@
-Convert text to uppercase, lowercase, title case, or reverse it instantly in your browser.
