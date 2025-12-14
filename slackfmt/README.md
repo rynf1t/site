@@ -7,7 +7,7 @@ Convert Markdown to Slack-compatible HTML format for pasting into Slack, Google 
 ### From Source
 
 ```bash
-go install github.com/rynf1t/site/slackfmt@latest
+go install github.com/rynf1t/slackfmt@latest
 ```
 
 This installs `slackfmt` to `~/go/bin/`. To use it as `fmtmd` from anywhere:
@@ -23,14 +23,14 @@ export PATH="$HOME/go/bin:$PATH"
 Or build from source:
 
 ```bash
-git clone https://github.com/rynf1t/site.git
-cd site/slackfmt
+git clone https://github.com/rynf1t/slackfmt.git
+cd slackfmt
 go build -o slackfmt
 ```
 
 ### Pre-built Binaries
 
-Download pre-built binaries from [GitHub Releases](https://github.com/rynf1t/site/releases) for macOS, Linux, and Windows.
+Download pre-built binaries from [GitHub Releases](https://github.com/rynf1t/slackfmt/releases) for macOS, Linux, and Windows.
 
 ## Usage
 

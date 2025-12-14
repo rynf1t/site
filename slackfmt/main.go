@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"encoding/base64"
 	"flag"
 	"fmt"
 	"io"
@@ -62,11 +61,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Convert markdown to Slack format
+	// Convert markdown to Slack format (for plain text fallback)
 	slackText := markdownToSlack(input)
 
-	// Convert Slack format to HTML
-	htmlText := slackToHTML(slackText)
+	// Convert markdown directly to HTML (preserves heading structure)
+	htmlText := markdownToHTML(input)
 
 	if *outputFile != "" {
 		// Write to file
@@ -108,10 +107,16 @@ func markdownToSlack(markdown string) string {
 		slack = strings.Replace(slack, code, fmt.Sprintf("__INLINECODE_%d__", i), 1)
 	}
 
-	// Convert headers
-	slack = regexp.MustCompile(`(?m)^### (.*)$`).ReplaceAllString(slack, "*$1*")
-	slack = regexp.MustCompile(`(?m)^## (.*)$`).ReplaceAllString(slack, "*$1*")
-	slack = regexp.MustCompile(`(?m)^# (.*)$`).ReplaceAllString(slack, "*$1*")
+	// Convert headers first and protect them
+	headerPattern := regexp.MustCompile(`(?m)^(#{1,3}) (.*)$`)
+	headerMatches := headerPattern.FindAllStringSubmatch(slack, -1)
+	headerPlaceholders := make([]string, len(headerMatches))
+	for i, match := range headerMatches {
+		if len(match) >= 3 {
+			headerPlaceholders[i] = "*" + match[2] + "*"
+			slack = strings.Replace(slack, match[0], fmt.Sprintf("__HEADER_%d__", i), 1)
+		}
+	}
 
 	// Convert bold **text** to *text*
 	boldPattern := regexp.MustCompile(`\*\*(.+?)\*\*`)
@@ -125,11 +130,23 @@ func markdownToSlack(markdown string) string {
 	}
 
 	// Convert italic *text* to _text_
-	slack = regexp.MustCompile(`(?m)\*([^*\n]+?)\*`).ReplaceAllString(slack, "_$1_")
+	italicPattern := regexp.MustCompile(`(?m)\*([^*\n]+?)\*`)
+	slack = italicPattern.ReplaceAllStringFunc(slack, func(match string) string {
+		submatches := italicPattern.FindStringSubmatch(match)
+		if len(submatches) > 1 {
+			return "_" + submatches[1] + "_"
+		}
+		return match
+	})
 
 	// Restore bold placeholders
 	for i, content := range boldPlaceholders {
 		slack = strings.Replace(slack, fmt.Sprintf("__BOLD_%d__", i), "*"+content+"*", 1)
+	}
+
+	// Restore header placeholders (after italic conversion to avoid conflicts)
+	for i, content := range headerPlaceholders {
+		slack = strings.Replace(slack, fmt.Sprintf("__HEADER_%d__", i), content, 1)
 	}
 
 	// Convert strikethrough
@@ -157,10 +174,10 @@ func markdownToSlack(markdown string) string {
 	return slack
 }
 
-func slackToHTML(slack string) string {
-	html := slack
+func markdownToHTML(markdown string) string {
+	html := markdown
 
-	// Protect code blocks
+	// Protect code blocks first
 	codeBlockPattern := regexp.MustCompile("(?s)```.*?```")
 	codeBlocks := codeBlockPattern.FindAllString(html, -1)
 	for i, block := range codeBlocks {
@@ -174,11 +191,82 @@ func slackToHTML(slack string) string {
 		html = strings.Replace(html, code, fmt.Sprintf("__INLINECODE_%d__", i), 1)
 	}
 
-	// Convert Slack formatting to HTML
-	html = regexp.MustCompile(`\*([^*\n]+?)\*`).ReplaceAllString(html, "<strong>$1</strong>")
-	html = regexp.MustCompile(`_([^_\n]+?)_`).ReplaceAllString(html, "<em>$1</em>")
-	html = regexp.MustCompile(`~([^~\n]+?)~`).ReplaceAllString(html, "<del>$1</del>")
-	html = regexp.MustCompile(`<([^|>]+)\|([^>]+)>`).ReplaceAllString(html, "<a href=\"$1\">$2</a>")
+	// Convert headings to HTML heading tags (before other formatting)
+	html = regexp.MustCompile(`(?m)^### (.*)$`).ReplaceAllString(html, "<h3>$1</h3>")
+	html = regexp.MustCompile(`(?m)^## (.*)$`).ReplaceAllString(html, "<h2>$1</h2>")
+	html = regexp.MustCompile(`(?m)^# (.*)$`).ReplaceAllString(html, "<h1>$1</h1>")
+
+	// Convert bold **text** to <strong> first (use placeholder to avoid conflicts)
+	boldPattern := regexp.MustCompile(`\*\*(.+?)\*\*`)
+	boldMatches := boldPattern.FindAllStringSubmatch(html, -1)
+	boldPlaceholders := make([]string, len(boldMatches))
+	for i, match := range boldMatches {
+		if len(match) > 1 {
+			boldPlaceholders[i] = match[1]
+			html = strings.Replace(html, match[0], fmt.Sprintf("__BOLD_%d__", i), 1)
+		}
+	}
+
+	// Convert italic *text* to <em> (now safe since bold is protected)
+	html = regexp.MustCompile(`(?m)\*([^*\n]+?)\*`).ReplaceAllString(html, "<em>$1</em>")
+
+	// Restore bold placeholders
+	for i, content := range boldPlaceholders {
+		html = strings.Replace(html, fmt.Sprintf("__BOLD_%d__", i), "<strong>"+content+"</strong>", 1)
+	}
+
+	// Convert strikethrough
+	html = regexp.MustCompile(`~~(.+?)~~`).ReplaceAllString(html, "<del>$1</del>")
+
+	// Convert links
+	html = regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`).ReplaceAllString(html, "<a href=\"$2\">$1</a>")
+
+	// Convert blockquotes
+	html = regexp.MustCompile(`(?m)^> (.+)$`).ReplaceAllString(html, "<blockquote>$1</blockquote>")
+
+	// Convert lists - process line by line
+	lines := strings.Split(html, "\n")
+	var processedLines []string
+	inList := false
+	listType := ""
+
+	for _, line := range lines {
+		bulletMatch := regexp.MustCompile(`^(\s*)[-*] (.+)$`).FindStringSubmatch(line)
+		numberMatch := regexp.MustCompile(`^(\s*)\d+\. (.+)$`).FindStringSubmatch(line)
+
+		if bulletMatch != nil {
+			if !inList || listType != "ul" {
+				if inList {
+					processedLines = append(processedLines, fmt.Sprintf("</%s>", listType))
+				}
+				processedLines = append(processedLines, "<ul>")
+				inList = true
+				listType = "ul"
+			}
+			processedLines = append(processedLines, fmt.Sprintf("<li>%s</li>", bulletMatch[2]))
+		} else if numberMatch != nil {
+			if !inList || listType != "ol" {
+				if inList {
+					processedLines = append(processedLines, fmt.Sprintf("</%s>", listType))
+				}
+				processedLines = append(processedLines, "<ol>")
+				inList = true
+				listType = "ol"
+			}
+			processedLines = append(processedLines, fmt.Sprintf("<li>%s</li>", numberMatch[2]))
+		} else {
+			if inList {
+				processedLines = append(processedLines, fmt.Sprintf("</%s>", listType))
+				inList = false
+				listType = ""
+			}
+			processedLines = append(processedLines, line)
+		}
+	}
+	if inList {
+		processedLines = append(processedLines, fmt.Sprintf("</%s>", listType))
+	}
+	html = strings.Join(processedLines, "\n")
 
 	// Restore code blocks
 	for i, block := range codeBlocks {
@@ -193,8 +281,20 @@ func slackToHTML(slack string) string {
 		html = strings.Replace(html, fmt.Sprintf("__INLINECODE_%d__", i), "<code>"+codeContent+"</code>", 1)
 	}
 
-	// Convert newlines to <br>
+	// Convert remaining newlines to <br> (but not inside block elements)
 	html = strings.ReplaceAll(html, "\n", "<br>")
+
+	// Clean up: remove <br> tags that are inside/after block elements
+	html = regexp.MustCompile(`(</h[1-6]>)<br>`).ReplaceAllString(html, "$1")
+	html = regexp.MustCompile(`(</li>)<br>`).ReplaceAllString(html, "$1")
+	html = regexp.MustCompile(`(</blockquote>)<br>`).ReplaceAllString(html, "$1")
+	html = regexp.MustCompile(`(</ul>)<br>`).ReplaceAllString(html, "$1")
+	html = regexp.MustCompile(`(</ol>)<br>`).ReplaceAllString(html, "$1")
+	html = regexp.MustCompile(`(<h[1-6]>)<br>`).ReplaceAllString(html, "$1")
+	html = regexp.MustCompile(`(<ul>)<br>`).ReplaceAllString(html, "$1")
+	html = regexp.MustCompile(`(<ol>)<br>`).ReplaceAllString(html, "$1")
+	html = regexp.MustCompile(`(<li>)<br>`).ReplaceAllString(html, "$1")
+	html = regexp.MustCompile(`(<blockquote>)<br>`).ReplaceAllString(html, "$1")
 
 	return html
 }
@@ -222,45 +322,51 @@ func isMacOS() bool {
 }
 
 func copyHTMLMacOS(html, plain string) error {
-	// Use AppleScript to set HTML clipboard on macOS
-	// macOS clipboard format for HTML requires both HTML and plain text
-	script := fmt.Sprintf(`
-		set the clipboard to (read POSIX file "/dev/stdin" as «class HTML»)
-	`, html)
+	// macOS requires using AppleScript to set HTML clipboard format
+	// We use temporary files to avoid escaping issues with AppleScript
 	
-	// Better approach: use osascript with proper HTML clipboard format
-	// macOS HTML clipboard format is complex, but we can use a simpler method
-	// by creating a temporary HTML file and using pbcopy
-	
-	// Actually, let's use osascript with the HTML data directly
-	// We need to escape the HTML properly for AppleScript
-	escapedHTML := strings.ReplaceAll(html, "\\", "\\\\")
-	escapedHTML = strings.ReplaceAll(escapedHTML, "\"", "\\\"")
-	escapedHTML = strings.ReplaceAll(escapedHTML, "\n", "\\n")
-	
-	escapedPlain := strings.ReplaceAll(plain, "\\", "\\\\")
-	escapedPlain = strings.ReplaceAll(escapedPlain, "\"", "\\\"")
-	
-	// Use osascript to set HTML clipboard
-	// macOS HTML clipboard format: we need to set both HTML and plain text
-	applescript := fmt.Sprintf(`
-		set htmlData to "%s"
-		set plainData to "%s"
-		set the clipboard to htmlData as «class HTML»
-		set the clipboard to plainData as string
-	`, escapedHTML, escapedPlain)
-	
-	// Actually, macOS clipboard HTML format is more complex
-	// Let's use a different approach - use pbcopy with HTML format
-	// But pbcopy doesn't directly support HTML...
-	
-	// Best approach: use osascript with proper HTML clipboard format
-	// The HTML clipboard format on macOS requires a specific structure
-	// For now, let's just copy as plain text and note that HTML clipboard
-	// support would require more complex macOS-specific code
-	
-	// Let's try using the clipboard library but note the limitation
-	// For a prototype, we'll copy the HTML as text and note it needs HTML format
-	return clipboard.WriteAll(html)
-}
+	// Create temporary file for HTML
+	tmpHTML, err := os.CreateTemp("", "slackfmt-*.html")
+	if err != nil {
+		return fmt.Errorf("failed to create temp file: %w", err)
+	}
+	defer os.Remove(tmpHTML.Name())
+	defer tmpHTML.Close()
 
+	if _, err := tmpHTML.WriteString(html); err != nil {
+		return fmt.Errorf("failed to write HTML to temp file: %w", err)
+	}
+	tmpHTML.Close()
+
+	// Create temporary file for plain text
+	tmpPlain, err := os.CreateTemp("", "slackfmt-*.txt")
+	if err != nil {
+		return fmt.Errorf("failed to create temp file: %w", err)
+	}
+	defer os.Remove(tmpPlain.Name())
+	defer tmpPlain.Close()
+
+	if _, err := tmpPlain.WriteString(plain); err != nil {
+		return fmt.Errorf("failed to write plain text to temp file: %w", err)
+	}
+	tmpPlain.Close()
+
+	// Use AppleScript to set both HTML and plain text clipboard formats
+	// macOS clipboard supports multiple formats simultaneously
+	script := fmt.Sprintf(`
+		set htmlFile to POSIX file "%s"
+		set plainFile to POSIX file "%s"
+		set htmlData to (read htmlFile as «class HTML»)
+		set plainData to (read plainFile as «class utf8»)
+		set the clipboard to htmlData
+		set the clipboard to plainData
+	`, tmpHTML.Name(), tmpPlain.Name())
+
+	cmd := exec.Command("osascript", "-e", script)
+	if err := cmd.Run(); err != nil {
+		// Fallback to plain text if HTML clipboard fails
+		return clipboard.WriteAll(plain)
+	}
+
+	return nil
+}
