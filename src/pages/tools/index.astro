@@ -1,0 +1,110 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { readdir, readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
+// Get all HTML files from public/tools
+const toolsPath = join(process.cwd(), 'public', 'tools');
+let tools = [];
+
+try {
+  const files = await readdir(toolsPath);
+  const htmlFiles = files.filter(f => f.endsWith('.html'));
+
+  tools = await Promise.all(
+    htmlFiles.map(async (file) => {
+      const name = file.replace('.html', '');
+      const mdFile = file.replace('.html', '.md');
+
+      // Try to read description from .md file
+      let description = '';
+      try {
+        const mdPath = join(toolsPath, mdFile);
+        description = await readFile(mdPath, 'utf-8');
+        description = description.trim();
+      } catch {
+        // No description file, that's ok
+      }
+
+      return {
+        name,
+        title: name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        url: `/tools/${file}`,
+        description
+      };
+    })
+  );
+
+  // Sort alphabetically
+  tools.sort((a, b) => a.title.localeCompare(b.title));
+} catch (error) {
+  console.error('Error reading tools:', error);
+}
+---
+
+<Layout title="Tools">
+  <h1>Tools</h1>
+
+  <input
+    type="search"
+    id="search"
+    placeholder="Search tools..."
+    style="width: 100%; padding: 0.5rem; margin-bottom: 2rem; font-family: 'Times New Roman', Times, serif; font-size: 1rem; border: 1px solid #ddd; border-radius: 4px;"
+  />
+
+  {tools.length === 0 ? (
+    <p>No tools yet. Add HTML files to <code>public/tools/</code> to get started.</p>
+  ) : (
+    <ul class="tools-list" id="tools-list">
+      {tools.map(tool => (
+        <li class="tool-item" data-title={tool.title.toLowerCase()} data-description={tool.description?.toLowerCase() || ''}>
+          <a href={tool.url}>{tool.title}</a>
+          {tool.description && <span class="description"> — {tool.description}</span>}
+        </li>
+      ))}
+    </ul>
+  )}
+
+  <script>
+    const search = document.getElementById('search');
+    const toolsList = document.getElementById('tools-list');
+    const items = toolsList?.querySelectorAll('.tool-item');
+
+    search?.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      items?.forEach(item => {
+        const title = item.dataset.title || '';
+        const description = item.dataset.description || '';
+        const matches = title.includes(query) || description.includes(query);
+        item.style.display = matches ? '' : 'none';
+      });
+    });
+  </script>
+</Layout>
+
+<style>
+  .tools-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tool-item {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .tool-item a {
+    color: #1a1a1a;
+    text-decoration: none;
+    font-weight: normal;
+  }
+
+  .tool-item a:hover {
+    text-decoration: underline;
+  }
+
+  .description {
+    color: #666;
+  }
+</style>

@@ -1,43 +1,56 @@
 ---
-import { getCollection } from 'astro:content';
+const currentPath = Astro.url.pathname;
 
-const pages = await getCollection('pages');
-const links = pages.map(page => ({
-  href: `/${page.id.replace('.md', '')}`,
-  text: page.data.title,
-  order: page.data.order || 99
-}));
-
-// Sort by order first, then alphabetically
-links.sort((a, b) => {
-  return a.order - b.order || a.text.localeCompare(b.text);
-});
+const links = [
+  { href: '/', text: 'home' },
+  { href: '/writing', text: 'writing' },
+  { href: '/tools', text: 'tools' },
+  { href: '/about', text: 'about' }
+];
 ---
 
 <nav>
-  <div class="nav-links">
-    {links.map(link => (
-      <a href={link.href}>{link.text}</a>
-    ))}
-  </div>
+  {links.map(link => (
+    <a
+      href={link.href}
+      class={currentPath.startsWith(link.href) && link.href !== '/' ? 'active' : currentPath === link.href && link.href === '/' ? 'active' : ''}
+    >
+      {link.text}
+    </a>
+  ))}
 </nav>
 
 <style>
   nav {
-    margin-bottom: 2rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid #ddd;
-  }
-  .nav-links {
     display: flex;
     gap: 1rem;
+    border-bottom: 1px solid var(--border-color, #ddd);
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
   }
-  .nav-links a {
-    color: var(--text-color);
-    text-decoration: none;
+
+  nav a {
     font-size: 1.2rem;
+    color: var(--link-color, #1a1a1a);
+    text-decoration: none;
   }
-  .nav-links a:hover {
+
+  nav a:hover {
     text-decoration: underline;
+  }
+
+  nav a.active {
+    font-weight: bold;
+  }
+
+  @media (max-width: 600px) {
+    nav {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    nav a {
+      font-size: 1rem;
+    }
   }
 </style>

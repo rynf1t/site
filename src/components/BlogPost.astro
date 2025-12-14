@@ -7,42 +7,52 @@ interface Props {
 
 const { title, url, pubDate } = Astro.props;
 
-// Replace hyphens with spaces and capitalize words
-const formattedTitle = title.replace(/-/g, ' ');
+// Format the date to match the screenshot
+const formattedDate = pubDate.toLocaleDateString('en-us', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
 ---
 
-<article class="post-preview">
-  <a href={url}>
-    <span class="title">{formattedTitle}</span>
-    <span class="date">
-      {pubDate.toLocaleDateString('en-us', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })}
-    </span>
-  </a>
-</article>
+<div class="post">
+  <div class="post-content">
+    <span class="arrow">→</span>
+    <a href={url} class="post-title">{title}</a>
+  </div>
+  <time class="date">{formattedDate}</time>
+</div>
 
 <style>
-  .post-preview {
-    margin-bottom: 0.5rem;
+  .post {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    padding: 0.25rem 1rem;
   }
-  .post-preview a {
+
+  .post-content {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    color: var(--text-color);
-    text-decoration: none;
-    font-size: 1rem;
-    padding: 0.25rem 0;
+    align-items: center;
+    gap: 0.5rem;
   }
-  .post-preview a:hover {
+
+  .arrow {
+    font-family: monospace;
+  }
+
+  .post-title {
+    color: #000;
+    text-decoration: none;
+  }
+
+  .post-title:hover {
     text-decoration: underline;
   }
+
   .date {
-    color: #666;
+    font-family: "Times New Roman", Times, serif;
     font-style: italic;
-    font-size: 0.9em;
+    color: #666;
   }
 </style>

@@ -1,0 +1,1 @@
+Flip a virtual coin and get heads or tails instantly.

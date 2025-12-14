@@ -25,10 +25,11 @@ const posts = page.id === 'writing.md'
   {posts.length > 0 && (
     <div class="posts">
       {posts.map((post) => (
-        <BlogPost 
+        <BlogPost
           title={post.data.title || post.slug}
-          url={`/blog/${post.slug}`}
+          url={`/writing/${post.slug}`}
           pubDate={post.data.pubDate}
+          description={post.data.description}
         />
       ))}
     </div>
