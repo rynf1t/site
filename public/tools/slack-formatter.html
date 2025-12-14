@@ -329,17 +329,17 @@ Example:
         }
         
         async function copyAsHTML() {
-            const text = slackOutput.textContent;
+            const markdown = markdownInput.value;
             
-            if (!text || slackOutput.classList.contains('empty')) {
+            if (!markdown.trim()) {
                 return;
             }
             
-            // Convert Slack formatting to HTML
-            // Need to be careful with order - handle code blocks first, then inline code, then other formatting
-            let html = text;
+            // Convert directly from markdown to HTML (not from Slack format)
+            // This preserves heading structure for Google Docs
+            let html = markdown;
             
-            // Protect code blocks
+            // Protect code blocks first
             const codeBlocks = [];
             html = html.replace(/```[\s\S]*?```/g, (match) => {
                 codeBlocks.push(match);
@@ -353,34 +353,112 @@ Example:
                 return `__INLINECODE_${inlineCodes.length - 1}__`;
             });
             
-            // Convert Slack formatting to HTML
-            html = html
-                .replace(/\*([^*\n]+?)\*/g, '<strong>$1</strong>')
-                .replace(/_([^_\n]+?)_/g, '<em>$1</em>')
-                .replace(/~([^~\n]+?)~/g, '<del>$1</del>')
-                .replace(/<([^|>]+)\|([^>]+)>/g, '<a href="$1">$2</a>');
+            // Convert headings to HTML heading tags (before other formatting)
+            html = html.replace(/^### (.*)$/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*)$/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*)$/gim, '<h1>$1</h1>');
             
-            // Restore code blocks and inline code
+            // Convert bold **text** to <strong>
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            
+            // Convert italic *text* to <em> (but not if it's part of bold)
+            html = html.replace(/(?<!\*)\*([^*\n]+?)\*(?!\*)/g, '<em>$1</em>');
+            
+            // Convert strikethrough
+            html = html.replace(/~~(.+?)~~/g, '<del>$1</del>');
+            
+            // Convert links
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+            
+            // Convert blockquotes
+            html = html.replace(/^> (.+)$/gim, '<blockquote>$1</blockquote>');
+            
+            // Convert lists - process line by line to handle properly
+            const lines = html.split('\n');
+            const processedLines = [];
+            let inList = false;
+            let listType = null;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const bulletMatch = line.match(/^(\s*)[-*] (.+)$/);
+                const numberMatch = line.match(/^(\s*)\d+\. (.+)$/);
+                
+                if (bulletMatch) {
+                    const indent = bulletMatch[1];
+                    const content = bulletMatch[2];
+                    const level = Math.floor(indent.length / 2);
+                    
+                    if (!inList || listType !== 'ul') {
+                        if (inList) processedLines.push(`</${listType}>`);
+                        processedLines.push('<ul>');
+                        inList = true;
+                        listType = 'ul';
+                    }
+                    processedLines.push(`<li>${content}</li>`);
+                } else if (numberMatch) {
+                    const indent = numberMatch[1];
+                    const content = numberMatch[2];
+                    const level = Math.floor(indent.length / 2);
+                    
+                    if (!inList || listType !== 'ol') {
+                        if (inList) processedLines.push(`</${listType}>`);
+                        processedLines.push('<ol>');
+                        inList = true;
+                        listType = 'ol';
+                    }
+                    processedLines.push(`<li>${content}</li>`);
+                } else {
+                    if (inList) {
+                        processedLines.push(`</${listType}>`);
+                        inList = false;
+                        listType = null;
+                    }
+                    processedLines.push(line);
+                }
+            }
+            if (inList) {
+                processedLines.push(`</${listType}>`);
+            }
+            html = processedLines.join('\n');
+            
+            // Restore code blocks
             codeBlocks.forEach((code, index) => {
                 const codeContent = code.replace(/```/g, '').trim();
                 html = html.replace(`__CODEBLOCK_${index}__`, `<pre><code>${codeContent.replace(/\n/g, '<br>')}</code></pre>`);
             });
             
+            // Restore inline code
             inlineCodes.forEach((code, index) => {
                 const codeContent = code.replace(/`/g, '');
                 html = html.replace(`__INLINECODE_${index}__`, `<code>${codeContent}</code>`);
             });
             
-            // Convert newlines to <br> (but not inside code blocks which we already handled)
+            // Convert remaining newlines to <br> (but not inside block elements)
             html = html.replace(/\n/g, '<br>');
+            
+            // Clean up: remove <br> tags that are inside/after block elements
+            html = html.replace(/(<\/h[1-6]>)<br>/gi, '$1');
+            html = html.replace(/(<\/li>)<br>/gi, '$1');
+            html = html.replace(/(<\/blockquote>)<br>/gi, '$1');
+            html = html.replace(/(<\/ul>)<br>/gi, '$1');
+            html = html.replace(/(<\/ol>)<br>/gi, '$1');
+            html = html.replace(/(<h[1-6]>)<br>/gi, '$1');
+            html = html.replace(/(<ul>)<br>/gi, '$1');
+            html = html.replace(/(<ol>)<br>/gi, '$1');
+            html = html.replace(/(<li>)<br>/gi, '$1');
+            html = html.replace(/(<blockquote>)<br>/gi, '$1');
             
             const button = document.getElementById('copyHtmlBtn');
             const originalText = button.textContent;
             
+            // Get plain text version (Slack format) for fallback
+            const plainText = slackOutput.classList.contains('empty') ? markdown : slackOutput.textContent;
+            
             try {
                 // Copy as HTML using Clipboard API
                 const clipboardItem = new ClipboardItem({
-                    'text/plain': new Blob([text], { type: 'text/plain' }),
+                    'text/plain': new Blob([plainText], { type: 'text/plain' }),
                     'text/html': new Blob([html], { type: 'text/html' })
                 });
                 
@@ -394,7 +472,7 @@ Example:
                 // Fallback: try older method
                 try {
                     const htmlBlob = new Blob([html], { type: 'text/html' });
-                    const textBlob = new Blob([text], { type: 'text/plain' });
+                    const textBlob = new Blob([plainText], { type: 'text/plain' });
                     const data = new ClipboardItem({
                         'text/html': htmlBlob,
                         'text/plain': textBlob
