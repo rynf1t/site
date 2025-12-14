@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { readdir, readFile } from 'node:fs/promises';
+import { readdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 
 // Get all HTML files from public/tools
@@ -15,6 +15,7 @@ try {
     htmlFiles.map(async (file) => {
       const name = file.replace('.html', '');
       const mdFile = file.replace('.html', '.md');
+      const filePath = join(toolsPath, file);
 
       // Try to read description from .md file
       let description = '';
@@ -26,17 +27,27 @@ try {
         // No description file, that's ok
       }
 
+      // Get file creation date
+      let createdDate = new Date(0);
+      try {
+        const stats = await stat(filePath);
+        createdDate = stats.birthtime || stats.mtime;
+      } catch {
+        // File not found, use epoch
+      }
+
       return {
         name,
         title: name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
         url: `/tools/${file}`,
-        description
+        description,
+        createdDate
       };
     })
   );
 
-  // Sort alphabetically
-  tools.sort((a, b) => a.title.localeCompare(b.title));
+  // Sort by creation date, newest first
+  tools.sort((a, b) => b.createdDate.getTime() - a.createdDate.getTime());
 } catch (error) {
   console.error('Error reading tools:', error);
 }
