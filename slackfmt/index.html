@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>slackfmt - CLI Tool</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Times New Roman", Times, serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #1a1a1a;
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+        
+        h1 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+        
+        pre {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        pre code {
+            background: transparent;
+            padding: 0;
+        }
+        
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-link {
+            margin-bottom: 2rem;
+        }
+        
+        .back-link a {
+            color: #1a1a1a;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            font-family: 'Times New Roman', Times, serif;
+            transition: background-color 0.2s;
+        }
+        
+        .back-link a:hover {
+            background-color: #f5f5f5;
+            border-color: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-link">
+        <a href="https://rynf1t.com/tools">← Back to Tools</a>
+    </div>
+
+    <h1>slackfmt</h1>
+    <p class="subtitle">
+        CLI tool written in Go. Convert Markdown to Slack-compatible HTML format for pasting into Slack, Google Docs, and other apps that recognize HTML clipboard format.
+    </p>
+
+    <h2>Installation</h2>
+    
+    <h3>From Source</h3>
+    <pre><code>go install github.com/rynf1t/slackfmt@latest</code></pre>
+
+    <p style="margin-bottom: 1.5rem;">Or build from source:</p>
+    <pre><code>git clone https://github.com/rynf1t/slackfmt.git
+cd slackfmt
+go build -o slackfmt</code></pre>
+
+    <h3>Pre-built Binaries</h3>
+    <p style="margin-bottom: 1.5rem;">
+        Download pre-built binaries from <a href="https://github.com/rynf1t/slackfmt/releases" target="_blank" rel="noopener noreferrer">GitHub Releases</a> for macOS, Linux, and Windows.
+    </p>
+
+    <h2>Usage</h2>
+    <pre><code># Read from stdin
+echo "# Hello **world**" | slackfmt
+
+# Read from file
+slackfmt input.md
+
+# Read from clipboard
+slackfmt -c
+
+# Write to file instead of clipboard
+slackfmt input.md -o output.html
+
+# Output to stdout (don't copy to clipboard)
+slackfmt input.md -clipboard=false</code></pre>
+
+    <h2>Features</h2>
+    <ul>
+        <li>Converts Markdown to HTML with proper heading tags (<code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>) for Google Docs</li>
+        <li>Converts to Slack format for plain text fallback</li>
+        <li>Copies HTML to clipboard in a format recognized by Slack and Google Docs</li>
+        <li>Supports all common Markdown features:
+            <ul>
+                <li>Headings</li>
+                <li>Bold and italic text</li>
+                <li>Lists (bulleted and numbered)</li>
+                <li>Code blocks and inline code</li>
+                <li>Links</li>
+                <li>Blockquotes</li>
+                <li>Strikethrough</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>Platform Support</h2>
+    <ul>
+        <li><strong>macOS</strong>: Full HTML clipboard support using AppleScript</li>
+        <li><strong>Linux</strong>: Plain text clipboard (HTML clipboard support coming soon)</li>
+        <li><strong>Windows</strong>: Plain text clipboard (HTML clipboard support coming soon)</li>
+    </ul>
+
+    <h2>How It Works</h2>
+    <ol>
+        <li>Reads Markdown from stdin, file, or clipboard</li>
+        <li>Converts directly to HTML (preserving heading structure for Google Docs)</li>
+        <li>Also generates Slack-formatted text as a fallback</li>
+        <li>Copies HTML to clipboard using platform-specific methods</li>
+        <li>When you paste into Slack or Google Docs, the HTML format is recognized and formatting is applied</li>
+    </ol>
+
+    <h2>Examples</h2>
+    <pre><code># Convert a markdown file and paste into Slack
+slackfmt meeting-notes.md
+
+# Convert from clipboard and paste into Google Docs
+slackfmt -c</code></pre>
+
+    <h2>Troubleshooting</h2>
+    <ul>
+        <li><strong>Formatting doesn't work when pasting</strong>: Make sure you're pasting into an app that recognizes HTML clipboard format (Slack, Google Docs, etc.)</li>
+        <li><strong>Clipboard errors on macOS</strong>: Ensure you've granted Terminal/iTerm accessibility permissions in System Preferences</li>
+        <li><strong>HTML clipboard not working</strong>: The tool will fall back to plain text. HTML clipboard support is currently only available on macOS.</li>
+    </ul>
+
+    <h2>See Also</h2>
+    <p>
+        <a href="https://rynf1t.github.io/slack-formatter/">Web version</a> - Use the tool in your browser
+    </p>
+
+    <p style="margin-top: 2rem;">
+        <a href="https://github.com/rynf1t/slackfmt" target="_blank" rel="noopener noreferrer">View source code on GitHub</a>
+    </p>
+</body>
+</html>

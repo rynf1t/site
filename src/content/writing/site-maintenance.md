@@ -26,23 +26,16 @@ npm run preview
 
 ## Adding a Tool
 
-Tools are standalone HTML files in `public/tools/`. To add a new tool:
+Tools are now isolated in their own GitHub repositories. Each tool has its own repo and is hosted separately on GitHub Pages.
 
-1. Create an HTML file in `public/tools/` (e.g., `my-tool.html`)
-2. Optionally create a `.md` file with the same name (e.g., `my-tool.md`) containing a one-sentence description
-3. The tool will automatically appear on the `/tools` page, sorted by creation date
+To add a new tool:
 
-The HTML file should be self-contained. Include a back link to `/tools` at the top of your tool. You can use the template in `public/tools/_template.html` as a starting point.
+1. Follow the instructions in `TOOL_TEMPLATE.md` to create a new tool repository
+2. Create the tool repository on GitHub (e.g., `rynf1t/tool-name`)
+3. Set up the tool with GitHub Pages deployment
+4. Add the tool to the main site's tools list in `src/pages/tools/index.astro`
 
-Tool titles are automatically generated from the filename (e.g., `my-tool.html` becomes "My Tool"). For special cases, add an override in `src/pages/tools/index.astro` in the `toolTitleOverrides` object.
-
-To auto-generate descriptions for tools without `.md` files, run:
-
-```bash
-python3 scripts/generate-docs.py
-```
-
-This requires the `llm` CLI tool to be installed and configured.
+See `TOOL_TEMPLATE.md` for detailed step-by-step instructions and templates.
 
 ## Adding a Blog Post
 
@@ -70,25 +63,17 @@ Posts with h2 and h3 headings will automatically get a table of contents.
 The site includes several push scripts that automatically generate commit messages using an LLM:
 
 - `scripts/push-site.sh` - Push all changes
-- `scripts/push-tool.sh` - Push only tool changes
 - `scripts/push-writing.sh` - Push only writing/blog post changes
 
 All scripts use the unified `scripts/push.sh` under the hood. They will:
 1. Check for changes in the specified directory
-2. Auto-generate tool descriptions if applicable
-3. Stage the changes
-4. Generate a commit message using the LLM
-5. Commit and push
+2. Stage the changes
+3. Generate a commit message using the LLM
+4. Commit and push
 
 These scripts require the `llm` CLI tool to be installed and configured.
 
-### Generate Tool Descriptions
-
-```bash
-python3 scripts/generate-docs.py
-```
-
-Generates one-sentence descriptions for HTML tools that don't have a corresponding `.md` file. Requires the `llm` CLI tool.
+**Note:** Tools are now in separate repositories, so `push-tool.sh` is no longer used for the main site.
 
 ### Commit with LLM
 
@@ -100,17 +85,18 @@ Generates a commit message for staged changes using an LLM. Requires the `llm` C
 
 ## Development Workflow
 
-1. Make your changes (add tools, write posts, update code)
+1. Make your changes (write posts, update code)
 2. Test locally with `npm run dev`
 3. Use the appropriate push script to commit and push:
-   - `./scripts/push-tool.sh` for tool changes
    - `./scripts/push-writing.sh` for blog post changes
    - `./scripts/push-site.sh` for everything else
 4. The site will rebuild automatically on push (if using a CI/CD setup)
 
+**Note:** Tools are developed in their own repositories. See `TOOL_TEMPLATE.md` for creating new tools.
+
 ## Project Structure
 
-- `public/tools/` - Standalone HTML tools
+- `src/pages/tools/` - Tools directory page (links to external tool repos)
 - `src/content/writing/` - Blog posts (markdown)
 - `src/content/pages/` - Static pages (markdown)
 - `src/pages/` - Astro pages and routes
@@ -118,6 +104,8 @@ Generates a commit message for staged changes using an LLM. Requires the `llm` C
 - `src/layouts/` - Page layouts
 - `src/utils/` - Utility functions (date, format, TOC)
 - `scripts/` - Helper scripts for development
+- `TOOL_TEMPLATE.md` - Instructions for creating new tools
+- `MIGRATION_GUIDE.md` - Guide for migrating tools to separate repos
 
 ## Utilities
 
