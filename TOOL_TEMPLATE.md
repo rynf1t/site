@@ -72,7 +72,7 @@ Create `index.html` with your tool. Make sure to include:
 1. **Back to Tools link** at the top:
 ```html
 <div style="margin-bottom: 2rem;">
-    <a href="https://rynf1t.com/tools" style="color: #1a1a1a; text-decoration: none; border: 1px solid #ddd; padding: 0.5rem 1rem; display: inline-block; font-family: 'Times New Roman', Times, serif; transition: background-color 0.2s;" 
+    <a href="https://itsryan.me/tools" style="color: #1a1a1a; text-decoration: none; border: 1px solid #ddd; padding: 0.5rem 1rem; display: inline-block; font-family: 'Times New Roman', Times, serif; transition: background-color 0.2s;" 
        onmouseover="this.style.backgroundColor='#f5f5f5'; this.style.borderColor='#1a1a1a';" 
        onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='#ddd';">
         ← Back to Tools
@@ -93,7 +93,7 @@ Brief one-sentence description of what the tool does.
 
 ## Live Demo
 
-[Try it here](https://rynf1t.github.io/tool-name/)
+[Try it here](https://tool-name.itsryan.me/)
 
 ## Usage
 
@@ -120,7 +120,7 @@ open index.html
 
 ## See Also
 
-- [All Tools](https://rynf1t.com/tools) - Browse all available tools
+- [All Tools](https://itsryan.me/tools) - Browse all available tools
 ```
 
 ## Step 6: Enable GitHub Pages
@@ -139,7 +139,7 @@ Update `src/pages/tools/index.astro` and add your tool to the `tools` array:
   name: 'tool-name',
   title: 'Tool Name',
   description: 'Brief description of what the tool does',
-  url: 'https://rynf1t.github.io/tool-name/',
+  url: 'https://tool-name.itsryan.me/',
   repo: 'https://github.com/rynf1t/tool-name',
   type: 'html' // or 'cli' for CLI tools
 }
@@ -149,7 +149,7 @@ Update `src/pages/tools/index.astro` and add your tool to the `tools` array:
 
 1. Push your changes to the tool repo
 2. Wait for GitHub Pages to deploy (check Actions tab)
-3. Visit `https://rynf1t.github.io/tool-name/` to verify it works
+3. Visit `https://tool-name.itsryan.me/` to verify it works
 4. Update the main site and test the link from `/tools` page
 
 ## Checklist
@@ -167,5 +167,5 @@ Update `src/pages/tools/index.astro` and add your tool to the `tools` array:
 
 - Tools should be self-contained (all CSS/JS inline or in the same repo)
 - Keep tools simple and focused
-- The back link should point to `https://rynf1t.com/tools`
-- Tool URLs follow the pattern: `https://rynf1t.github.io/tool-name/`
+- The back link should point to `https://itsryan.me/tools`
+- Tool URLs follow the pattern: `https://tool-name.itsryan.me/` (with custom domain setup)

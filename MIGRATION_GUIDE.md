@@ -27,7 +27,7 @@ Each tool will become its own GitHub repository with:
 3. Create `README.md` with the description
 4. Add GitHub Pages workflow (see template below)
 5. Enable GitHub Pages in repo settings (Source: GitHub Actions)
-6. Push and verify deployment at `https://rynf1t.github.io/coin-flip/`
+6. Push and verify deployment at `https://coin-flip.itsryan.me/` (after setting up custom domain)
 
 ### 2. Slack Formatter
 
@@ -44,7 +44,7 @@ Each tool will become its own GitHub repository with:
 3. Create `README.md` with the description
 4. Add GitHub Pages workflow
 5. Enable GitHub Pages in repo settings
-6. Push and verify deployment at `https://rynf1t.github.io/slack-formatter/`
+6. Push and verify deployment at `https://slack-formatter.itsryan.me/` (after setting up custom domain)
 
 ### 3. SQLite CSV Playground
 
@@ -63,7 +63,7 @@ Each tool will become its own GitHub repository with:
 4. Create `README.md` with the description
 5. Add GitHub Pages workflow
 6. Enable GitHub Pages in repo settings
-7. Push and verify deployment at `https://rynf1t.github.io/sqlite-csv-playground/`
+7. Push and verify deployment at `https://sqlite-csv-playground.itsryan.me/` (after setting up custom domain)
 
 ### 4. slackfmt (CLI Tool)
 
@@ -144,7 +144,7 @@ Brief one-sentence description.
 
 ## Live Demo
 
-[Try it here](https://rynf1t.github.io/tool-name/)
+[Try it here](https://tool-name.itsryan.me/)
 
 ## Usage
 
@@ -163,7 +163,7 @@ open index.html
 
 ## See Also
 
-- [All Tools](https://rynf1t.com/tools) - Browse all available tools
+- [All Tools](https://itsryan.me/tools) - Browse all available tools
 ```
 
 ## After Migration
@@ -186,8 +186,8 @@ For each tool:
 - [ ] Files copied
 - [ ] GitHub Pages workflow added
 - [ ] GitHub Pages enabled (Source: GitHub Actions)
-- [ ] Tool deployed and accessible at `https://rynf1t.github.io/tool-name/`
-- [ ] Back link points to `https://rynf1t.com/tools`
+- [ ] Tool deployed and accessible at `https://tool-name.itsryan.me/`
+- [ ] Back link points to `https://itsryan.me/tools`
 - [ ] README created with proper links
 - [ ] Added to main site's tools list
 - [ ] Tested link from main site
