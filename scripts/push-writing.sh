@@ -3,10 +3,6 @@
 
 set -e
 
-# Get the repo root
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-cd "$REPO_ROOT"
-
 # Check if there are changes in writing directory
 if git diff --quiet src/content/writing/ && git diff --cached --quiet -- src/content/writing/ && [ -z "$(git ls-files --others --exclude-standard src/content/writing/)" ]; then
     echo "No changes in src/content/writing/ to commit."

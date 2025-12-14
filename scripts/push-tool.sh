@@ -3,10 +3,6 @@
 
 set -e
 
-# Get the repo root
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-cd "$REPO_ROOT"
-
 # Check if there are changes in tools directory
 if git diff --quiet public/tools/ && git diff --cached --quiet -- public/tools/ && [ -z "$(git ls-files --others --exclude-standard public/tools/)" ]; then
     echo "No changes in public/tools/ to commit."

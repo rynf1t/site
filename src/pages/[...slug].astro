@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import BlogPost from '../components/BlogPost.astro';
+import { stat } from 'node:fs/promises';
+import { join } from 'node:path';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
@@ -23,9 +25,50 @@ function slugToTitle(slug: string): string {
 }
 
 // Only fetch posts if we're on the writing page
-const posts = page.id === 'writing.md' 
-  ? await getCollection('writing')
-  : [];
+let posts = [];
+if (page.id === 'writing.md') {
+  const allPosts = await getCollection('writing');
+  const buildTime = Date.now();
+  
+  // Get file creation dates and use them for sorting
+  posts = await Promise.all(
+    allPosts.map(async (post) => {
+      // Try to get file creation date using post.id (full filename)
+      let fileDate: Date | null = null;
+      try {
+        const filePath = join(process.cwd(), 'src', 'content', 'writing', post.id);
+        const stats = await stat(filePath);
+        fileDate = stats.birthtime || stats.mtime;
+      } catch {
+        // File not found, skip
+      }
+      
+      // If pubDate exists and is not from this build (default), use it
+      // Otherwise use file creation date
+      if (post.data.pubDate && fileDate) {
+        const pubDateTime = post.data.pubDate.getTime();
+        // If pubDate is within 2 seconds of build time, it's likely the default
+        if (Math.abs(buildTime - pubDateTime) > 2000) {
+          // pubDate was explicitly set, use it
+          return { ...post, displayDate: post.data.pubDate, sortDate: post.data.pubDate };
+        }
+        // pubDate is default, use file date
+        return { ...post, displayDate: fileDate, sortDate: fileDate };
+      }
+      
+      // Use file date if available, otherwise pubDate, otherwise epoch
+      const displayDate = fileDate || post.data.pubDate || new Date(0);
+      return { ...post, displayDate, sortDate: displayDate };
+    })
+  );
+  
+  // Sort by creation date, newest first
+  posts.sort((a, b) => {
+    const dateA = a.sortDate.getTime();
+    const dateB = b.sortDate.getTime();
+    return dateB - dateA;
+  });
+}
 ---
 
 <Layout title={page.data.title}>
@@ -36,7 +79,7 @@ const posts = page.id === 'writing.md'
         <BlogPost
           title={slugToTitle(post.slug)}
           url={`/writing/${post.slug}`}
-          pubDate={post.data.pubDate}
+          pubDate={post.displayDate}
           description={post.data.description}
         />
       ))}

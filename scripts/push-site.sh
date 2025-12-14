@@ -3,10 +3,6 @@
 
 set -e
 
-# Get the repo root
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-cd "$REPO_ROOT"
-
 # Check if there are any changes at all
 if git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then
     echo "No changes to commit."
