@@ -60,7 +60,7 @@ toc.forEach(item => {
     
     {toc.length > 0 && (
       <div class="toc" id="toc">
-        <h3 class="toc-header" onclick="toggleTOC()">
+        <h3 class="toc-header" id="toc-header">
           Table of Contents
           <span class="toc-toggle">▼</span>
         </h3>
@@ -270,20 +270,21 @@ toc.forEach(item => {
   }
 </style>
 
-<script>
-  function toggleTOC() {
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tocHeader = document.getElementById('toc-header');
     const toc = document.getElementById('toc');
-    if (toc) {
-      toc.classList.toggle('collapsed');
+    
+    if (tocHeader && toc) {
+      tocHeader.addEventListener('click', function() {
+        toc.classList.toggle('collapsed');
+      });
+      
+      // Make TOC collapsed by default on mobile, expanded on desktop
+      if (window.innerWidth < 768) {
+        toc.classList.add('collapsed');
+      }
     }
-  }
-  
-  // Make TOC collapsed by default on mobile, expanded on desktop
-  if (typeof window !== 'undefined') {
-    const toc = document.getElementById('toc');
-    if (toc && window.innerWidth < 768) {
-      toc.classList.add('collapsed');
-    }
-  }
+  });
 </script>
 
