@@ -1,0 +1,2133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQLite CSV Playground Pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 13px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-actions button {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 0;
+            min-height: calc(100vh - 140px);
+        }
+
+        .sidebar {
+            background: #fafafa;
+            border-right: 1px solid #e0e0e0;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
+        }
+
+        .content {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
+        }
+
+        .drop-zone {
+            border: 3px dashed #ccc;
+            border-radius: 8px;
+            padding: 30px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            margin-bottom: 15px;
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .drop-zone input {
+            display: none;
+        }
+
+        .url-input-section {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .url-input-section input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .url-input-section button {
+            width: 100%;
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        .tables-list {
+            margin-top: 15px;
+        }
+
+        .table-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .table-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .table-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .table-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .table-count {
+            color: #666;
+            font-size: 11px;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .table-actions button {
+            font-size: 10px;
+            padding: 4px 8px;
+        }
+
+        .query-section {
+            margin-bottom: 20px;
+        }
+
+        .query-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .query-tab {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .query-tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .query-tab.chained::before {
+            content: '⛓';
+            font-size: 10px;
+        }
+
+        .query-tab:hover:not(.active) {
+            background: #e0e0e0;
+        }
+
+        .query-tab-close {
+            margin-left: 4px;
+            opacity: 0.7;
+            font-weight: bold;
+        }
+
+        .query-tab-close:hover {
+            opacity: 1;
+        }
+
+        .add-query-btn {
+            padding: 8px 16px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .add-query-btn:hover {
+            background: #45a049;
+        }
+
+        .query-editor-wrapper {
+            position: relative;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .autocomplete-item:hover, .autocomplete-item.selected {
+            background: #667eea;
+            color: white;
+        }
+
+        .autocomplete-item .type {
+            color: #999;
+            font-size: 10px;
+            margin-left: 8px;
+        }
+
+        .query-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .query-mode-toggle {
+            display: flex;
+            gap: 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .query-mode-toggle button {
+            padding: 8px 16px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 0;
+            font-size: 12px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .query-mode-toggle button:hover {
+            background: #e0e0e0;
+        }
+
+        .query-mode-toggle button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .query-mode-toggle button.active:hover {
+            background: #5568d3;
+        }
+
+        .chain-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .chain-controls label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chain-controls input[type="checkbox"] {
+            width: auto;
+        }
+
+        .chain-controls input[type="text"] {
+            width: 150px;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .results {
+            margin-top: 15px;
+        }
+
+        .result-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .result-controls input {
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .result-info {
+            padding: 10px;
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            margin-bottom: 12px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .error {
+            padding: 10px;
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            margin-bottom: 12px;
+            border-radius: 4px;
+            color: #c62828;
+            font-size: 12px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th {
+            background: #f5f5f5;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th:hover {
+            background: #ebebeb;
+        }
+
+        th.sorted-asc::after {
+            content: ' ▲';
+            font-size: 10px;
+        }
+
+        th.sorted-desc::after {
+            content: ' ▼';
+            font-size: 10px;
+        }
+
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .query-panel {
+            display: none;
+        }
+
+        .query-panel.active {
+            display: block;
+        }
+
+        .saved-queries {
+            margin-top: 20px;
+        }
+
+        .saved-query-item {
+            background: #f9f9f9;
+            padding: 8px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .saved-query-item:hover {
+            background: #f0f0f0;
+        }
+
+        .saved-query-item .delete {
+            color: #dc3545;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .query-history {
+            margin-top: 20px;
+        }
+
+        .history-item {
+            background: #f9f9f9;
+            padding: 8px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .history-item:hover {
+            background: #f0f0f0;
+        }
+
+        .history-item .timestamp {
+            color: #999;
+            font-size: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .schema-table {
+            margin-bottom: 30px;
+        }
+
+        .schema-table h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .column-info {
+            background: #f9f9f9;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+        }
+
+        .column-info h4 {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .column-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            font-size: 12px;
+        }
+
+        .stat {
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 11px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .sample-values {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .visual-query-builder {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .vqb-section {
+            margin-bottom: 15px;
+        }
+
+        .vqb-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .vqb-section select, .vqb-section input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .vqb-columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .vqb-column-tag {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .vqb-column-tag .remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .dependency-graph {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .dependency-node {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .dependency-arrow {
+            color: #667eea;
+            font-size: 20px;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <a href="/tools" style="color: white; text-decoration: none; font-size: 12px; opacity: 0.9; margin-bottom: 8px; display: inline-block;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.9'">← Back to Tools</a>
+                <h1>SQLite CSV Playground Pro</h1>
+                <p class="subtitle">Advanced data exploration with query chaining, autocomplete, and visual query building</p>
+            </div>
+            <div class="header-actions">
+                <button onclick="saveWorkspace()" class="btn-success">💾 Save Workspace</button>
+                <button onclick="loadWorkspace()" class="btn-secondary">📂 Load Workspace</button>
+                <button onclick="showHistory()" class="btn-secondary">📜 History</button>
+                <a href="/tools/sqlite-csv-playground-docs.md" target="_blank" style="color: white; text-decoration: none; padding: 8px 16px; font-size: 13px; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">📖 FAQ</a>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <div class="drop-zone" id="dropZone">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p><strong>Drop CSV files</strong></p>
+                    <p style="font-size: 11px; color: #666; margin-top: 6px;">or click to browse</p>
+                    <input type="file" id="fileInput" accept=".csv" multiple>
+                </div>
+
+                <div class="url-input-section">
+                    <input type="text" id="urlInput" placeholder="Or paste CSV URL here...">
+                    <button onclick="loadFromURL()">Load from URL</button>
+                </div>
+
+                <div class="tables-list">
+                    <div class="section-title">
+                        Tables
+                        <button onclick="showDependencyGraph()" style="padding: 4px 8px; font-size: 11px;">View Graph</button>
+                    </div>
+                    <div id="tablesList"></div>
+                </div>
+
+                <div class="saved-queries">
+                    <div class="section-title" style="background: #667eea; color: white; padding: 8px; margin: 0 -20px 12px -20px; padding-left: 20px; padding-right: 20px;">
+                        ⭐ Saved Queries
+                    </div>
+                    <div id="savedQueriesList" style="min-height: 40px;">
+                        <div style="color: #999; font-size: 11px; text-align: center; padding: 12px;">
+                            No saved queries yet. Click "Save Query" to add one.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="query-history">
+                    <div class="section-title">
+                        Recent Queries
+                        <button onclick="clearHistory()" class="btn-danger" style="padding: 4px 8px; font-size: 11px;">Clear</button>
+                    </div>
+                    <div id="historyList"></div>
+                </div>
+            </aside>
+
+            <main class="content">
+                <div class="query-section">
+                    <div class="query-tabs">
+                        <div id="queryTabsContainer"></div>
+                        <button class="add-query-btn" id="addQueryBtn">+ New Query</button>
+                    </div>
+                    <div id="queryPanelsContainer"></div>
+                </div>
+
+                <div id="emptyState" class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <h2>No CSV files loaded yet</h2>
+                    <p>Drop CSV files or load from URL to get started</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Schema Inspector Modal -->
+    <div class="modal" id="schemaModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Schema Inspector</h2>
+                <span class="modal-close" onclick="closeModal('schemaModal')">&times;</span>
+            </div>
+            <div id="schemaContent"></div>
+        </div>
+    </div>
+
+    <!-- Dependency Graph Modal -->
+    <div class="modal" id="graphModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Query Dependency Graph</h2>
+                <span class="modal-close" onclick="closeModal('graphModal')">&times;</span>
+            </div>
+            <div id="graphContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let db = null;
+        let queries = [];
+        let activeQueryIndex = 0;
+        let queryCounter = 1;
+        let queryHistory = [];
+        let savedQueries = [];
+        let autocompleteIndex = -1;
+
+        // Load from localStorage
+        function loadLocalStorage() {
+            const saved = localStorage.getItem('queryHistory');
+            if (saved) {
+                queryHistory = JSON.parse(saved);
+                renderHistory();
+            }
+            const savedQs = localStorage.getItem('savedQueries');
+            if (savedQs) {
+                savedQueries = JSON.parse(savedQs);
+                renderSavedQueries();
+            }
+        }
+
+        // Initialize SQL.js
+        initSqlJs({
+            locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/${file}`
+        }).then(SQL => {
+            db = new SQL.Database();
+            console.log('SQLite initialized');
+            loadLocalStorage();
+        });
+
+        // File handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.name.endsWith('.csv')) {
+                    loadCSV(file);
+                }
+            });
+        }
+
+        function loadCSV(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const csv = e.target.result;
+                const tableName = file.name.replace('.csv', '').replace(/[^a-zA-Z0-9_]/g, '_');
+                createTableFromCSV(tableName, csv);
+            };
+            reader.readAsText(file);
+        }
+
+        async function loadFromURL() {
+            const url = document.getElementById('urlInput').value.trim();
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+
+            try {
+                const response = await fetch(url);
+                const csv = await response.text();
+                const fileName = url.split('/').pop().split('?')[0] || 'data';
+                const tableName = fileName.replace('.csv', '').replace(/[^a-zA-Z0-9_]/g, '_');
+                createTableFromCSV(tableName, csv);
+                document.getElementById('urlInput').value = '';
+            } catch (error) {
+                alert('Failed to load CSV from URL: ' + error.message);
+            }
+        }
+
+        function createTableFromCSV(tableName, csv) {
+            const lines = csv.trim().split('\n');
+            const headers = parseCSVLine(lines[0]);
+
+            db.run(`DROP TABLE IF EXISTS "${tableName}"`);
+            const columnDefs = headers.map(h => `"${h}" TEXT`).join(', ');
+            db.run(`CREATE TABLE "${tableName}" (${columnDefs})`);
+
+            const placeholders = headers.map(() => '?').join(', ');
+            const stmt = db.prepare(`INSERT INTO "${tableName}" VALUES (${placeholders})`);
+
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim()) {
+                    const values = parseCSVLine(lines[i]);
+                    stmt.run(values);
+                }
+            }
+            stmt.free();
+
+            updateTablesList();
+            hideEmptyState();
+
+            if (queries.length === 0) {
+                addNewQuery();
+            }
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    if (inQuotes && line[i + 1] === '"') {
+                        current += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result.map(v => v.trim());
+        }
+
+        function updateTablesList() {
+            const tablesList = document.getElementById('tablesList');
+            const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table'");
+
+            if (tables.length === 0 || tables[0].values.length === 0) {
+                tablesList.innerHTML = '<p style="color: #999; font-size: 11px;">No tables loaded</p>';
+                return;
+            }
+
+            tablesList.innerHTML = '';
+            tables[0].values.forEach(([tableName]) => {
+                const count = db.exec(`SELECT COUNT(*) as count FROM "${tableName}"`)[0].values[0][0];
+                const columns = db.exec(`PRAGMA table_info("${tableName}")`)[0].values;
+
+                const div = document.createElement('div');
+                div.className = 'table-item';
+                div.innerHTML = `
+                    <div class="table-item-header">
+                        <span class="table-name">${tableName}</span>
+                        <span class="table-count">${count} rows</span>
+                    </div>
+                    <div style="font-size: 10px; color: #666;">${columns.length} columns</div>
+                    <div class="table-actions">
+                        <button class="btn-secondary" onclick="previewTable('${tableName}')">Preview</button>
+                        <button class="btn-secondary" onclick="inspectSchema('${tableName}')">Inspect</button>
+                        <button class="btn-danger" onclick="dropTable('${tableName}')">Drop</button>
+                    </div>
+                `;
+                tablesList.appendChild(div);
+            });
+        }
+
+        function previewTable(tableName) {
+            if (queries.length === 0) {
+                addNewQuery();
+            }
+            const currentQuery = queries[activeQueryIndex];
+            currentQuery.element.querySelector('textarea').value = `SELECT * FROM "${tableName}" LIMIT 100`;
+            queries[activeQueryIndex].sql = `SELECT * FROM "${tableName}" LIMIT 100`;
+        }
+
+        function inspectSchema(tableName) {
+            const columns = db.exec(`PRAGMA table_info("${tableName}")`)[0].values;
+            const schemaContent = document.getElementById('schemaContent');
+
+            let html = `<div class="schema-table"><h3>${tableName}</h3>`;
+
+            columns.forEach(([cid, name, type, notnull, dflt, pk]) => {
+                const sampleData = db.exec(`SELECT "${name}" FROM "${tableName}" WHERE "${name}" IS NOT NULL LIMIT 5`);
+                const nullCount = db.exec(`SELECT COUNT(*) FROM "${tableName}" WHERE "${name}" IS NULL`)[0].values[0][0];
+                const uniqueCount = db.exec(`SELECT COUNT(DISTINCT "${name}") FROM "${tableName}"`)[0].values[0][0];
+
+                html += `
+                    <div class="column-info">
+                        <h4>${name} <span style="color: #999; font-size: 12px;">(${type})</span></h4>
+                        <div class="column-stats">
+                            <div class="stat">
+                                <div class="stat-label">Unique Values</div>
+                                <div class="stat-value">${uniqueCount}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Null Count</div>
+                                <div class="stat-value">${nullCount}</div>
+                            </div>
+                        </div>
+                        <div class="sample-values">
+                            <strong>Sample values:</strong> ${sampleData.length > 0 ? sampleData[0].values.map(v => v[0]).join(', ') : 'No data'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            schemaContent.innerHTML = html;
+            document.getElementById('schemaModal').classList.add('active');
+        }
+
+        function dropTable(tableName) {
+            if (confirm(`Drop table "${tableName}"?`)) {
+                db.run(`DROP TABLE "${tableName}"`);
+                updateTablesList();
+
+                const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table'");
+                if (tables.length === 0 || tables[0].values.length === 0) {
+                    showEmptyState();
+                }
+            }
+        }
+
+        function addNewQuery() {
+            const query = {
+                id: queryCounter++,
+                name: `Query ${queries.length + 1}`,
+                sql: '',
+                results: null,
+                mode: 'sql',
+                chainEnabled: false,
+                chainTableName: '',
+                sortColumn: null,
+                sortDirection: null,
+                filterText: ''
+            };
+
+            queries.push(query);
+            renderQueryTabs();
+            renderQueryPanels();
+            switchToQuery(queries.length - 1);
+        }
+
+        function renderQueryTabs() {
+            const container = document.getElementById('queryTabsContainer');
+            container.innerHTML = '';
+
+            queries.forEach((query, index) => {
+                const tab = document.createElement('div');
+                tab.className = `query-tab ${index === activeQueryIndex ? 'active' : ''} ${query.chainEnabled ? 'chained' : ''}`;
+                tab.innerHTML = `
+                    ${query.name}
+                    ${queries.length > 1 ? `<span class="query-tab-close" onclick="closeQuery(${index}, event)">×</span>` : ''}
+                `;
+                tab.onclick = (e) => {
+                    if (!e.target.classList.contains('query-tab-close')) {
+                        switchToQuery(index);
+                    }
+                };
+                container.appendChild(tab);
+            });
+        }
+
+        function renderQueryPanels() {
+            const container = document.getElementById('queryPanelsContainer');
+            container.innerHTML = '';
+
+            queries.forEach((query, index) => {
+                const panel = document.createElement('div');
+                panel.className = `query-panel ${index === activeQueryIndex ? 'active' : ''}`;
+
+                const vqbHtml = query.mode === 'visual' ? `
+                    <div class="visual-query-builder" id="vqb-${index}">
+                        <div class="vqb-section">
+                            <label>Select Table:</label>
+                            <select id="vqb-table-${index}" onchange="updateVQB(${index})">
+                                <option value="">-- Choose Table --</option>
+                            </select>
+                        </div>
+                        <div class="vqb-section" id="vqb-columns-section-${index}" style="display:none;">
+                            <label>Select Columns:</label>
+                            <select id="vqb-column-select-${index}">
+                                <option value="">-- Add Column --</option>
+                            </select>
+                            <div class="vqb-columns" id="vqb-selected-columns-${index}"></div>
+                        </div>
+                        <div class="vqb-section" id="vqb-where-section-${index}" style="display:none;">
+                            <label>WHERE Clause (optional):</label>
+                            <div style="position: relative;">
+                                <input type="text" id="vqb-where-${index}" placeholder="e.g., column_name = 'value'" oninput="validateWhereClause(${index})" style="width: 100%; box-sizing: border-box;">
+                                <div class="autocomplete-dropdown" id="vqb-where-autocomplete-${index}"></div>
+                            </div>
+                            <div id="vqb-where-error-${index}" style="color: #dc3545; font-size: 11px; margin-top: 4px; display: none;"></div>
+                        </div>
+                        <div class="vqb-section" id="vqb-limit-section-${index}" style="display:none;">
+                            <label>LIMIT (optional):</label>
+                            <input type="number" id="vqb-limit-${index}" placeholder="100">
+                        </div>
+                        <button onclick="generateSQLFromVQB(${index})">Generate SQL</button>
+                    </div>
+                ` : '';
+
+                panel.innerHTML = `
+                    <div class="query-mode-toggle">
+                        <button class="${query.mode === 'sql' ? 'active' : ''}" onclick="setQueryMode(${index}, 'sql')">SQL Editor</button>
+                        <button class="${query.mode === 'visual' ? 'active' : ''}" onclick="setQueryMode(${index}, 'visual')">Visual Builder</button>
+                    </div>
+                    ${vqbHtml}
+                    <div class="query-editor-wrapper" id="editor-wrapper-${index}" style="display: ${query.mode === 'sql' ? 'block' : 'none'}">
+                        <textarea id="textarea-${index}" placeholder="Enter your SQL query here...">${query.sql}</textarea>
+                        <div class="autocomplete-dropdown" id="autocomplete-${index}"></div>
+                    </div>
+                    <div class="chain-controls" style="background: #f9f9f9; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                        <label style="font-weight: 600; margin-bottom: 8px; display: block;">
+                            <input type="checkbox" ${query.chainEnabled ? 'checked' : ''} onchange="toggleChain(${index}, this.checked)">
+                            Save results as temporary table
+                        </label>
+                        ${query.chainEnabled ? `
+                            <div style="margin-left: 24px;">
+                                <label style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">
+                                    Temp table name (use this name in queries below):
+                                </label>
+                                <input type="text" value="${query.chainTableName || 'temp_' + index}" onchange="setChainTableName(${index}, this.value)" placeholder="Table name" style="width: 200px;">
+                                <div style="font-size: 11px; color: #666; margin-top: 4px;">
+                                    💡 This query's results will be queryable as "${query.chainTableName || 'temp_' + index}" in queries below
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="query-controls">
+                        <button onclick="executeQuery(${index})">Execute Query</button>
+                        <button class="btn-secondary" onclick="exportResults(${index})">Export CSV</button>
+                        <button class="btn-secondary" onclick="saveQueryToList(${index})">Save Query</button>
+                        ${queryHistory.length > 0 ? `<button class="btn-secondary" onclick="undoQuery(${index})">↶ Undo</button>` : ''}
+                    </div>
+                    <div class="results" id="results-${index}"></div>
+                `;
+
+                const textarea = panel.querySelector('textarea');
+                if (textarea) {
+                    textarea.oninput = (e) => {
+                        queries[index].sql = e.target.value;
+                    };
+
+                    textarea.onkeydown = (e) => {
+                        handleAutocomplete(e, index);
+                    };
+
+                    textarea.onkeyup = (e) => {
+                        if (!['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(e.key)) {
+                            showAutocomplete(index);
+                        }
+                    };
+                }
+
+                // Setup autocomplete for WHERE input in Visual Builder
+                const whereInput = panel.querySelector(`#vqb-where-${index}`);
+                if (whereInput) {
+                    whereInput.onkeydown = (e) => {
+                        handleWhereAutocomplete(e, index);
+                    };
+
+                    whereInput.onkeyup = (e) => {
+                        if (!['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(e.key)) {
+                            showWhereAutocomplete(index);
+                        }
+                    };
+                }
+
+                query.element = panel;
+                container.appendChild(panel);
+
+                if (query.mode === 'visual') {
+                    populateVQBTables(index);
+                }
+
+                if (query.results) {
+                    displayResults(index, query.results);
+                }
+            });
+        }
+
+        function setQueryMode(index, mode) {
+            queries[index].mode = mode;
+            renderQueryPanels();
+        }
+
+        function populateVQBTables(index) {
+            const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table'");
+            if (tables.length === 0 || tables[0].values.length === 0) return;
+
+            const select = document.getElementById(`vqb-table-${index}`);
+            tables[0].values.forEach(([tableName]) => {
+                const option = document.createElement('option');
+                option.value = tableName;
+                option.textContent = tableName;
+                select.appendChild(option);
+            });
+        }
+
+        function updateVQB(index) {
+            const tableName = document.getElementById(`vqb-table-${index}`).value;
+            if (!tableName) return;
+
+            document.getElementById(`vqb-columns-section-${index}`).style.display = 'block';
+            document.getElementById(`vqb-where-section-${index}`).style.display = 'block';
+            document.getElementById(`vqb-limit-section-${index}`).style.display = 'block';
+
+            const columns = db.exec(`PRAGMA table_info("${tableName}")`)[0].values;
+            const columnSelect = document.getElementById(`vqb-column-select-${index}`);
+            columnSelect.innerHTML = '<option value="">-- Add Column --</option>';
+
+            columns.forEach(([cid, name]) => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                columnSelect.appendChild(option);
+            });
+
+            columnSelect.onchange = () => {
+                if (columnSelect.value) {
+                    addVQBColumn(index, columnSelect.value);
+                    columnSelect.value = '';
+                }
+            };
+
+            queries[index].vqbSelectedColumns = [];
+        }
+
+        function addVQBColumn(index, columnName) {
+            if (!queries[index].vqbSelectedColumns) {
+                queries[index].vqbSelectedColumns = [];
+            }
+
+            if (queries[index].vqbSelectedColumns.includes(columnName)) return;
+
+            // Validate column exists in selected table
+            const tableName = document.getElementById(`vqb-table-${index}`).value;
+            if (tableName) {
+                const columns = db.exec(`PRAGMA table_info("${tableName}")`)[0].values;
+                const validColumns = columns.map(c => c[1]);
+                if (!validColumns.includes(columnName)) {
+                    alert(`Invalid column: "${columnName}" does not exist in table "${tableName}"`);
+                    return;
+                }
+            }
+
+            queries[index].vqbSelectedColumns.push(columnName);
+
+            const container = document.getElementById(`vqb-selected-columns-${index}`);
+            const tag = document.createElement('div');
+            tag.className = 'vqb-column-tag';
+            tag.innerHTML = `
+                ${columnName}
+                <span class="remove" onclick="removeVQBColumn(${index}, '${columnName}')">×</span>
+            `;
+            container.appendChild(tag);
+        }
+
+        function removeVQBColumn(index, columnName) {
+            queries[index].vqbSelectedColumns = queries[index].vqbSelectedColumns.filter(c => c !== columnName);
+            renderQueryPanels();
+        }
+
+        function validateWhereClause(index) {
+            const tableName = document.getElementById(`vqb-table-${index}`).value;
+            const whereInput = document.getElementById(`vqb-where-${index}`);
+            const errorDiv = document.getElementById(`vqb-where-error-${index}`);
+
+            if (!whereInput || !errorDiv) {
+                console.error('WHERE input or error div not found');
+                return;
+            }
+
+            const where = whereInput.value.trim();
+
+            if (!where || !tableName) {
+                errorDiv.style.display = 'none';
+                whereInput.style.borderColor = '#ddd';
+                return;
+            }
+
+            // Try to validate the WHERE clause
+            try {
+                const testSQL = `SELECT * FROM "${tableName}" WHERE ${where} LIMIT 0`;
+                db.exec(testSQL);
+                errorDiv.style.display = 'none';
+                whereInput.style.borderColor = '#ddd';
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+                whereInput.style.borderColor = '#dc3545';
+            }
+        }
+
+        function generateSQLFromVQB(index) {
+            const tableName = document.getElementById(`vqb-table-${index}`).value;
+            if (!tableName) {
+                alert('Please select a table');
+                return;
+            }
+
+            // Validate all selected columns still exist
+            if (queries[index].vqbSelectedColumns && queries[index].vqbSelectedColumns.length > 0) {
+                const tableColumns = db.exec(`PRAGMA table_info("${tableName}")`)[0].values;
+                const validColumns = tableColumns.map(c => c[1]);
+                const invalidColumns = queries[index].vqbSelectedColumns.filter(c => !validColumns.includes(c));
+
+                if (invalidColumns.length > 0) {
+                    alert(`Invalid columns: ${invalidColumns.join(', ')}\n\nThese columns do not exist in table "${tableName}"`);
+                    return;
+                }
+            }
+
+            const columns = queries[index].vqbSelectedColumns && queries[index].vqbSelectedColumns.length > 0
+                ? queries[index].vqbSelectedColumns.map(c => `"${c}"`).join(', ')
+                : '*';
+
+            const where = document.getElementById(`vqb-where-${index}`).value.trim();
+            const limit = document.getElementById(`vqb-limit-${index}`).value.trim();
+
+            // Validate LIMIT is a positive number
+            if (limit && (isNaN(limit) || parseInt(limit) <= 0)) {
+                alert('LIMIT must be a positive number');
+                return;
+            }
+
+            let sql = `SELECT ${columns} FROM "${tableName}"`;
+            if (where) sql += ` WHERE ${where}`;
+            if (limit) sql += ` LIMIT ${limit}`;
+
+            // Validate the SQL by trying to execute it with LIMIT 0 (doesn't return data, just checks syntax)
+            try {
+                const validationSQL = sql.replace(/LIMIT\s+\d+/i, '') + ' LIMIT 0';
+                db.exec(validationSQL);
+            } catch (error) {
+                alert(`Invalid SQL generated:\n\n${error.message}\n\nPlease check your WHERE clause for syntax errors.`);
+                return;
+            }
+
+            queries[index].sql = sql;
+            queries[index].mode = 'sql';
+            renderQueryPanels();
+        }
+
+        function showAutocomplete(index) {
+            const textarea = document.getElementById(`textarea-${index}`);
+            const dropdown = document.getElementById(`autocomplete-${index}`);
+
+            const cursorPos = textarea.selectionStart;
+            const textBeforeCursor = textarea.value.substring(0, cursorPos);
+            const words = textBeforeCursor.split(/\s+/);
+            const currentWord = words[words.length - 1];
+
+            if (currentWord.length < 2) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            const suggestions = getAutocompleteSuggestions(currentWord, textarea.value);
+            if (suggestions.length === 0) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            dropdown.innerHTML = '';
+            suggestions.forEach((suggestion, idx) => {
+                const div = document.createElement('div');
+                div.className = 'autocomplete-item';
+                // Auto-quote if contains spaces or special chars
+                const needsQuotes = suggestion.needsQuotes || /[\s\-\.]/.test(suggestion.text);
+                const textToInsert = needsQuotes ? `"${suggestion.text}"` : suggestion.text;
+                div.dataset.text = textToInsert; // Store the quoted version
+                if (idx === autocompleteIndex) div.classList.add('selected');
+                div.innerHTML = `${suggestion.text}<span class="type">${suggestion.type}</span>`;
+                div.onclick = () => {
+                    insertAutocomplete(index, textToInsert);
+                };
+                dropdown.appendChild(div);
+            });
+
+            const rect = textarea.getBoundingClientRect();
+            dropdown.style.left = '0px';
+            dropdown.style.top = textarea.offsetHeight + 'px';
+            dropdown.style.display = 'block';
+        }
+
+        function getAutocompleteSuggestions(prefix, fullQuery) {
+            const suggestions = [];
+            const lowerPrefix = prefix.toLowerCase();
+
+            // Extract table names from the query (look for FROM and JOIN clauses)
+            const tableMatches = fullQuery.match(/(?:FROM|JOIN)\s+["']?(\w+)["']?/gi);
+            const queryTables = new Set();
+            if (tableMatches) {
+                tableMatches.forEach(match => {
+                    const tableName = match.replace(/(?:FROM|JOIN)\s+["']?/i, '').replace(/["']?$/, '').trim();
+                    queryTables.add(tableName.toLowerCase()); // Store lowercase for case-insensitive comparison
+                });
+            }
+
+            const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'LEFT JOIN', 'INNER JOIN', 'GROUP BY', 'ORDER BY', 'LIMIT', 'HAVING', 'AS', 'AND', 'OR', 'NOT', 'IN', 'LIKE', 'BETWEEN', 'IS NULL', 'IS NOT NULL', 'COUNT', 'SUM', 'AVG', 'MAX', 'MIN', 'DISTINCT'];
+            keywords.forEach(kw => {
+                if (kw.toLowerCase().startsWith(lowerPrefix)) {
+                    suggestions.push({ text: kw, type: 'keyword', priority: 1 });
+                }
+            });
+
+            const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table'");
+            if (tables.length > 0) {
+                // First pass: Add columns from tables used in the query (higher priority)
+                queryTables.forEach(queryTableLower => {
+                    // Find the actual table name (case-sensitive) from the database
+                    const actualTableName = tables[0].values.find(([name]) =>
+                        name.toLowerCase() === queryTableLower
+                    )?.[0];
+
+                    if (actualTableName) {
+                        try {
+                            const columns = db.exec(`PRAGMA table_info("${actualTableName}")`)[0].values;
+                            columns.forEach(([cid, name]) => {
+                                if (name.toLowerCase().startsWith(lowerPrefix)) {
+                                    suggestions.push({ text: name, type: `column (${actualTableName})`, priority: 0 });
+                                }
+                            });
+                        } catch (e) {
+                            // Table might not exist, skip
+                        }
+                    }
+                });
+
+                // Second pass: Add all tables and their columns
+                tables[0].values.forEach(([tableName]) => {
+                    if (tableName.toLowerCase().startsWith(lowerPrefix)) {
+                        suggestions.push({ text: tableName, type: 'table', priority: 2 });
+                    }
+
+                    // Only add columns from other tables if not already added
+                    if (!queryTables.has(tableName.toLowerCase())) {
+                        const columns = db.exec(`PRAGMA table_info("${tableName}")`)[0].values;
+                        columns.forEach(([cid, name]) => {
+                            if (name.toLowerCase().startsWith(lowerPrefix)) {
+                                suggestions.push({ text: name, type: `column (${tableName})`, priority: 3 });
+                            }
+                        });
+                    }
+                });
+            }
+
+            // Sort by priority (lower number = higher priority), then alphabetically
+            suggestions.sort((a, b) => {
+                if (a.priority !== b.priority) return a.priority - b.priority;
+                return a.text.localeCompare(b.text);
+            });
+
+            return suggestions.slice(0, 15);
+        }
+
+        function handleAutocomplete(e, index) {
+            const dropdown = document.getElementById(`autocomplete-${index}`);
+            if (dropdown.style.display === 'none') return;
+
+            const items = dropdown.querySelectorAll('.autocomplete-item');
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                autocompleteIndex = Math.min(autocompleteIndex + 1, items.length - 1);
+                updateAutocompleteSelection(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                autocompleteIndex = Math.max(autocompleteIndex - 1, 0);
+                updateAutocompleteSelection(items);
+            } else if (e.key === 'Tab' || (e.key === 'Enter' && autocompleteIndex >= 0)) {
+                e.preventDefault();
+                const selectedItem = items[autocompleteIndex >= 0 ? autocompleteIndex : 0];
+                const selectedText = selectedItem.dataset.text; // Use the stored text from data attribute
+                insertAutocomplete(index, selectedText);
+            } else if (e.key === 'Escape') {
+                dropdown.style.display = 'none';
+                autocompleteIndex = -1;
+            }
+        }
+
+        function updateAutocompleteSelection(items) {
+            items.forEach((item, idx) => {
+                item.classList.toggle('selected', idx === autocompleteIndex);
+            });
+        }
+
+        function insertAutocomplete(index, text) {
+            const textarea = document.getElementById(`textarea-${index}`);
+            const cursorPos = textarea.selectionStart;
+            const textBeforeCursor = textarea.value.substring(0, cursorPos);
+            const textAfterCursor = textarea.value.substring(cursorPos);
+
+            const words = textBeforeCursor.split(/\s+/);
+            words[words.length - 1] = text;
+
+            const newText = words.join(' ') + ' ' + textAfterCursor;
+            textarea.value = newText;
+            queries[index].sql = newText;
+
+            const newCursorPos = words.join(' ').length + 1; // +1 for the space
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+
+            document.getElementById(`autocomplete-${index}`).style.display = 'none';
+            autocompleteIndex = -1;
+            textarea.focus();
+        }
+
+        // WHERE input autocomplete functions
+        let whereAutocompleteIndex = -1;
+
+        function showWhereAutocomplete(index) {
+            const input = document.getElementById(`vqb-where-${index}`);
+            const dropdown = document.getElementById(`vqb-where-autocomplete-${index}`);
+            const tableName = document.getElementById(`vqb-table-${index}`).value;
+
+            if (!input || !dropdown || !tableName) {
+                if (dropdown) dropdown.style.display = 'none';
+                return;
+            }
+
+            const cursorPos = input.selectionStart;
+            const textBeforeCursor = input.value.substring(0, cursorPos);
+            const words = textBeforeCursor.split(/\s+/);
+            const currentWord = words[words.length - 1];
+
+            if (currentWord.length < 2) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            const suggestions = getWhereAutocompleteSuggestions(currentWord, tableName);
+            if (suggestions.length === 0) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            dropdown.innerHTML = '';
+            suggestions.forEach((suggestion, idx) => {
+                const div = document.createElement('div');
+                div.className = 'autocomplete-item';
+                // Auto-quote if contains spaces or special chars
+                const needsQuotes = suggestion.needsQuotes || /[\s\-\.]/.test(suggestion.text);
+                const textToInsert = needsQuotes ? `"${suggestion.text}"` : suggestion.text;
+                div.dataset.text = textToInsert;
+                if (idx === whereAutocompleteIndex) div.classList.add('selected');
+                div.innerHTML = `${suggestion.text}<span class="type">${suggestion.type}</span>`;
+                div.onclick = () => {
+                    insertWhereAutocomplete(index, textToInsert);
+                };
+                dropdown.appendChild(div);
+            });
+
+            dropdown.style.left = '0px';
+            dropdown.style.top = input.offsetHeight + 'px';
+            dropdown.style.display = 'block';
+        }
+
+        function getWhereAutocompleteSuggestions(prefix, tableName) {
+            const suggestions = [];
+            const lowerPrefix = prefix.toLowerCase();
+
+            // SQL keywords useful in WHERE clauses
+            const keywords = ['AND', 'OR', 'NOT', 'IN', 'LIKE', 'BETWEEN', 'IS NULL', 'IS NOT NULL'];
+            keywords.forEach(kw => {
+                if (kw.toLowerCase().startsWith(lowerPrefix)) {
+                    suggestions.push({ text: kw, type: 'keyword', priority: 1 });
+                }
+            });
+
+            // Add columns from the selected table
+            try {
+                const columns = db.exec(`PRAGMA table_info("${tableName}")`)[0].values;
+                columns.forEach(([cid, name]) => {
+                    if (name.toLowerCase().startsWith(lowerPrefix)) {
+                        suggestions.push({ text: name, type: 'column', priority: 0 });
+                    }
+                });
+            } catch (e) {
+                // Table might not exist
+            }
+
+            // Sort by priority (lower number = higher priority), then alphabetically
+            suggestions.sort((a, b) => {
+                if (a.priority !== b.priority) return a.priority - b.priority;
+                return a.text.localeCompare(b.text);
+            });
+
+            return suggestions.slice(0, 15);
+        }
+
+        function handleWhereAutocomplete(e, index) {
+            const dropdown = document.getElementById(`vqb-where-autocomplete-${index}`);
+            if (!dropdown || dropdown.style.display === 'none') return;
+
+            const items = dropdown.querySelectorAll('.autocomplete-item');
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                whereAutocompleteIndex = Math.min(whereAutocompleteIndex + 1, items.length - 1);
+                updateWhereAutocompleteSelection(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                whereAutocompleteIndex = Math.max(whereAutocompleteIndex - 1, 0);
+                updateWhereAutocompleteSelection(items);
+            } else if (e.key === 'Tab' || (e.key === 'Enter' && whereAutocompleteIndex >= 0)) {
+                e.preventDefault();
+                const selectedItem = items[whereAutocompleteIndex >= 0 ? whereAutocompleteIndex : 0];
+                const selectedText = selectedItem.dataset.text;
+                insertWhereAutocomplete(index, selectedText);
+            } else if (e.key === 'Escape') {
+                dropdown.style.display = 'none';
+                whereAutocompleteIndex = -1;
+            }
+        }
+
+        function updateWhereAutocompleteSelection(items) {
+            items.forEach((item, idx) => {
+                item.classList.toggle('selected', idx === whereAutocompleteIndex);
+            });
+        }
+
+        function insertWhereAutocomplete(index, text) {
+            const input = document.getElementById(`vqb-where-${index}`);
+            const cursorPos = input.selectionStart;
+            const textBeforeCursor = input.value.substring(0, cursorPos);
+            const textAfterCursor = input.value.substring(cursorPos);
+
+            const words = textBeforeCursor.split(/\s+/);
+            words[words.length - 1] = text;
+
+            const newText = words.join(' ') + ' ' + textAfterCursor;
+            input.value = newText;
+
+            const newCursorPos = words.join(' ').length + 1; // +1 for the space
+            input.setSelectionRange(newCursorPos, newCursorPos);
+
+            document.getElementById(`vqb-where-autocomplete-${index}`).style.display = 'none';
+            whereAutocompleteIndex = -1;
+            input.focus();
+
+            // Trigger validation
+            validateWhereClause(index);
+        }
+
+        function toggleChain(index, enabled) {
+            queries[index].chainEnabled = enabled;
+            if (enabled && !queries[index].chainTableName) {
+                queries[index].chainTableName = 'temp_' + index;
+            }
+            renderQueryPanels();
+        }
+
+        function setChainTableName(index, name) {
+            queries[index].chainTableName = name;
+        }
+
+        function switchToQuery(index) {
+            activeQueryIndex = index;
+            renderQueryTabs();
+            document.querySelectorAll('.query-panel').forEach((panel, i) => {
+                panel.classList.toggle('active', i === index);
+            });
+        }
+
+        function closeQuery(index, event) {
+            event.stopPropagation();
+            if (queries.length === 1) return;
+
+            queries.splice(index, 1);
+            if (activeQueryIndex >= queries.length) {
+                activeQueryIndex = queries.length - 1;
+            }
+            renderQueryTabs();
+            renderQueryPanels();
+        }
+
+        function executeQuery(index) {
+            const query = queries[index];
+            const resultsDiv = document.getElementById(`results-${index}`);
+            resultsDiv.innerHTML = '';
+
+            // Handle chaining from previous queries
+            for (let i = 0; i < index; i++) {
+                if (queries[i].chainEnabled && queries[i].results && queries[i].results.length > 0) {
+                    const chainTableName = queries[i].chainTableName || 'temp_' + i;
+                    const prevResult = queries[i].results[0];
+
+                    db.run(`DROP TABLE IF EXISTS "${chainTableName}"`);
+                    const columnDefs = prevResult.columns.map(c => `"${c}" TEXT`).join(', ');
+                    db.run(`CREATE TABLE "${chainTableName}" (${columnDefs})`);
+
+                    const placeholders = prevResult.columns.map(() => '?').join(', ');
+                    const stmt = db.prepare(`INSERT INTO "${chainTableName}" VALUES (${placeholders})`);
+                    prevResult.values.forEach(row => {
+                        stmt.run(row);
+                    });
+                    stmt.free();
+                }
+            }
+
+            try {
+                const start = performance.now();
+                const results = db.exec(query.sql);
+                const duration = (performance.now() - start).toFixed(2);
+
+                query.results = results;
+                query.sortColumn = null;
+                query.sortDirection = null;
+                query.filterText = '';
+
+                // Add to history
+                queryHistory.unshift({
+                    sql: query.sql,
+                    timestamp: new Date().toISOString(),
+                    queryIndex: index
+                });
+                if (queryHistory.length > 50) queryHistory = queryHistory.slice(0, 50);
+                localStorage.setItem('queryHistory', JSON.stringify(queryHistory));
+                renderHistory();
+
+                if (results.length === 0) {
+                    resultsDiv.innerHTML = `<div class="result-info">Query executed successfully in ${duration}ms (no results returned)</div>`;
+                    updateTablesList(); // Refresh in case tables were created
+                    return;
+                }
+
+                displayResults(index, results, duration);
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        function displayResults(index, results, duration) {
+            const resultsDiv = document.getElementById(`results-${index}`);
+            const result = results[0];
+            if (!result) return;
+
+            const query = queries[index];
+            let displayData = result.values;
+
+            // Apply client-side filtering
+            if (query.filterText) {
+                displayData = displayData.filter(row =>
+                    row.some(cell => String(cell).toLowerCase().includes(query.filterText.toLowerCase()))
+                );
+            }
+
+            // Apply client-side sorting
+            if (query.sortColumn !== null) {
+                const colIndex = query.sortColumn;
+                displayData = [...displayData].sort((a, b) => {
+                    const aVal = a[colIndex];
+                    const bVal = b[colIndex];
+                    const comparison = String(aVal).localeCompare(String(bVal), undefined, { numeric: true });
+                    return query.sortDirection === 'asc' ? comparison : -comparison;
+                });
+            }
+
+            const rowCount = displayData.length;
+            const totalRows = result.values.length;
+
+            const info = duration
+                ? `<div class="result-info">${rowCount}${rowCount !== totalRows ? '/' + totalRows : ''} rows in ${duration}ms</div>`
+                : `<div class="result-info">${rowCount}${rowCount !== totalRows ? '/' + totalRows : ''} rows</div>`;
+
+            const controls = `
+                <div class="result-controls">
+                    <input type="text" placeholder="Filter results..." value="${query.filterText}" onchange="filterResults(${index}, this.value)">
+                    <button class="btn-secondary" onclick="clearFilters(${index})">Clear Filters</button>
+                </div>
+            `;
+
+            const table = `
+                ${info}
+                ${controls}
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                ${result.columns.map((col, colIndex) => {
+                                    const sortClass = query.sortColumn === colIndex
+                                        ? `sorted-${query.sortDirection}`
+                                        : '';
+                                    return `<th class="${sortClass}" onclick="sortResults(${index}, ${colIndex})">${col}</th>`;
+                                }).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${displayData.map(row => `
+                                <tr>
+                                    ${row.map(cell => `<td>${cell !== null ? cell : '<em>NULL</em>'}</td>`).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            resultsDiv.innerHTML = table;
+        }
+
+        function sortResults(index, colIndex) {
+            const query = queries[index];
+
+            if (query.sortColumn === colIndex) {
+                query.sortDirection = query.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                query.sortColumn = colIndex;
+                query.sortDirection = 'asc';
+            }
+
+            displayResults(index, query.results);
+        }
+
+        function filterResults(index, filterText) {
+            queries[index].filterText = filterText;
+            displayResults(index, queries[index].results);
+        }
+
+        function clearFilters(index) {
+            queries[index].filterText = '';
+            queries[index].sortColumn = null;
+            queries[index].sortDirection = null;
+            displayResults(index, queries[index].results);
+        }
+
+        function exportResults(index) {
+            const query = queries[index];
+            if (!query.results || query.results.length === 0) {
+                alert('No results to export. Run a query first.');
+                return;
+            }
+
+            const result = query.results[0];
+            let csv = result.columns.join(',') + '\n';
+            csv += result.values.map(row =>
+                row.map(cell => {
+                    const str = cell !== null ? String(cell) : '';
+                    return str.includes(',') || str.includes('"') || str.includes('\n')
+                        ? `"${str.replace(/"/g, '""')}"`
+                        : str;
+                }).join(',')
+            ).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `query-results-${Date.now()}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function saveQueryToList(index) {
+            const query = queries[index];
+            const name = prompt('Enter a name for this query:', query.name);
+            if (name) {
+                savedQueries.push({ name, sql: query.sql });
+                localStorage.setItem('savedQueries', JSON.stringify(savedQueries));
+                renderSavedQueries();
+            }
+        }
+
+        function renderSavedQueries() {
+            const list = document.getElementById('savedQueriesList');
+            list.innerHTML = '';
+
+            if (savedQueries.length === 0) {
+                list.innerHTML = '<div style="color: #999; font-size: 11px; text-align: center; padding: 12px;">No saved queries yet. Click "Save Query" to add one.</div>';
+                return;
+            }
+
+            savedQueries.forEach((sq, idx) => {
+                const div = document.createElement('div');
+                div.className = 'saved-query-item';
+                div.innerHTML = `
+                    <span onclick="loadSavedQuery(${idx})" style="flex: 1; cursor: pointer; font-weight: 600;">${sq.name}</span>
+                    <span class="delete" onclick="deleteSavedQuery(${idx})">×</span>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function loadSavedQuery(idx) {
+            if (queries.length === 0) addNewQuery();
+            queries[activeQueryIndex].sql = savedQueries[idx].sql;
+            renderQueryPanels();
+        }
+
+        function deleteSavedQuery(idx) {
+            savedQueries.splice(idx, 1);
+            localStorage.setItem('savedQueries', JSON.stringify(savedQueries));
+            renderSavedQueries();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+
+            queryHistory.slice(0, 10).forEach((h, idx) => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                const date = new Date(h.timestamp);
+                div.innerHTML = `
+                    <div>${h.sql.substring(0, 60)}${h.sql.length > 60 ? '...' : ''}</div>
+                    <div class="timestamp">${date.toLocaleTimeString()}</div>
+                `;
+                div.onclick = () => {
+                    if (queries.length === 0) addNewQuery();
+                    queries[activeQueryIndex].sql = h.sql;
+                    renderQueryPanels();
+                };
+                list.appendChild(div);
+            });
+        }
+
+        function clearHistory() {
+            if (confirm('Clear all query history?')) {
+                queryHistory = [];
+                localStorage.removeItem('queryHistory');
+                renderHistory();
+            }
+        }
+
+        function showHistory() {
+            alert('Query history is shown in the sidebar. Click any query to load it.');
+        }
+
+        function undoQuery(index) {
+            if (queryHistory.length > 1) {
+                queries[index].sql = queryHistory[1].sql;
+                renderQueryPanels();
+            }
+        }
+
+        function saveWorkspace() {
+            const workspace = {
+                queries: queries.map(q => ({
+                    name: q.name,
+                    sql: q.sql,
+                    chainEnabled: q.chainEnabled,
+                    chainTableName: q.chainTableName
+                })),
+                tables: []
+            };
+
+            const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table'");
+            if (tables.length > 0) {
+                tables[0].values.forEach(([tableName]) => {
+                    const data = db.exec(`SELECT * FROM "${tableName}"`)[0];
+                    workspace.tables.push({
+                        name: tableName,
+                        columns: data.columns,
+                        values: data.values
+                    });
+                });
+            }
+
+            const json = JSON.stringify(workspace, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `workspace-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function loadWorkspace() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const workspace = JSON.parse(event.target.result);
+
+                        // Clear existing
+                        const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table'");
+                        if (tables.length > 0) {
+                            tables[0].values.forEach(([tableName]) => {
+                                db.run(`DROP TABLE IF EXISTS "${tableName}"`);
+                            });
+                        }
+
+                        // Load tables
+                        workspace.tables.forEach(table => {
+                            const columnDefs = table.columns.map(c => `"${c}" TEXT`).join(', ');
+                            db.run(`CREATE TABLE "${table.name}" (${columnDefs})`);
+
+                            const placeholders = table.columns.map(() => '?').join(', ');
+                            const stmt = db.prepare(`INSERT INTO "${table.name}" VALUES (${placeholders})`);
+                            table.values.forEach(row => {
+                                stmt.run(row);
+                            });
+                            stmt.free();
+                        });
+
+                        // Load queries
+                        queries = workspace.queries.map((q, idx) => ({
+                            id: idx + 1,
+                            name: q.name,
+                            sql: q.sql,
+                            results: null,
+                            mode: 'sql',
+                            chainEnabled: q.chainEnabled || false,
+                            chainTableName: q.chainTableName || '',
+                            sortColumn: null,
+                            sortDirection: null,
+                            filterText: ''
+                        }));
+
+                        queryCounter = queries.length + 1;
+                        activeQueryIndex = 0;
+
+                        updateTablesList();
+                        renderQueryTabs();
+                        renderQueryPanels();
+                        hideEmptyState();
+                    } catch (error) {
+                        alert('Failed to load workspace: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function showDependencyGraph() {
+            const graphContent = document.getElementById('graphContent');
+
+            if (queries.length === 0) {
+                graphContent.innerHTML = '<p style="text-align: center; color: #999;">No queries created yet</p>';
+                document.getElementById('graphModal').classList.add('active');
+                return;
+            }
+
+            let html = '<div class="dependency-graph">';
+            html += '<p style="margin-bottom: 20px; color: #666;">This shows how your queries chain together. Chained queries create temporary tables that later queries can use.</p>';
+
+            queries.forEach((q, idx) => {
+                const sql = q.sql ? q.sql.substring(0, 100) + (q.sql.length > 100 ? '...' : '') : 'Empty query';
+                html += `
+                    <div class="dependency-node">
+                        <strong>${q.name}</strong>
+                        <div style="font-family: monospace; font-size: 11px; margin-top: 8px; color: #666;">${sql}</div>
+                        ${q.chainEnabled ? `<div style="margin-top: 8px; padding: 6px; background: #e8f5e9; border-radius: 4px; font-size: 11px;">⛓ Creates temp table: <strong>${q.chainTableName}</strong></div>` : ''}
+                    </div>
+                `;
+                if (q.chainEnabled && idx < queries.length - 1) {
+                    html += `<div class="dependency-arrow">⬇</div>`;
+                }
+            });
+
+            html += '</div>';
+            graphContent.innerHTML = html;
+            document.getElementById('graphModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function hideEmptyState() {
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        function showEmptyState() {
+            document.getElementById('emptyState').style.display = 'block';
+            queries = [];
+            renderQueryTabs();
+            renderQueryPanels();
+        }
+
+        document.getElementById('addQueryBtn').addEventListener('click', addNewQuery);
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

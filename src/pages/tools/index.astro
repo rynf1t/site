@@ -9,7 +9,7 @@ let tools = [];
 
 try {
   const files = await readdir(toolsPath);
-  const htmlFiles = files.filter(f => f.endsWith('.html'));
+  const htmlFiles = files.filter(f => f.endsWith('.html') && !f.startsWith('_'));
 
   tools = await Promise.all(
     htmlFiles.map(async (file) => {
@@ -55,7 +55,7 @@ try {
 
 <Layout title="Tools">
   <h1>Tools</h1>
-
+  <p>This is a list of tools I've built largely with the assistance of AI. The page is inspired by </p>
   <input
     type="search"
     id="search"
