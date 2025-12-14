@@ -1,15 +1,15 @@
 # itsryan.me
 
-Personal site with blog and tools, built with Astro.
+Personal site with writing and tools, built with Astro.
 
 ## 🚀 Quick Start
 
-### Write a Blog Post
+### Write a Post
 
 ```bash
 # Just write! No frontmatter needed!
-cat > src/content/blog/my-new-post.md << 'EOF'
-This is my blog post. Just pure writing.
+cat > src/content/writing/my-new-post.md << 'EOF'
+This is my post. Just pure writing.
 
 ## Markdown works great
 
@@ -21,8 +21,8 @@ Write whatever you want. The date is auto-added.
 EOF
 
 # Commit and push
-git add src/content/blog/my-new-post.md
-git commit -m "Add new blog post"
+git add src/content/writing/my-new-post.md
+git commit -m "Add new post"
 git push
 ```
 
@@ -68,12 +68,12 @@ git push
 /
 ├── src/
 │   ├── content/
-│   │   └── blog/              # Blog posts (.md files)
+│   │   └── writing/           # Writing posts (.md files)
 │   │       ├── my-post.md     # Just add files here!
 │   │       └── another.md
 │   ├── pages/
 │   │   ├── index.astro        # Homepage
-│   │   ├── writing.astro      # Blog listing (auto-generated)
+│   │   ├── writing.astro      # Writing listing (auto-generated)
 │   │   ├── about.astro        # About page
 │   │   └── tools/
 │   │       └── index.astro    # Tools listing (auto-generated)
@@ -124,7 +124,7 @@ llm keys set anthropic
 
 ```bash
 # Generate descriptions for all tools without .md files
-cd /Users/ryan/Documents/blog
+cd /Users/ryan/Documents/site
 python scripts/generate-docs.py
 
 # Dry run (see what would be done)
@@ -157,8 +157,8 @@ npm run preview
 
 ## 📝 File Naming
 
-### Blog Posts
-- File: `src/content/blog/kebab-case-name.md`
+### Writing Posts
+- File: `src/content/writing/kebab-case-name.md`
 - URL: `itsryan.me/writing/kebab-case-name`
 
 ### Tools
@@ -187,7 +187,7 @@ If you want to switch to Cloudflare Pages:
 
 ## 📊 What Astro Does Automatically
 
-- ✅ Finds all blog posts in `src/content/blog/`
+- ✅ Finds all writing posts in `src/content/writing/`
 - ✅ Creates `/writing` page with all posts listed
 - ✅ Generates individual post pages
 - ✅ Finds all tools in `public/tools/`
@@ -256,7 +256,7 @@ if __name__ == "__main__":
 
 ## 💡 Tips
 
-### Blog Posts
+### Writing Posts
 - Use frontmatter for metadata (title, date, description)
 - Markdown supports code blocks, lists, links, images
 - Posts are automatically sorted by date (newest first)
@@ -274,7 +274,7 @@ if __name__ == "__main__":
 
 ## 🎯 Examples
 
-**Blog post:**
+**Writing post:**
 ```markdown
 ---
 title: My Thoughts on X
@@ -313,6 +313,6 @@ Here's what I think about X...
 
 ---
 
-**That's it! Just add Markdown files for blog posts and HTML files for tools.**
+**That's it! Just add Markdown files for writing posts and HTML files for tools.**
 
 <!-- Workflow test -->
