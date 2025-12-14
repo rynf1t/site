@@ -70,21 +70,34 @@ try {
       const item = toc[i];
       const headingTag = item.level === 2 ? 'h2' : 'h3';
       
-      // Escape special regex characters in the text
+      // Escape special regex characters in the text (but not apostrophes/quotes which might be HTML entities)
       const escapedText = item.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       
-      // Create a flexible regex that matches the heading with optional whitespace
-      // This handles cases where marked might trim or normalize whitespace
-      const regex = new RegExp(`<${headingTag}([^>]*)>\\s*${escapedText}\\s*</${headingTag}>`, 'gi');
+      // Create patterns that match both the original text and potential HTML entities
+      // Marked might convert apostrophes to &#39; or &apos;
+      const textPatterns = [
+        escapedText, // Original text
+        escapedText.replace(/'/g, '(&#39;|&apos;|\')'), // Apostrophe variations
+      ];
       
-      html = html.replace(regex, (match, attrs) => {
-        // Only add id if it doesn't already exist
-        const hasId = attrs && attrs.includes('id=');
-        const idAttr = hasId ? '' : ` id="${item.id}"`;
-        // Preserve existing attributes
-        const finalAttrs = attrs ? attrs + idAttr : idAttr;
-        return `<${headingTag}${finalAttrs}>${item.text} <a href="#toc" class="back-to-toc">↑ back to TOC</a></${headingTag}>`;
-      });
+      // Try each pattern
+      for (const textPattern of textPatterns) {
+        // Create a flexible regex that matches the heading with optional whitespace
+        const regex = new RegExp(`<${headingTag}([^>]*)>\\s*${textPattern}\\s*</${headingTag}>`, 'gi');
+        
+        if (regex.test(html)) {
+          regex.lastIndex = 0; // Reset regex
+          html = html.replace(regex, (match, attrs) => {
+            // Only add id if it doesn't already exist
+            const hasId = attrs && attrs.includes('id=');
+            const idAttr = hasId ? '' : ` id="${item.id}"`;
+            // Preserve existing attributes
+            const finalAttrs = attrs ? attrs + idAttr : idAttr;
+            return `<${headingTag}${finalAttrs}>${item.text} <a href="#toc" class="back-to-toc">↑ back to TOC</a></${headingTag}>`;
+          });
+          break; // Found and replaced, move to next item
+        }
+      }
     }
     
     processedHtml = html;
