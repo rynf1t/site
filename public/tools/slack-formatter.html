@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slack Formatter</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Times New Roman", Times, serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #1a1a1a;
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+        
+        h1 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .panel-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: "Courier New", monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+        
+        .preview {
+            min-height: 400px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+        
+        .preview.empty {
+            color: #999;
+            font-style: italic;
+        }
+        
+        button {
+            background-color: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #333;
+        }
+        
+        button:active {
+            background-color: #000;
+        }
+        
+        button.copy-btn {
+            background-color: #4a90e2;
+        }
+        
+        button.copy-btn:hover {
+            background-color: #357abd;
+        }
+        
+        button.copy-btn.copied {
+            background-color: #28a745;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .info-box {
+            background-color: #f0f7ff;
+            border-left: 3px solid #4a90e2;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-box p {
+            margin: 0.5rem 0;
+        }
+        
+        .info-box code {
+            background-color: #e8f0f8;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: "Courier New", monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to tools link -->
+    <div style="margin-bottom: 2rem;">
+        <a href="/tools" style="color: #1a1a1a; text-decoration: none; border: 1px solid #ddd; padding: 0.5rem 1rem; display: inline-block; font-family: 'Times New Roman', Times, serif; transition: background-color 0.2s;" 
+           onmouseover="this.style.backgroundColor='#f5f5f5'; this.style.borderColor='#1a1a1a';" 
+           onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='#ddd';">
+            ← Back to Tools
+        </a>
+    </div>
+    
+    <h1>Slack Formatter</h1>
+    <p class="subtitle">Convert Markdown to Slack-compatible formatting</p>
+    
+    <div class="info-box" style="background-color: #f9f9f9; border-left-color: #666;">
+        <p>Click "Copy HTML" to copy formatted text. HTML clipboard format works when pasting into Slack, Google Docs, and other apps that recognize HTML.</p>
+    </div>
+    
+    <div class="container">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">Markdown Input</span>
+            </div>
+            <textarea id="markdownInput" placeholder="Paste or type your Markdown here...
+
+Example:
+# Heading
+**Bold text** and *italic text*
+- List item 1
+- List item 2
+
+\`code\` and code blocks
+
+> Blockquote"></textarea>
+        </div>
+        
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">Formatted Output</span>
+                <div style="display: flex; gap: 8px;">
+                    <button class="copy-btn" id="copyHtmlBtn" onclick="copyAsHTML()" style="background-color: #28a745;" title="Copy as HTML (works in Slack, Google Docs, etc.)">Copy HTML</button>
+                    <button class="copy-btn" id="copyBtn" onclick="copyToClipboard()" style="background-color: #666;" title="Copy as plain text">Copy Text</button>
+                </div>
+            </div>
+            <div class="preview empty" id="slackOutput">Slack-formatted text will appear here...</div>
+        </div>
+    </div>
+    
+    <div class="actions">
+        <button onclick="clearAll()">Clear All</button>
+        <button onclick="loadExample()">Load Example</button>
+    </div>
+    
+
+    <script>
+        const markdownInput = document.getElementById('markdownInput');
+        const slackOutput = document.getElementById('slackOutput');
+        const copyBtn = document.getElementById('copyBtn');
+        
+        markdownInput.addEventListener('input', convertMarkdownToSlack);
+        
+        function convertMarkdownToSlack() {
+            const markdown = markdownInput.value;
+            
+            if (!markdown.trim()) {
+                slackOutput.textContent = 'Slack-formatted text will appear here...';
+                slackOutput.classList.add('empty');
+                return;
+            }
+            
+            slackOutput.classList.remove('empty');
+            
+            let slack = markdown;
+            
+            // First, protect code blocks and inline code from conversion
+            const codeBlocks = [];
+            const inlineCodes = [];
+            
+            // Store code blocks
+            slack = slack.replace(/```[\s\S]*?```/g, (match) => {
+                codeBlocks.push(match);
+                return `__CODEBLOCK_${codeBlocks.length - 1}__`;
+            });
+            
+            // Store inline code
+            slack = slack.replace(/`[^`]+`/g, (match) => {
+                inlineCodes.push(match);
+                return `__INLINECODE_${inlineCodes.length - 1}__`;
+            });
+            
+            // Convert headers (remove # syntax, make bold)
+            slack = slack.replace(/^### (.*$)/gim, '*$1*');
+            slack = slack.replace(/^## (.*$)/gim, '*$1*');
+            slack = slack.replace(/^# (.*$)/gim, '*$1*');
+            
+            // Convert bold **text** to *text* (Slack uses single asterisk for bold)
+            // Use a placeholder to avoid conflicts
+            const boldPlaceholders = [];
+            slack = slack.replace(/\*\*(.+?)\*\*/g, (match, content) => {
+                boldPlaceholders.push(content);
+                return `__BOLD_${boldPlaceholders.length - 1}__`;
+            });
+            
+            // Convert italic *text* to _text_ (Slack uses underscore for italic)
+            slack = slack.replace(/\*([^*\n]+?)\*/g, '_$1_');
+            
+            // Convert italic _text_ (markdown alternative) - already correct for Slack
+            // But make sure we don't double-convert
+            
+            // Restore bold placeholders
+            boldPlaceholders.forEach((content, index) => {
+                slack = slack.replace(`__BOLD_${index}__`, `*${content}*`);
+            });
+            
+            // Convert strikethrough ~~text~~ to ~text~
+            slack = slack.replace(/~~(.+?)~~/g, '~$1~');
+            
+            // Convert bullet lists (- or *) to • (but preserve indentation)
+            slack = slack.replace(/^(\s*)[-*] (.+)$/gim, '$1• $2');
+            
+            // Convert links [text](url) to <url|text>
+            slack = slack.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<$2|$1>');
+            
+            // Restore code blocks and inline code
+            codeBlocks.forEach((code, index) => {
+                slack = slack.replace(`__CODEBLOCK_${index}__`, code);
+            });
+            
+            inlineCodes.forEach((code, index) => {
+                slack = slack.replace(`__INLINECODE_${index}__`, code);
+            });
+            
+            // Clean up extra blank lines (more than 2 consecutive)
+            slack = slack.replace(/\n{3,}/g, '\n\n');
+            
+            slackOutput.textContent = slack;
+        }
+        
+        async function copyToClipboard() {
+            const text = slackOutput.textContent;
+            
+            if (!text || slackOutput.classList.contains('empty')) {
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(text);
+                copyBtn.textContent = 'Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = 'Copy';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                copyBtn.textContent = 'Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = 'Copy';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }
+        }
+        
+        async function copyAsHTML() {
+            const text = slackOutput.textContent;
+            
+            if (!text || slackOutput.classList.contains('empty')) {
+                return;
+            }
+            
+            // Convert Slack formatting to HTML
+            // Need to be careful with order - handle code blocks first, then inline code, then other formatting
+            let html = text;
+            
+            // Protect code blocks
+            const codeBlocks = [];
+            html = html.replace(/```[\s\S]*?```/g, (match) => {
+                codeBlocks.push(match);
+                return `__CODEBLOCK_${codeBlocks.length - 1}__`;
+            });
+            
+            // Protect inline code
+            const inlineCodes = [];
+            html = html.replace(/`[^`]+`/g, (match) => {
+                inlineCodes.push(match);
+                return `__INLINECODE_${inlineCodes.length - 1}__`;
+            });
+            
+            // Convert Slack formatting to HTML
+            html = html
+                .replace(/\*([^*\n]+?)\*/g, '<strong>$1</strong>')
+                .replace(/_([^_\n]+?)_/g, '<em>$1</em>')
+                .replace(/~([^~\n]+?)~/g, '<del>$1</del>')
+                .replace(/<([^|>]+)\|([^>]+)>/g, '<a href="$1">$2</a>');
+            
+            // Restore code blocks and inline code
+            codeBlocks.forEach((code, index) => {
+                const codeContent = code.replace(/```/g, '').trim();
+                html = html.replace(`__CODEBLOCK_${index}__`, `<pre><code>${codeContent.replace(/\n/g, '<br>')}</code></pre>`);
+            });
+            
+            inlineCodes.forEach((code, index) => {
+                const codeContent = code.replace(/`/g, '');
+                html = html.replace(`__INLINECODE_${index}__`, `<code>${codeContent}</code>`);
+            });
+            
+            // Convert newlines to <br> (but not inside code blocks which we already handled)
+            html = html.replace(/\n/g, '<br>');
+            
+            const button = document.getElementById('copyHtmlBtn');
+            const originalText = button.textContent;
+            
+            try {
+                // Copy as HTML using Clipboard API
+                const clipboardItem = new ClipboardItem({
+                    'text/plain': new Blob([text], { type: 'text/plain' }),
+                    'text/html': new Blob([html], { type: 'text/html' })
+                });
+                
+                await navigator.clipboard.write([clipboardItem]);
+                button.textContent = 'Copied!';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            } catch (err) {
+                // Fallback: try older method
+                try {
+                    const htmlBlob = new Blob([html], { type: 'text/html' });
+                    const textBlob = new Blob([text], { type: 'text/plain' });
+                    const data = new ClipboardItem({
+                        'text/html': htmlBlob,
+                        'text/plain': textBlob
+                    });
+                    await navigator.clipboard.write([data]);
+                    button.textContent = 'Copied!';
+                    
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                } catch (err2) {
+                    // Final fallback: just copy as text
+                    await copyToClipboard();
+                    alert('HTML clipboard not supported in this browser. Copied as plain text instead.');
+                }
+            }
+        }
+        
+        function clearAll() {
+            markdownInput.value = '';
+            slackOutput.textContent = 'Slack-formatted text will appear here...';
+            slackOutput.classList.add('empty');
+            markdownInput.focus();
+        }
+        
+        function loadExample() {
+            const example = `# Meeting Notes
+
+## Action Items
+
+- **Review** the proposal by Friday
+- *Follow up* with the team
+- ~~Old task~~ (completed)
+
+## Code Example
+
+Here's some \`inline code\` and a block:
+
+\`\`\`javascript
+function greet(name) {
+  return \`Hello, \${name}!\`;
+}
+\`\`\`
+
+## Links
+
+Check out [this article](https://example.com/article) for more info.
+
+## Quote
+
+> "The best way to predict the future is to invent it."
+> — Alan Kay
+
+## Numbered List
+
+1. First step
+2. Second step
+3. Third step`;
+            
+            markdownInput.value = example;
+            convertMarkdownToSlack();
+        }
+        
+        
+        // Initial focus
+        markdownInput.focus();
+    </script>
+</body>
+</html>
+
