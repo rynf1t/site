@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { getFileDate } from '../../utils/date';
+import { getGitFileDate } from '../../utils/date';
 import { formatToolTitle } from '../../utils/format';
 
 // Tool title overrides for special cases
@@ -34,8 +34,8 @@ try {
         // No description file, that's ok
       }
 
-      // Get file creation date using utility function
-      const createdDate = await getFileDate(filePath);
+      // Get file creation date from git (first commit date)
+      const createdDate = await getGitFileDate(filePath);
       
       // Format title using utility function with overrides
       const title = formatToolTitle(name, toolTitleOverrides);
