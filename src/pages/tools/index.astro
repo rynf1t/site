@@ -33,7 +33,11 @@ try {
         const stats = await stat(filePath);
         // Use birthtime if available (creation date), otherwise fall back to mtime (modification date)
         // On some systems birthtime might not be available
-        createdDate = stats.birthtime && stats.birthtime.getTime() > 0 ? stats.birthtime : stats.mtime;
+        if (stats.birthtime && stats.birthtime.getTime() > 0) {
+          createdDate = stats.birthtime;
+        } else if (stats.mtime && stats.mtime.getTime() > 0) {
+          createdDate = stats.mtime;
+        }
       } catch {
         // File not found, use epoch
       }
@@ -56,10 +60,16 @@ try {
 
   // Sort by creation date, newest first
   tools.sort((a, b) => {
-    const dateA = a.createdDate.getTime();
-    const dateB = b.createdDate.getTime();
-    return dateB - dateA; // Newest first (larger timestamp - smaller timestamp)
+    const dateA = a.createdDate instanceof Date ? a.createdDate.getTime() : 0;
+    const dateB = b.createdDate instanceof Date ? b.createdDate.getTime() : 0;
+    // Newest first (larger timestamp - smaller timestamp)
+    // If dates are equal, maintain original order
+    if (dateB === dateA) return 0;
+    return dateB - dateA;
   });
+  
+  // Debug: log sorted order (remove in production if needed)
+  // console.log('Tools sorted:', tools.map(t => ({ name: t.name, date: t.createdDate })));
 } catch (error) {
   console.error('Error reading tools:', error);
 }
