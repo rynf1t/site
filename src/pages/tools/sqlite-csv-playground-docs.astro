@@ -8,8 +8,39 @@ import { marked } from 'marked';
 const docsPath = join(process.cwd(), 'public', 'tools', 'sqlite-csv-playground-docs.md');
 const markdown = await readFile(docsPath, 'utf-8');
 
-// Convert markdown to HTML
-const html = await marked(markdown);
+// Generate table of contents from headings
+function generateTOC(markdown: string) {
+  const lines = markdown.split('\n');
+  const toc: Array<{ level: number; text: string; id: string }> = [];
+  
+  lines.forEach(line => {
+    const h2Match = line.match(/^## (.+)$/);
+    const h3Match = line.match(/^### (.+)$/);
+    
+    if (h2Match) {
+      const text = h2Match[1];
+      const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      toc.push({ level: 2, text, id });
+    } else if (h3Match) {
+      const text = h3Match[1];
+      const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      toc.push({ level: 3, text, id });
+    }
+  });
+  
+  return toc;
+}
+
+const toc = generateTOC(markdown);
+
+// Convert markdown to HTML and add IDs to headings
+let html = await marked(markdown);
+// Add IDs to h2 and h3 headings
+toc.forEach(item => {
+  const headingTag = item.level === 2 ? 'h2' : 'h3';
+  const regex = new RegExp(`<${headingTag}>${item.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</${headingTag}>`, 'g');
+  html = html.replace(regex, `<${headingTag} id="${item.id}">${item.text}</${headingTag}>`);
+});
 ---
 
 <Layout title="SQLite CSV Playground Pro - FAQ">
@@ -21,6 +52,19 @@ const html = await marked(markdown);
         ← Back to Tool
       </a>
     </div>
+    
+    {toc.length > 0 && (
+      <div class="toc">
+        <h3>Table of Contents</h3>
+        <ul>
+          {toc.map(item => (
+            <li class={`toc-level-${item.level}`}>
+              <a href={`#${item.id}`}>{item.text}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
     
     <div class="markdown-content" set:html={html}></div>
   </div>
@@ -113,6 +157,54 @@ const html = await marked(markdown);
     margin: 1rem 0;
     font-style: italic;
     color: #666;
+  }
+  
+  .toc {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .toc h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .toc li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .toc-level-2 {
+    font-weight: 600;
+  }
+  
+  .toc-level-3 {
+    padding-left: 1.5rem;
+    font-weight: normal;
+    font-size: 0.95em;
+  }
+  
+  .toc a {
+    color: #1a1a1a;
+    text-decoration: none;
+  }
+  
+  .toc a:hover {
+    text-decoration: underline;
+  }
+  
+  :global(.markdown-content h2),
+  :global(.markdown-content h3) {
+    scroll-margin-top: 20px;
   }
 </style>
 

@@ -36,9 +36,15 @@ try {
         // File not found, use epoch
       }
 
+      // Special handling for SQLite CSV to keep it in capitals
+      let title = name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      if (name === 'sqlite-csv-playground') {
+        title = 'SQLite CSV Playground Pro';
+      }
+      
       return {
         name,
-        title: name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        title,
         url: `/tools/${file}`,
         description,
         createdDate
