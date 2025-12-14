@@ -35,16 +35,12 @@ const toc = generateTOC(markdown);
 
 // Convert markdown to HTML and add IDs to headings
 let html = await marked(markdown);
-// Add IDs to h2 and h3 headings, and add "back to TOC" links to H2 headings
+// Add IDs to h2 and h3 headings, and add "back to TOC" links to all headings
 toc.forEach(item => {
   const headingTag = item.level === 2 ? 'h2' : 'h3';
   const regex = new RegExp(`<${headingTag}>${item.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</${headingTag}>`, 'g');
-  if (item.level === 2) {
-    // For H2 headings, add a "back to TOC" link
-    html = html.replace(regex, `<${headingTag} id="${item.id}">${item.text} <a href="#toc" class="back-to-toc">↑ back to TOC</a></${headingTag}>`);
-  } else {
-    html = html.replace(regex, `<${headingTag} id="${item.id}">${item.text}</${headingTag}>`);
-  }
+  // Add "back to TOC" link to all headings (H2 and H3)
+  html = html.replace(regex, `<${headingTag} id="${item.id}">${item.text} <a href="#toc" class="back-to-toc">↑ back to TOC</a></${headingTag}>`);
 });
 ---
 
@@ -243,7 +239,8 @@ toc.forEach(item => {
     scroll-margin-top: 20px;
   }
   
-  :global(.markdown-content h2) {
+  :global(.markdown-content h2),
+  :global(.markdown-content h3) {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -265,7 +262,8 @@ toc.forEach(item => {
     text-decoration: underline;
   }
   
-  :global(.markdown-content h2:hover .back-to-toc) {
+  :global(.markdown-content h2:hover .back-to-toc),
+  :global(.markdown-content h3:hover .back-to-toc) {
     opacity: 1;
   }
 </style>
