@@ -17,6 +17,16 @@ A browser-based SQLite query playground that lets you drag-and-drop CSV files an
 
 Each CSV becomes a table named after the filename (special characters replaced with underscores).
 
+### What URLs are supported?
+
+The tool automatically detects and converts URLs from common data sources:
+
+- **GitHub**: Paste any GitHub blob URL (e.g., `github.com/user/repo/blob/branch/path/file.csv`) and it automatically converts to the raw format
+- **Google Sheets**: Paste a shareable link (e.g., `docs.google.com/spreadsheets/d/ID/edit`) and it converts to CSV export format. Also supports direct export URLs.
+- **Direct CSV URLs**: Any direct link to a CSV file works as-is
+
+The tool handles URL normalization automatically - just paste the URL and click "Load from URL".
+
 ### Do I need to know SQL?
 
 Not necessarily! Toggle to "Visual Builder" mode to build queries with dropdowns and inputs. It generates the SQL for you. But knowing SQL gives you way more power.
@@ -183,13 +193,25 @@ Click **"💾 Save Workspace"** in the header. Downloads a JSON file with:
 
 ### How do I load a saved workspace?
 
-Click **"📂 Load Workspace"** and select your JSON file. It replaces your current session entirely (clears existing tables and queries first).
+**Two ways:**
+1. **From file**: Click **"📂 Load Workspace"** and select your JSON file. It replaces your current session entirely (clears existing tables and queries first).
+2. **From URL**: If someone shares a workspace URL with you (contains `?workspace=...`), the workspace will automatically load when you open the link.
+
+### How do I share a workspace?
+
+Click **"🔗 Share Workspace"** in the header. This:
+- Generates a shareable URL with your workspace embedded
+- Copies the URL to your clipboard
+- For large workspaces (>2000 characters), shows a modal with the JSON to copy manually
+
+Share the URL with others - when they open it, your workspace (tables + queries) loads automatically!
 
 ### Why would I use workspaces?
 
 - **Resume work later** - close browser, come back tomorrow, load workspace
-- **Share analysis** - send workspace file to colleague, they get exact same setup
+- **Share analysis** - send workspace URL or file to colleague, they get exact same setup
 - **Template queries** - save common analysis patterns to reuse
+- **Collaboration** - share workspace URLs in chat/email for instant access
 
 ---
 
@@ -241,7 +263,12 @@ Larger datasets might slow down.
 
 ### Can I load CSVs from any URL?
 
-Only if the URL allows CORS (Cross-Origin Resource Sharing). Many public data sources work fine. GitHub raw URLs work great.
+Only if the URL allows CORS (Cross-Origin Resource Sharing). Many public data sources work fine. The tool automatically handles:
+- **GitHub URLs** - Converts blob URLs to raw format automatically
+- **Google Sheets** - Converts shareable links to export format automatically
+- **Direct CSV URLs** - Works as-is if CORS is enabled
+
+If you get a CORS error, the file host doesn't allow cross-origin access. Try downloading the file and using drag-and-drop instead.
 
 ---
 

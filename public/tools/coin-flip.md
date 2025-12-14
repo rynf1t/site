@@ -1,1 +1,1 @@
-Flip a virtual coin and get heads or tails instantly.
+Randomly generates a coin flip result with retro arcade-style animation and visual feedback showing heads or tails.

@@ -701,26 +701,33 @@
             font-weight: bold;
         }
 
-        .dependency-graph {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 8px;
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: #4caf50;
+            color: white;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 3000;
+            animation: slideIn 0.3s ease-out;
+            font-size: 13px;
         }
 
-        .dependency-node {
-            background: white;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-            display: inline-block;
+        .toast.error {
+            background: #f44336;
         }
 
-        .dependency-arrow {
-            color: #667eea;
-            font-size: 20px;
-            margin: 0 10px;
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -735,6 +742,7 @@
             <div class="header-actions">
                 <button onclick="saveWorkspace()" class="btn-success">💾 Save Workspace</button>
                 <button onclick="loadWorkspace()" class="btn-secondary">📂 Load Workspace</button>
+                <button onclick="shareWorkspace()" class="btn-secondary">🔗 Share Workspace</button>
                 <button onclick="showHistory()" class="btn-secondary">📜 History</button>
                 <a href="/tools/sqlite-csv-playground-docs" style="color: white; text-decoration: none; padding: 8px 16px; font-size: 13px; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">📖 FAQ</a>
             </div>
@@ -754,14 +762,13 @@
                 </div>
 
                 <div class="url-input-section">
-                    <input type="text" id="urlInput" placeholder="Or paste CSV URL here...">
+                    <input type="text" id="urlInput" placeholder="Paste CSV URL (GitHub, Google Sheets, or direct CSV link)...">
                     <button onclick="loadFromURL()">Load from URL</button>
                 </div>
 
                 <div class="tables-list">
                     <div class="section-title">
                         Tables
-                        <button onclick="showDependencyGraph()" style="padding: 4px 8px; font-size: 11px;">View Graph</button>
                     </div>
                     <div id="tablesList"></div>
                 </div>
@@ -820,17 +827,6 @@
         </div>
     </div>
 
-    <!-- Dependency Graph Modal -->
-    <div class="modal" id="graphModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Query Dependency Graph</h2>
-                <span class="modal-close" onclick="closeModal('graphModal')">&times;</span>
-            </div>
-            <div id="graphContent"></div>
-        </div>
-    </div>
-
     <script>
         let db = null;
         let queries = [];
@@ -861,6 +857,8 @@
             db = new SQL.Database();
             console.log('SQLite initialized');
             loadLocalStorage();
+            // Check for workspace URL parameter
+            loadWorkspaceFromUrl();
         });
 
         // File handling
@@ -902,22 +900,95 @@
             reader.readAsText(file);
         }
 
+        function normalizeCSVUrl(url) {
+            try {
+                // Remove protocol if present for easier matching
+                const urlWithoutProtocol = url.replace(/^https?:\/\//, '');
+                
+                // GitHub blob URL: github.com/user/repo/blob/branch/path/file.csv
+                // Convert to: raw.githubusercontent.com/user/repo/branch/path/file.csv
+                const githubBlobMatch = urlWithoutProtocol.match(/github\.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.+)/);
+                if (githubBlobMatch) {
+                    const [, user, repo, branch, path] = githubBlobMatch;
+                    return `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`;
+                }
+
+                // Google Sheets shareable link: docs.google.com/spreadsheets/d/ID/edit
+                // Convert to: docs.google.com/spreadsheets/d/ID/export?format=csv&gid=0
+                const googleSheetsEditMatch = urlWithoutProtocol.match(/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9-_]+)(?:\/.*)?/);
+                if (googleSheetsEditMatch) {
+                    const sheetId = googleSheetsEditMatch[1];
+                    // Try to extract gid from URL if present (check query params, hash, or both)
+                    const gidMatch = url.match(/[?#&]gid=(\d+)/);
+                    const gid = gidMatch ? gidMatch[1] : '0';
+                    return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+                }
+
+                // Google Sheets export URL: already in correct format, use as-is
+                if (urlWithoutProtocol.includes('docs.google.com/spreadsheets') && url.includes('/export')) {
+                    // Ensure it has https:// protocol
+                    return url.startsWith('http') ? url : `https://${url}`;
+                }
+
+                // Return original URL if no pattern matches, ensure it has protocol
+                if (!url.startsWith('http')) {
+                    return `https://${url}`;
+                }
+                return url;
+            } catch (error) {
+                // If URL parsing fails, return original
+                return url;
+            }
+        }
+
         async function loadFromURL() {
-            const url = document.getElementById('urlInput').value.trim();
+            const urlInput = document.getElementById('urlInput');
+            const url = urlInput.value.trim();
             if (!url) {
                 alert('Please enter a URL');
                 return;
             }
 
+            // Show loading state
+            const originalButton = urlInput.nextElementSibling;
+            const originalText = originalButton.textContent;
+            originalButton.disabled = true;
+            originalButton.textContent = 'Loading...';
+
             try {
-                const response = await fetch(url);
+                const normalizedUrl = normalizeCSVUrl(url);
+                const response = await fetch(normalizedUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
                 const csv = await response.text();
-                const fileName = url.split('/').pop().split('?')[0] || 'data';
+                const fileName = normalizedUrl.split('/').pop().split('?')[0] || 'data';
                 const tableName = fileName.replace('.csv', '').replace(/[^a-zA-Z0-9_]/g, '_');
                 createTableFromCSV(tableName, csv);
-                document.getElementById('urlInput').value = '';
+                urlInput.value = '';
+                showToast('CSV loaded successfully!');
             } catch (error) {
-                alert('Failed to load CSV from URL: ' + error.message);
+                let errorMessage = 'Failed to load CSV from URL: ' + error.message;
+                
+                // Provide helpful error message for Google Sheets
+                if (normalizedUrl.includes('docs.google.com/spreadsheets') && normalizedUrl.includes('/export')) {
+                    errorMessage += '\n\n📋 Google Sheets Error:\n';
+                    errorMessage += 'The sheet must be publicly accessible to load it here.\n\n';
+                    errorMessage += 'To fix this:\n';
+                    errorMessage += '1. Open your Google Sheet\n';
+                    errorMessage += '2. Click "Share" → "Change to anyone with the link"\n';
+                    errorMessage += '3. Set permission to "Viewer"\n';
+                    errorMessage += '4. Try loading the URL again';
+                } else {
+                    errorMessage += '\n\nNote: Some URLs may not allow cross-origin requests (CORS).';
+                }
+                
+                alert(errorMessage);
+            } finally {
+                originalButton.disabled = false;
+                originalButton.textContent = originalText;
             }
         }
 
@@ -1769,6 +1840,30 @@
                 }
 
                 displayResults(index, results, duration);
+                
+                // Create temp table for this query if chaining is enabled
+                if (query.chainEnabled && results.length > 0) {
+                    const chainTableName = query.chainTableName || 'temp_' + index;
+                    const result = results[0];
+                    
+                    // Drop existing table if it exists
+                    db.run(`DROP TABLE IF EXISTS "${chainTableName}"`);
+                    
+                    // Create table with columns from results
+                    const columnDefs = result.columns.map(c => `"${c}" TEXT`).join(', ');
+                    db.run(`CREATE TABLE "${chainTableName}" (${columnDefs})`);
+                    
+                    // Insert all result rows
+                    const placeholders = result.columns.map(() => '?').join(', ');
+                    const stmt = db.prepare(`INSERT INTO "${chainTableName}" VALUES (${placeholders})`);
+                    result.values.forEach(row => {
+                        stmt.run(row);
+                    });
+                    stmt.free();
+                    
+                    // Update tables list to show the new temp table
+                    updateTablesList();
+                }
             } catch (error) {
                 resultsDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
             }
@@ -2072,35 +2167,205 @@
             input.click();
         }
 
-        function showDependencyGraph() {
-            const graphContent = document.getElementById('graphContent');
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${isError ? 'error' : ''}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
 
-            if (queries.length === 0) {
-                graphContent.innerHTML = '<p style="text-align: center; color: #999;">No queries created yet</p>';
-                document.getElementById('graphModal').classList.add('active');
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (error) {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    return true;
+                } catch (e) {
+                    document.body.removeChild(textarea);
+                    return false;
+                }
+            }
+        }
+
+        function getWorkspaceData() {
+            const workspace = {
+                queries: queries.map(q => ({
+                    name: q.name,
+                    sql: q.sql,
+                    chainEnabled: q.chainEnabled,
+                    chainTableName: q.chainTableName
+                })),
+                tables: []
+            };
+
+            const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table'");
+            if (tables.length > 0) {
+                tables[0].values.forEach(([tableName]) => {
+                    const data = db.exec(`SELECT * FROM "${tableName}"`)[0];
+                    workspace.tables.push({
+                        name: tableName,
+                        columns: data.columns,
+                        values: data.values
+                    });
+                });
+            }
+
+            return workspace;
+        }
+
+        function generateShareableUrl() {
+            const workspace = getWorkspaceData();
+            const json = JSON.stringify(workspace);
+            const base64 = btoa(unescape(encodeURIComponent(json)));
+            const currentUrl = window.location.href.split('?')[0];
+            return `${currentUrl}?workspace=${encodeURIComponent(base64)}`;
+        }
+
+        function loadWorkspaceFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const workspaceParam = urlParams.get('workspace');
+            
+            if (!workspaceParam) {
+                return false;
+            }
+
+            try {
+                const base64 = decodeURIComponent(workspaceParam);
+                const json = decodeURIComponent(escape(atob(base64)));
+                const workspace = JSON.parse(json);
+
+                // Clear existing
+                const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table'");
+                if (tables.length > 0) {
+                    tables[0].values.forEach(([tableName]) => {
+                        db.run(`DROP TABLE IF EXISTS "${tableName}"`);
+                    });
+                }
+
+                // Load tables
+                workspace.tables.forEach(table => {
+                    const columnDefs = table.columns.map(c => `"${c}" TEXT`).join(', ');
+                    db.run(`CREATE TABLE "${table.name}" (${columnDefs})`);
+
+                    const placeholders = table.columns.map(() => '?').join(', ');
+                    const stmt = db.prepare(`INSERT INTO "${table.name}" VALUES (${placeholders})`);
+                    table.values.forEach(row => {
+                        stmt.run(row);
+                    });
+                    stmt.free();
+                });
+
+                // Load queries
+                queries = workspace.queries.map((q, idx) => ({
+                    id: idx + 1,
+                    name: q.name,
+                    sql: q.sql,
+                    results: null,
+                    mode: 'sql',
+                    chainEnabled: q.chainEnabled || false,
+                    chainTableName: q.chainTableName || '',
+                    sortColumn: null,
+                    sortDirection: null,
+                    filterText: ''
+                }));
+
+                queryCounter = queries.length + 1;
+                activeQueryIndex = 0;
+
+                updateTablesList();
+                renderQueryTabs();
+                renderQueryPanels();
+                hideEmptyState();
+
+                // Clear URL parameter
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
+                showToast('Workspace loaded successfully!');
+                return true;
+            } catch (error) {
+                showToast('Failed to load workspace from URL: ' + error.message, true);
+                return false;
+            }
+        }
+
+        async function shareWorkspace() {
+            const workspace = getWorkspaceData();
+            
+            // Check if workspace is empty
+            if (workspace.tables.length === 0 && workspace.queries.length === 0) {
+                showToast('No workspace to share. Load some data or create queries first.', true);
                 return;
             }
 
-            let html = '<div class="dependency-graph">';
-            html += '<p style="margin-bottom: 20px; color: #666;">This shows how your queries chain together. Chained queries create temporary tables that later queries can use.</p>';
-
-            queries.forEach((q, idx) => {
-                const sql = q.sql ? q.sql.substring(0, 100) + (q.sql.length > 100 ? '...' : '') : 'Empty query';
-                html += `
-                    <div class="dependency-node">
-                        <strong>${q.name}</strong>
-                        <div style="font-family: monospace; font-size: 11px; margin-top: 8px; color: #666;">${sql}</div>
-                        ${q.chainEnabled ? `<div style="margin-top: 8px; padding: 6px; background: #e8f5e9; border-radius: 4px; font-size: 11px;">⛓ Creates temp table: <strong>${q.chainTableName}</strong></div>` : ''}
+            const shareableUrl = generateShareableUrl();
+            
+            // Check URL length (browsers typically support up to ~2000 chars reliably)
+            if (shareableUrl.length > 2000) {
+                // Show modal with JSON for manual copying
+                const json = JSON.stringify(workspace, null, 2);
+                const modal = document.createElement('div');
+                modal.className = 'modal active';
+                modal.innerHTML = `
+                    <div class="modal-content" style="max-width: 600px;">
+                        <div class="modal-header">
+                            <h2>Workspace Too Large for URL</h2>
+                            <span class="modal-close" onclick="this.closest('.modal').remove()">&times;</span>
+                        </div>
+                        <p style="margin-bottom: 15px; color: #666;">The workspace is too large to share via URL. Copy the JSON below and share it manually:</p>
+                        <textarea readonly style="width: 100%; min-height: 300px; font-family: monospace; font-size: 11px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">${json}</textarea>
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <button onclick="copyWorkspaceJson(this)">Copy JSON</button>
+                            <button class="btn-secondary" onclick="this.closest('.modal').remove()">Close</button>
+                        </div>
                     </div>
                 `;
-                if (q.chainEnabled && idx < queries.length - 1) {
-                    html += `<div class="dependency-arrow">⬇</div>`;
+                document.body.appendChild(modal);
+                
+                // Store JSON in button for copying
+                modal.querySelector('button').dataset.json = json;
+                
+                // Close on outside click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            } else {
+                // Copy URL to clipboard
+                const success = await copyToClipboard(shareableUrl);
+                if (success) {
+                    showToast('Shareable link copied to clipboard!');
+                } else {
+                    showToast('Failed to copy to clipboard. Please copy the URL manually.', true);
+                    // Show URL in prompt as fallback
+                    prompt('Copy this URL to share your workspace:', shareableUrl);
                 }
-            });
+            }
+        }
 
-            html += '</div>';
-            graphContent.innerHTML = html;
-            document.getElementById('graphModal').classList.add('active');
+        async function copyWorkspaceJson(button) {
+            const json = button.dataset.json;
+            const success = await copyToClipboard(json);
+            if (success) {
+                showToast('JSON copied to clipboard!');
+            } else {
+                showToast('Failed to copy. Please select and copy manually.', true);
+            }
         }
 
         function closeModal(modalId) {

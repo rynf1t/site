@@ -1,7 +1,14 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { readdir, readFile, stat } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { getFileDate } from '../../utils/date';
+import { formatToolTitle } from '../../utils/format';
+
+// Tool title overrides for special cases
+const toolTitleOverrides: Record<string, string> = {
+  'sqlite-csv-playground': 'SQLite CSV Playground Pro',
+};
 
 // Get all HTML files from public/tools
 const toolsPath = join(process.cwd(), 'public', 'tools');
@@ -27,26 +34,11 @@ try {
         // No description file, that's ok
       }
 
-      // Get file creation date (birthtime is creation, mtime is modification)
-      let createdDate = new Date(0);
-      try {
-        const stats = await stat(filePath);
-        // Use birthtime if available (creation date), otherwise fall back to mtime (modification date)
-        // On some systems birthtime might not be available
-        if (stats.birthtime && stats.birthtime.getTime() > 0) {
-          createdDate = stats.birthtime;
-        } else if (stats.mtime && stats.mtime.getTime() > 0) {
-          createdDate = stats.mtime;
-        }
-      } catch {
-        // File not found, use epoch
-      }
-
-      // Special handling for SQLite CSV to keep it in capitals
-      let title = name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-      if (name === 'sqlite-csv-playground') {
-        title = 'SQLite CSV Playground Pro';
-      }
+      // Get file creation date using utility function
+      const createdDate = await getFileDate(filePath);
+      
+      // Format title using utility function with overrides
+      const title = formatToolTitle(name, toolTitleOverrides);
       
       return {
         name,
@@ -67,9 +59,6 @@ try {
     if (dateB === dateA) return 0;
     return dateB - dateA;
   });
-  
-  // Debug: log sorted order (remove in production if needed)
-  // console.log('Tools sorted:', tools.map(t => ({ name: t.name, date: t.createdDate })));
 } catch (error) {
   console.error('Error reading tools:', error);
 }
@@ -93,18 +82,19 @@ try {
         <li class="tool-item" data-title={tool.title.toLowerCase()} data-description={tool.description?.toLowerCase() || ''}>
           <a href={tool.url}>{tool.title}</a>
           {tool.description && <span class="description"> — {tool.description}</span>}
+          <a href={`https://github.com/rynf1t/site/blob/main/public/tools/${tool.name}.html`} class="github-link" target="_blank" rel="noopener noreferrer">[see code]</a>
         </li>
       ))}
     </ul>
   )}
 
   <script>
-    const search = document.getElementById('search');
+    const search = document.getElementById('search') as HTMLInputElement | null;
     const toolsList = document.getElementById('tools-list');
-    const items = toolsList?.querySelectorAll('.tool-item');
+    const items = toolsList?.querySelectorAll('.tool-item') as NodeListOf<HTMLElement> | undefined;
 
     search?.addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase();
+      const query = (e.target as HTMLInputElement).value.toLowerCase();
       items?.forEach(item => {
         const title = item.dataset.title || '';
         const description = item.dataset.description || '';
@@ -128,9 +118,9 @@ try {
   }
 
   .tool-item a {
-    color: #1a1a1a;
+    color: #0066cc;
     text-decoration: none;
-    font-weight: normal;
+    font-weight: bold;
   }
 
   .tool-item a:hover {
@@ -139,5 +129,16 @@ try {
 
   .description {
     color: #666;
+  }
+
+  .tool-item .github-link {
+    color: #0066cc !important;
+    text-decoration: none;
+    font-size: 0.9em;
+    margin-left: 0.5rem;
+  }
+
+  .tool-item .github-link:hover {
+    text-decoration: underline;
   }
 </style>

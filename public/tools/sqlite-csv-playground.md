@@ -1,1 +1,1 @@
-Executes SQL queries on CSV data with features including query chaining, visual query builder, autocomplete, and result sorting/filtering.
+Analyze CSV and SQLite data with SQL queries, visual query building, autocomplete, result chaining, and workspace sharing features.

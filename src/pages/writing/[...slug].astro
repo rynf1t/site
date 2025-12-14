@@ -4,37 +4,8 @@ import Layout from '../../layouts/Layout.astro';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { marked } from 'marked';
-
-// Convert slug to title: "test-local-post" -> "Test Local Post"
-function slugToTitle(slug: string): string {
-  return slug
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
-// Generate table of contents from markdown
-function generateTOC(markdown: string) {
-  const lines = markdown.split('\n');
-  const toc: Array<{ level: number; text: string; id: string }> = [];
-  
-  lines.forEach(line => {
-    const h2Match = line.match(/^## (.+)$/);
-    const h3Match = line.match(/^### (.+)$/);
-    
-    if (h2Match) {
-      const text = h2Match[1].trim();
-      const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      toc.push({ level: 2, text, id });
-    } else if (h3Match) {
-      const text = h3Match[1].trim();
-      const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      toc.push({ level: 3, text, id });
-    }
-  });
-  
-  return toc;
-}
+import { slugToTitle } from '../../utils/format';
+import { generateTOC, addHeadingIds } from '../../utils/toc';
 
 export async function getStaticPaths() {
   const posts = await getCollection('writing');
@@ -62,45 +33,10 @@ try {
   if (hasTOC) {
     useCustomRender = true;
     // Render markdown to HTML
-    let html = await marked(rawMarkdown);
+    const html = await marked(rawMarkdown);
     
-    // Add IDs to headings and back-to-TOC links
-    // Process in reverse order to avoid replacing already-processed headings
-    for (let i = toc.length - 1; i >= 0; i--) {
-      const item = toc[i];
-      const headingTag = item.level === 2 ? 'h2' : 'h3';
-      
-      // Escape special regex characters in the text (but not apostrophes/quotes which might be HTML entities)
-      const escapedText = item.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      
-      // Create patterns that match both the original text and potential HTML entities
-      // Marked might convert apostrophes to &#39; or &apos;
-      const textPatterns = [
-        escapedText, // Original text
-        escapedText.replace(/'/g, '(&#39;|&apos;|\')'), // Apostrophe variations
-      ];
-      
-      // Try each pattern
-      for (const textPattern of textPatterns) {
-        // Create a flexible regex that matches the heading with optional whitespace
-        const regex = new RegExp(`<${headingTag}([^>]*)>\\s*${textPattern}\\s*</${headingTag}>`, 'gi');
-        
-        if (regex.test(html)) {
-          regex.lastIndex = 0; // Reset regex
-          html = html.replace(regex, (match, attrs) => {
-            // Only add id if it doesn't already exist
-            const hasId = attrs && attrs.includes('id=');
-            const idAttr = hasId ? '' : ` id="${item.id}"`;
-            // Preserve existing attributes
-            const finalAttrs = attrs ? attrs + idAttr : idAttr;
-            return `<${headingTag}${finalAttrs}>${item.text} <a href="#toc" class="back-to-toc">↑ back to TOC</a></${headingTag}>`;
-          });
-          break; // Found and replaced, move to next item
-        }
-      }
-    }
-    
-    processedHtml = html;
+    // Add IDs to headings and back-to-TOC links using utility function
+    processedHtml = addHeadingIds(html, toc);
   }
 } catch (error) {
   // If we can't read the file, just render normally

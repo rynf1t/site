@@ -2,8 +2,9 @@
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import BlogPost from '../components/BlogPost.astro';
-import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
+import { getFileDate } from '../utils/date';
+import { slugToTitle } from '../utils/format';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
@@ -16,14 +17,6 @@ export async function getStaticPaths() {
 const { page } = Astro.props;
 const { Content } = await page.render();
 
-// Convert slug to title: "test-local-post" -> "Test Local Post"
-function slugToTitle(slug: string): string {
-  return slug
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
 // Only fetch posts if we're on the writing page
 let posts = [];
 if (page.id === 'writing.md') {
@@ -33,19 +26,13 @@ if (page.id === 'writing.md') {
   // Get file creation dates and use them for sorting
   posts = await Promise.all(
     allPosts.map(async (post) => {
-      // Try to get file creation date using post.id (full filename)
-      let fileDate: Date | null = null;
-      try {
-        const filePath = join(process.cwd(), 'src', 'content', 'writing', post.id);
-        const stats = await stat(filePath);
-        fileDate = stats.birthtime || stats.mtime;
-      } catch {
-        // File not found, skip
-      }
+      // Get file creation date using utility function
+      const filePath = join(process.cwd(), 'src', 'content', 'writing', post.id);
+      const fileDate = await getFileDate(filePath);
       
       // If pubDate exists and is not from this build (default), use it
       // Otherwise use file creation date
-      if (post.data.pubDate && fileDate) {
+      if (post.data.pubDate && fileDate.getTime() > 0) {
         const pubDateTime = post.data.pubDate.getTime();
         // If pubDate is within 2 seconds of build time, it's likely the default
         if (Math.abs(buildTime - pubDateTime) > 2000) {
@@ -57,7 +44,7 @@ if (page.id === 'writing.md') {
       }
       
       // Use file date if available, otherwise pubDate, otherwise epoch
-      const displayDate = fileDate || post.data.pubDate || new Date(0);
+      const displayDate = fileDate.getTime() > 0 ? fileDate : (post.data.pubDate || new Date(0));
       return { ...post, displayDate, sortDate: displayDate };
     })
   );
