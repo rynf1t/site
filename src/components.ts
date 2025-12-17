@@ -294,7 +294,8 @@ export function MediaPost(props: {
   `
 }
 
-export function IndexPage(props: { posts: any[]; media: any[]; totalMedia?: number }) {
+
+export function IndexPage(props: { posts: any[]; media: any[]; totalMedia?: number; intro?: string }) {
   // Show only top 5 posts
   const recentPosts = props.posts.slice(0, 5)
 
@@ -313,6 +314,8 @@ export function IndexPage(props: { posts: any[]; media: any[]; totalMedia?: numb
   const totalMediaCount = props.totalMedia || props.media.length
 
   return `
+    ${props.intro ? `<div class="prose prose-stone prose-lg max-w-none mb-12">${props.intro}</div>` : ''}
+
     <section class="mb-12">
       <h3 class="font-bold text-xl mb-4">Writing</h3>
       <div class="space-y-2">
@@ -341,7 +344,7 @@ export function IndexPage(props: { posts: any[]; media: any[]; totalMedia?: numb
   `
 }
 
-export function ArchivePage(props: { posts: any[] }) {
+export function ArchivePage(props: { posts: any[]; intro?: string }) {
   const postList = props.posts
     .map(
       (post) => `
@@ -356,6 +359,7 @@ export function ArchivePage(props: { posts: any[] }) {
   return `
     <section class="mb-12">
       <h1 class="font-bold text-2xl mb-8">Archive</h1>
+      ${props.intro ? `<div class="prose prose-stone prose-lg max-w-none mb-8">${props.intro}</div>` : ''}
       <div class="space-y-2">
         ${postList}
       </div>
@@ -363,7 +367,7 @@ export function ArchivePage(props: { posts: any[] }) {
   `
 }
 
-export function MediaPage(props: { media: { title: string; image?: string; url: string; type: string; author?: string; year?: number; rating?: number }[] }) {
+export function MediaPage(props: { media: { title: string; image?: string; url: string; type: string; author?: string; year?: number; rating?: number }[]; intro?: string }) {
   const escapeAttr = (str: string) => str.replace(/"/g, '&quot;').replace(/'/g, '&#39;')
 
   const mediaItems = props.media.map((item) => {
@@ -389,7 +393,7 @@ export function MediaPage(props: { media: { title: string; image?: string; url: 
   return `
     <section class="mb-12">
       <h1 class="font-bold text-2xl mb-4">Media</h1>
-      <p class="text-text2 mb-6">Books, films, and TV I've consumed.</p>
+      ${props.intro ? `<div class="prose prose-stone prose-lg max-w-none mb-6">${props.intro}</div>` : '<p class="text-text2 mb-6">Books, films, and TV I\'ve consumed.</p>'}
       
       <!-- Search -->
       <div class="mb-4">
@@ -479,4 +483,5 @@ export function MediaPage(props: { media: { title: string; image?: string; url: 
     </script>
   `
 }
+
 

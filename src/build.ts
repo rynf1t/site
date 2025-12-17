@@ -257,7 +257,7 @@ async function build() {
 }
 
 // Tools Page Generator
-async function generateToolsPage(): Promise<string> {
+async function generateToolsPage(intro?: string): Promise<string> {
     const toolsDir = 'static/tools';
     let htmlTools: { name: string; title: string; description: string; url: string }[] = [];
 
@@ -297,6 +297,7 @@ async function generateToolsPage(): Promise<string> {
     return `
         <section>
             <h1 class="font-bold text-2xl mb-8">Tools</h1>
+            ${intro ? `<div class="prose prose-stone prose-lg max-w-none mb-8">${intro}</div>` : ''}
             <ul class="list-none p-0 m-0">
                 ${toolsList}
             </ul>
@@ -319,6 +320,7 @@ async function generateCustomPages() {
             const { attributes, body } = frontMatter<any>(raw);
 
             let content: string;
+            const htmlContent = md.render(body);
 
             // Special handling for specific pages
             if (pageName === 'home') {
@@ -366,7 +368,8 @@ async function generateCustomPages() {
                         url: `/posts/${m.slug}.html`,
                         type: m.mediaType
                     })),
-                    totalMedia: media.length
+                    totalMedia: media.length,
+                    intro: htmlContent
                 });
             } else if (pageName === 'writing') {
                 // Writing page uses archive layout
@@ -384,7 +387,8 @@ async function generateCustomPages() {
                 }
                 posts.sort((a, b) => b.date.localeCompare(a.date));
                 content = ArchivePage({
-                    posts: posts.map(p => ({ title: p.title, date: p.date, url: `/posts/${p.slug}.html` }))
+                    posts: posts.map(p => ({ title: p.title, date: p.date, url: `/posts/${p.slug}.html` })),
+                    intro: htmlContent
                 });
             } else if (pageName === 'media') {
                 // Media page uses media grid layout
@@ -421,11 +425,12 @@ async function generateCustomPages() {
                         author: m.author,
                         year: m.year,
                         rating: m.rating
-                    }))
+                    })),
+                    intro: htmlContent
                 });
             } else if (pageName === 'tools') {
                 // Tools page
-                content = await generateToolsPage();
+                content = await generateToolsPage(htmlContent);
             } else {
                 // Generic page - just render markdown
                 const html = md.render(body);

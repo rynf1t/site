@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "media/Trust Test.md",
+                "file": "pages/home.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Trust Test"
+              "title": "home"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "media/Trust Test.md",
+                "file": "pages/home.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Trust Test"
+              "title": "Backlinks for home"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "media/Trust Test.md",
+                "file": "pages/home.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Trust Test"
+              "title": "Outgoing links from home"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "media/Trust Test.md",
+                "file": "pages/home.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Trust Test"
+              "title": "Outline of home"
             }
           }
         ]
@@ -186,12 +186,12 @@
   },
   "active": "89c55660bb198395",
   "lastOpenFiles": [
-    "pages/home.md",
-    "media/Trust Test.md",
     "pages/media.md",
+    "pages/home.md",
     "pages/about.md",
     "pages/writing.md",
     "pages/tools.md",
+    "media/Trust Test.md",
     "media/Trust.md",
     "templates/book template.md",
     "media/project-hail-mary.md",
