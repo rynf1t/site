@@ -11,6 +11,11 @@ export function Layout(props: { title: string; content: string; description?: st
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${props.title} | Ryan's Blog</title>
   <meta name="description" content="${metaDescription}">
+  <!-- Preconnect to image CDN for faster loading -->
+  <link rel="preconnect" href="https://m.media-amazon.com" crossorigin>
+  <link rel="dns-prefetch" href="https://m.media-amazon.com">
+  <!-- Preload search index for instant search -->
+  <link rel="prefetch" href="/search.json" as="fetch" crossorigin>
   <link rel="stylesheet" href="/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✒</text></svg>">
   <script>
@@ -154,25 +159,31 @@ export function Layout(props: { title: string; content: string; description?: st
   </div>
 
   <script>
+    // ULTRA FAST SEARCH - preloaded, debounced, optimized
     let searchData = null;
+    let searchIndex = null; // Pre-computed lowercase index
     let selectedIndex = -1;
+    let debounceTimer = null;
+    let lastResults = [];
 
-    async function loadSearchData() {
-      if (searchData) return searchData;
-      try {
-        const res = await fetch('/search.json');
-        searchData = await res.json();
-        return searchData;
-      } catch (e) {
-        console.error('Failed to load search data:', e);
-        return [];
-      }
-    }
+    // Preload search data immediately (not on modal open)
+    (function preloadSearch() {
+      fetch('/search.json')
+        .then(r => r.json())
+        .then(data => {
+          searchData = data;
+          // Pre-compute lowercase search strings for instant matching
+          searchIndex = data.map(item => ({
+            ...item,
+            _search: [item.title, item.author, item.year].filter(Boolean).join(' ').toLowerCase()
+          }));
+        })
+        .catch(() => {});
+    })();
 
     function openSearch() {
       document.getElementById('searchModal').classList.remove('hidden');
       document.getElementById('searchInput').focus();
-      loadSearchData();
     }
 
     function closeSearch() {
@@ -180,21 +191,24 @@ export function Layout(props: { title: string; content: string; description?: st
       document.getElementById('searchInput').value = '';
       document.getElementById('searchResults').innerHTML = '';
       selectedIndex = -1;
+      lastResults = [];
     }
 
-    function fuzzyMatch(query, text) {
-      query = String(query || '').toLowerCase();
-      text = String(text || '').toLowerCase();
-      if (text.includes(query)) return 1000 - text.indexOf(query);
-      var qi = 0;
-      var score = 0;
-      for (var ti = 0; ti < text.length && qi < query.length; ti++) {
-        if (text[ti] === query[qi]) {
-          score += 10;
-          qi++;
+    // Ultra-fast search: simple substring match on pre-computed index
+    function search(query) {
+      if (!searchIndex) return [];
+      const q = query.toLowerCase();
+      const results = [];
+      for (let i = 0; i < searchIndex.length; i++) {
+        const item = searchIndex[i];
+        const idx = item._search.indexOf(q);
+        if (idx !== -1) {
+          results.push({ ...item, _score: 1000 - idx });
         }
       }
-      return qi === query.length ? score : 0;
+      // Sort by match position (earlier = better)
+      results.sort((a, b) => b._score - a._score);
+      return results.slice(0, 10);
     }
 
     function renderResults(results) {
@@ -203,85 +217,77 @@ export function Layout(props: { title: string; content: string; description?: st
         container.innerHTML = '<div class="search-empty">No results found</div>';
         return;
       }
-      container.innerHTML = results.slice(0, 10).map(function(item, i) {
-        var typeLabel = item.type === 'post' ? 'Post' : (item.mediaType || 'Media').charAt(0).toUpperCase() + (item.mediaType || 'media').slice(1);
-        var typeBadgeClass = item.type === 'post' ? 'badge-post' : 'badge-media';
-        var subtitle = item.type === 'post' ? item.date : (item.author || item.year || '');
-        var selectedClass = i === selectedIndex ? 'selected' : '';
-        var subtitleHtml = subtitle ? '<span class="search-result-subtitle">' + subtitle + '</span>' : '';
-        return '<a href="' + item.url + '" class="search-result ' + selectedClass + '" data-index="' + i + '">' +
+      let html = '';
+      for (let i = 0; i < results.length; i++) {
+        const item = results[i];
+        const typeLabel = item.type === 'post' ? 'Post' : (item.mediaType || 'Media').charAt(0).toUpperCase() + (item.mediaType || 'media').slice(1);
+        const typeBadgeClass = item.type === 'post' ? 'badge-post' : 'badge-media';
+        const subtitle = item.type === 'post' ? item.date : (item.author || item.year || '');
+        html += '<a href="' + item.url + '" class="search-result' + (i === selectedIndex ? ' selected' : '') + '">' +
           '<div class="search-result-content">' +
             '<span class="search-result-title">' + item.title + '</span>' +
-            subtitleHtml +
+            (subtitle ? '<span class="search-result-subtitle">' + subtitle + '</span>' : '') +
           '</div>' +
           '<span class="search-result-badge ' + typeBadgeClass + '">' + typeLabel + '</span>' +
         '</a>';
-      }).join('');
+      }
+      container.innerHTML = html;
     }
 
-    function updateSelection(results) {
+    function updateSelection() {
       const items = document.querySelectorAll('.search-result');
-      items.forEach((item, i) => {
-        item.classList.toggle('selected', i === selectedIndex);
-      });
+      for (let i = 0; i < items.length; i++) {
+        items[i].classList.toggle('selected', i === selectedIndex);
+      }
     }
 
-    document.addEventListener('keydown', async (e) => {
-      // Open with Cmd+K or Ctrl+K
+    document.addEventListener('keydown', (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         const modal = document.getElementById('searchModal');
-        if (modal.classList.contains('hidden')) {
-          openSearch();
-        } else {
-          closeSearch();
-        }
+        modal.classList.contains('hidden') ? openSearch() : closeSearch();
         return;
       }
 
-      // Handle keys when modal is open
       const modal = document.getElementById('searchModal');
       if (modal.classList.contains('hidden')) return;
 
-      if (e.key === 'Escape') {
-        closeSearch();
-        return;
-      }
+      if (e.key === 'Escape') { closeSearch(); return; }
 
-      const results = document.querySelectorAll('.search-result');
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+        selectedIndex = Math.min(selectedIndex + 1, lastResults.length - 1);
         updateSelection();
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         selectedIndex = Math.max(selectedIndex - 1, 0);
         updateSelection();
-      } else if (e.key === 'Enter' && selectedIndex >= 0 && results[selectedIndex]) {
+      } else if (e.key === 'Enter' && selectedIndex >= 0) {
         e.preventDefault();
-        results[selectedIndex].click();
+        const items = document.querySelectorAll('.search-result');
+        if (items[selectedIndex]) items[selectedIndex].click();
       }
     });
 
-    document.getElementById('searchInput').addEventListener('input', async (e) => {
+    document.getElementById('searchInput').addEventListener('input', (e) => {
       const query = e.target.value.trim();
-      selectedIndex = -1;
+      
+      // Clear previous debounce
+      if (debounceTimer) clearTimeout(debounceTimer);
       
       if (!query) {
         document.getElementById('searchResults').innerHTML = '';
+        selectedIndex = -1;
+        lastResults = [];
         return;
       }
 
-      const data = await loadSearchData();
-      const scored = data.map(function(item) {
-        var searchText = [item.title, item.author, item.year].filter(Boolean).join(' ');
-        return Object.assign({}, item, { score: fuzzyMatch(query, searchText) });
-      }).filter(function(item) { return item.score > 0; });
-      
-      scored.sort(function(a, b) { return b.score - a.score; });
-      
-      if (scored.length > 0) selectedIndex = 0;
-      renderResults(scored);
+      // Debounce: wait 50ms after last keystroke (feels instant but prevents jank)
+      debounceTimer = setTimeout(() => {
+        lastResults = search(query);
+        selectedIndex = lastResults.length > 0 ? 0 : -1;
+        renderResults(lastResults);
+      }, 50);
     });
   </script>
 </body>
@@ -331,7 +337,7 @@ export function MediaGridItem(props: { title: string; url: string; image: string
   return `
     <a href="${props.url}" class="group block overflow-hidden rounded border border-transparent hover:border-text transition-colors">
       <div class="aspect-[2/3] overflow-hidden bg-border relative">
-        <img src="${props.image}" alt="${props.title}" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 opacity-90 group-hover:opacity-100">
+        <img src="${props.image}" alt="${props.title}" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 opacity-90 group-hover:opacity-100">
       </div>
     </a>
   `
@@ -378,7 +384,7 @@ export function MediaPost(props: {
         ${props.image ? `
         <div class="flex-shrink-0 w-32 md:w-40">
           <div class="aspect-[2/3] overflow-hidden rounded border border-border">
-            <img src="${props.image}" alt="${props.title}" class="w-full h-full object-cover">
+            <img src="${props.image}" alt="${props.title}" loading="eager" decoding="async" fetchpriority="high" class="w-full h-full object-cover">
           </div>
         </div>
         ` : ''}
@@ -478,7 +484,7 @@ export function MediaPage(props: { media: { title: string; image?: string; url: 
     <div class="media-item" data-type="${item.type}" data-search="${searchText}" data-rating="${item.rating || 0}">
       <a href="${item.url}" class="group block overflow-hidden rounded border border-transparent hover:border-text transition-colors">
         <div class="aspect-[2/3] overflow-hidden bg-border relative">
-          ${item.image ? `<img src="${item.image}" alt="${item.title || ''}" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 opacity-90 group-hover:opacity-100">` : `<div class="w-full h-full flex items-center justify-center text-text2 text-sm p-2 text-center">${item.title || 'Untitled'}</div>`}
+          ${item.image ? `<img src="${item.image}" alt="${item.title || ''}" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 opacity-90 group-hover:opacity-100">` : `<div class="w-full h-full flex items-center justify-center text-text2 text-sm p-2 text-center">${item.title || 'Untitled'}</div>`}
         </div>
         <div class="p-2">
           <h3 class="font-medium text-sm truncate">${item.title || 'Untitled'}</h3>
@@ -542,31 +548,33 @@ export function MediaPage(props: { media: { title: string; image?: string; url: 
         var activeRating = 'all';
         var searchQuery = '';
         var searchInput = document.getElementById('mediaSearch');
+        var items = document.querySelectorAll('.media-item'); // Cache once
+        var noResults = document.getElementById('noResults');
+        var debounceTimer = null;
         
         function filterMedia() {
-          var items = document.querySelectorAll('.media-item');
           var visibleCount = 0;
+          var ratingNum = activeRating === 'all' ? -1 : parseInt(activeRating);
           
-          items.forEach(function(item) {
-            var matchesType = activeType === 'all' || item.dataset.type === activeType;
-            var itemRating = parseInt(item.dataset.rating) || 0;
-            var matchesRating = activeRating === 'all' || itemRating === parseInt(activeRating);
-            var matchesSearch = !searchQuery || item.dataset.search.includes(searchQuery);
+          for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var show = (activeType === 'all' || item.dataset.type === activeType) &&
+                       (ratingNum === -1 || parseInt(item.dataset.rating) === ratingNum) &&
+                       (!searchQuery || item.dataset.search.indexOf(searchQuery) !== -1);
             
-            if (matchesType && matchesRating && matchesSearch) {
-              item.style.display = 'block';
-              visibleCount++;
-            } else {
-              item.style.display = 'none';
-            }
-          });
+            item.style.display = show ? '' : 'none';
+            if (show) visibleCount++;
+          }
           
-          document.getElementById('noResults').classList.toggle('hidden', visibleCount > 0);
+          noResults.classList.toggle('hidden', visibleCount > 0);
         }
         
         searchInput.addEventListener('input', function() {
-          searchQuery = searchInput.value.toLowerCase();
-          filterMedia();
+          if (debounceTimer) clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(function() {
+            searchQuery = searchInput.value.toLowerCase();
+            filterMedia();
+          }, 30);
         });
         
         document.querySelectorAll('.media-filter').forEach(function(btn) {
