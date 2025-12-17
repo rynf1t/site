@@ -20,23 +20,6 @@
   </style>
 </head>
 <body class="selection:bg-ui">
-  <!-- Mobile Warning Modal -->
-  <div class="mobile-warning" id="mobileWarning">
-      <div class="mobile-warning-content">
-          <div class="mobile-warning-title">
-              <div class="close-box" onclick="closeMobileWarning()"></div>
-              <span>Mobile Device</span>
-          </div>
-          <div class="mobile-warning-body">
-              <p>The Mac OS Classic theme is designed for desktop displays. For optimal mobile viewing, please switch to the Brutalist theme.</p>
-              <div class="mobile-warning-buttons">
-                  <button class="mac-button" onclick="setTheme('brutalist'); closeMobileWarning()">Brutalist</button>
-                  <button class="mac-button" onclick="closeMobileWarning()">Continue</button>
-              </div>
-          </div>
-      </div>
-  </div>
-
   <!-- Theme Switcher with instant switching, no transitions on theme change -->
   <div class="theme-switcher print:hidden">
     <button onclick="setTheme('brutalist')" class="theme-btn" title="Brutalist" aria-label="Switch to Brutalist theme">
@@ -114,17 +97,6 @@
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('site-theme', theme);
       
-      // Check for mobile warning on Mac theme
-      if (theme === 'mac' && window.innerWidth < 768) {
-         if (!localStorage.getItem('mobile-warning-dismissed')) {
-            document.getElementById('mobileWarning').classList.add('show');
-         }
-      }
-    }
-
-    function closeMobileWarning() {
-        document.getElementById('mobileWarning').classList.remove('show');
-        localStorage.setItem('mobile-warning-dismissed', 'true');
     }
     
     function minimizeWindow() {
@@ -154,14 +126,6 @@
         if (confirm('Close this window?')) {
             window.location.href = '/';
         }
-    }
-    
-    // Initial check
-    var currentTheme = localStorage.getItem('site-theme') || 'brutalist';
-    if (currentTheme === 'mac' && window.innerWidth < 768 && !localStorage.getItem('mobile-warning-dismissed')) {
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('mobileWarning').classList.add('show');
-        });
     }
     
     // Apply maximize state on load
