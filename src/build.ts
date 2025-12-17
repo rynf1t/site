@@ -84,7 +84,7 @@ async function build() {
         const raw = await Bun.file(path).text();
         const { attributes, body } = frontMatter<any>(raw);
 
-        const slug = path.split('/').pop()!.replace('.md', '');
+        const slug = path.split('/').pop()!.replace('.md', '').replace(/ /g, '-').toLowerCase();
 
         // Process Sidenotes (Pre-render) hierarchy
         const processedBody = preProcessSidenotes(body, slug);
@@ -193,36 +193,9 @@ async function build() {
         await Bun.write(`dist/posts/${post.slug}.html`, finalHtml);
     }
 
-    // Generate Index
+    // Sort for use in custom pages
     posts.sort((a, b) => b.date.localeCompare(a.date));
     media.sort((a, b) => b.date.localeCompare(a.date));
-
-    const indexContent = IndexPage({
-        posts: posts.map(p => ({ title: p.title, date: p.date, url: `/posts/${p.slug}.html` })),
-        media: media.slice(0, 4).map(m => ({
-            title: m.title,
-            image: m.image,
-            url: `/posts/${m.slug}.html`,
-            type: m.mediaType
-        })),
-        totalMedia: media.length
-    });
-
-    await Bun.write('dist/index.html', Layout({ title: 'Home', content: indexContent }));
-
-    // Generate Media Page
-    const mediaPageContent = MediaPage({
-        media: media.map(m => ({
-            title: m.title,
-            image: m.image,
-            url: `/posts/${m.slug}.html`,
-            type: m.mediaType || 'book',
-            author: m.author,
-            year: m.year,
-            rating: m.rating
-        }))
-    });
-    await Bun.write('dist/media.html', Layout({ title: 'Media', content: mediaPageContent }));
 
     // Generate search index JSON
     const searchIndex = [

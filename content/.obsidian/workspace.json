@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "pages/home.md",
+                "file": "templates/film template.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "home"
+              "title": "film template"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "pages/home.md",
+                "file": "templates/film template.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for home"
+              "title": "Backlinks for film template"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "pages/home.md",
+                "file": "templates/film template.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from home"
+              "title": "Outgoing links from film template"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "pages/home.md",
+                "file": "templates/film template.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of home"
+              "title": "Outline of film template"
             }
           }
         ]
@@ -186,9 +186,10 @@
   },
   "active": "89c55660bb198395",
   "lastOpenFiles": [
-    "pages/media.md",
+    "templates/book template.md",
     "pages/writing.md",
     "pages/tools.md",
+    "pages/media.md",
     "pages/home.md",
     "pages/about.md",
     "templates/film template.md",
@@ -197,7 +198,6 @@
     "media/book-of-clouds.md",
     "media/dune.md",
     "media/dune-2021.md",
-    "templates/book template.md",
     "media/the-office.md",
     "media/the-great-gatsby.md",
     "media/the-bear.md",
