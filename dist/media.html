@@ -58,15 +58,13 @@
     <div class="theme-content p-5 md:p-8 bg-bg">
       <!-- Header -->
       <header class="mb-6 pb-4 border-b border-border">
-        <nav class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <a href="/" class="text-link no-underline hover:underline">home</a>
-            <a href="/writing.html" class="text-link no-underline hover:underline">writing</a>
-            <a href="/media.html" class="text-link no-underline hover:underline">media</a>
-            <a href="/tools.html" class="text-link no-underline hover:underline">tools</a>
-            <a href="/about.html" class="text-link no-underline hover:underline">about</a>
-          </div>
-          <button onclick="openSearch()" class="p-2 text-text2 hover:text-text" title="Search (⌘K)" aria-label="Open search">
+        <nav class="flex flex-wrap items-center gap-3 sm:gap-4">
+          <a href="/" class="text-link no-underline hover:underline">home</a>
+          <a href="/writing.html" class="text-link no-underline hover:underline">writing</a>
+          <a href="/media.html" class="text-link no-underline hover:underline">media</a>
+          <a href="/tools.html" class="text-link no-underline hover:underline">tools</a>
+          <a href="/about.html" class="text-link no-underline hover:underline">about</a>
+          <button onclick="openSearch()" class="ml-auto p-2 text-text2 hover:text-text" title="Search (⌘K)">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
           </button>
         </nav>
@@ -92,15 +90,15 @@
 
       <!-- Filters -->
       <div class="flex flex-wrap items-center gap-2 mb-6">
-        <button class="media-filter active px-3 py-1.5 text-sm bg-text text-bg rounded" data-filter="all">All</button>
-        <button class="media-filter px-3 py-1.5 text-sm text-text2 hover:text-text" data-filter="book">Books</button>
-        <button class="media-filter px-3 py-1.5 text-sm text-text2 hover:text-text" data-filter="film">Films</button>
-        <button class="media-filter px-3 py-1.5 text-sm text-text2 hover:text-text" data-filter="tv">TV</button>
-        <span class="text-text2 mx-2">|</span>
-        <button class="rating-filter active px-2 py-1 text-sm bg-text text-bg rounded" data-rating="all">Any ★</button>
-        <button class="rating-filter px-2 py-1 text-sm text-text2 hover:text-text" data-rating="5">★★★★★</button>
-        <button class="rating-filter px-2 py-1 text-sm text-text2 hover:text-text" data-rating="4">★★★★</button>
-        <button class="rating-filter px-2 py-1 text-sm text-text2 hover:text-text" data-rating="3">★★★</button>
+        <button class="media-filter active" data-filter="all">All</button>
+        <button class="media-filter" data-filter="book">Books</button>
+        <button class="media-filter" data-filter="film">Films</button>
+        <button class="media-filter" data-filter="tv">TV</button>
+        <span class="text-text2 mx-1">|</span>
+        <button class="rating-filter active" data-rating="all">Any</button>
+        <button class="rating-filter" data-rating="5">5★</button>
+        <button class="rating-filter" data-rating="4">4★</button>
+        <button class="rating-filter" data-rating="3">3★</button>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 sm:gap-4" id="mediaGrid">
@@ -357,11 +355,9 @@
           document.querySelectorAll(selector).forEach(function(btn) {
             btn.addEventListener('click', function() {
               document.querySelectorAll(selector).forEach(function(b) { 
-                b.classList.remove('active', 'bg-text', 'text-bg');
-                b.classList.add('text-text2');
+                b.classList.remove('active');
               });
-              btn.classList.add('active', 'bg-text', 'text-bg');
-              btn.classList.remove('text-text2');
+              btn.classList.add('active');
               updateFn(btn);
               filterMedia();
             });

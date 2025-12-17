@@ -1099,6 +1099,21 @@
   .media-filter,
   .rating-filter {
     cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text2, #555);
+    border-radius: 3px;
+  }
+  
+  .media-filter:hover,
+  .rating-filter:hover {
+    color: var(--color-text, #1a1a1a);
+  }
+  
+  .media-filter.active,
+  .rating-filter.active {
+    background: var(--color-text, #1a1a1a);
+    color: var(--color-bg, #fafaf8);
   }
 
   /* ==================== PRINT STYLES ==================== */
