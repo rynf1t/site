@@ -224,7 +224,7 @@ async function build() {
     
     const indexContent = IndexPage({
         posts: posts.map(p => ({ title: p.title, date: p.date, url: `/posts/${p.slug}.html` })),
-        media: media.slice(0, 5).map(m => ({ 
+        media: media.slice(0, 4).map(m => ({ 
             title: m.title, 
             image: m.image, 
             url: `/posts/${m.slug}.html`,
