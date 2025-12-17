@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "templates/film template.md",
+                "file": "pages/home.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "film template"
+              "title": "home"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "templates/film template.md",
+                "file": "pages/home.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for film template"
+              "title": "Backlinks for home"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "templates/film template.md",
+                "file": "pages/home.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from film template"
+              "title": "Outgoing links from home"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "templates/film template.md",
+                "file": "pages/home.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of film template"
+              "title": "Outline of home"
             }
           }
         ]
@@ -186,33 +186,33 @@
   },
   "active": "89c55660bb198395",
   "lastOpenFiles": [
-    "templates/book template.md",
+    "pages/media.md",
+    "pages/about.md",
     "pages/writing.md",
     "pages/tools.md",
-    "pages/media.md",
-    "pages/home.md",
-    "pages/about.md",
+    "media/Trust.md",
+    "templates/book template.md",
+    "media/project-hail-mary.md",
+    "media/the-office.md",
+    "media/everything-everywhere.md",
     "templates/film template.md",
+    "pages/home.md",
     "templates/tv template.md",
     "media/breaking-bad.md",
     "media/book-of-clouds.md",
     "media/dune.md",
     "media/dune-2021.md",
-    "media/the-office.md",
     "media/the-great-gatsby.md",
     "media/the-bear.md",
     "media/shawshank-redemption.md",
     "media/severance.md",
-    "media/project-hail-mary.md",
     "media/inception.md",
-    "media/everything-everywhere.md",
     "media/1984.md",
     "media",
     "posts/test note.md",
     "templates",
     "posts/note-c.md",
     "posts/note-b.md",
-    "Bases/Media/1984.md",
-    "posts/note-a.md"
+    "Bases/Media/1984.md"
   ]
 }
