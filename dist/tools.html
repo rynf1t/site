@@ -58,7 +58,18 @@
             <h1 class="font-bold text-2xl mb-8">Tools</h1>
             <div class="prose prose-stone prose-lg max-w-none mb-8"><p>This page will automatically list all your tools from the static/tools directory.</p>
 </div>
-            <ul class="list-none p-0 m-0">
+
+            <div class="mb-6">
+                <input 
+                    type="text" 
+                    id="toolSearch" 
+                    placeholder="Search tools..." 
+                    style="background: white; border: 2px inset #999; padding: 6px 10px; width: 100%; font-family: inherit; font-size: 14px; color: #000;"
+                    autocomplete="off"
+                >
+            </div>
+
+            <ul class="list-none p-0 m-0" id="toolsList">
                 
             <li class="mb-3 leading-relaxed">
                 <a href="/tools/sqlite-csv-playground.html" class="text-link font-bold no-underline hover:underline">SQLite CSV Playground Pro</a>
@@ -85,7 +96,33 @@
             </li>
         
             </ul>
+             <p id="noResults" class="hidden text-text2 text-center py-8">No tools match your search.</p>
         </section>
+
+        <script>
+            (function() {
+                var searchInput = document.getElementById('toolSearch');
+                var list = document.getElementById('toolsList');
+                var items = list.getElementsByTagName('li');
+                var noResults = document.getElementById('noResults');
+                
+                searchInput.addEventListener('input', function(e) {
+                    var query = e.target.value.toLowerCase();
+                    var visibleCount = 0;
+                    
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        var text = item.textContent.toLowerCase();
+                        var show = text.indexOf(query) !== -1;
+                        
+                        item.style.display = show ? '' : 'none';
+                        if (show) visibleCount++;
+                    }
+                    
+                    noResults.classList.toggle('hidden', visibleCount > 0);
+                });
+            })();
+        </script>
     
       </main>
 

@@ -224,7 +224,7 @@ async function build() {
     await Bun.write('dist/archive.html', Layout({ title: 'Archive', content: archiveContent }));
 
     // Generate custom pages from content/pages
-    await generateCustomPages();
+    await generateCustomPages(posts, media);
 
     // Copy static files to dist
     const staticDirs = [
@@ -298,15 +298,52 @@ async function generateToolsPage(intro?: string): Promise<string> {
         <section>
             <h1 class="font-bold text-2xl mb-8">Tools</h1>
             ${intro ? `<div class="prose prose-stone prose-lg max-w-none mb-8">${intro}</div>` : ''}
-            <ul class="list-none p-0 m-0">
+
+            <div class="mb-6">
+                <input 
+                    type="text" 
+                    id="toolSearch" 
+                    placeholder="Search tools..." 
+                    style="background: white; border: 2px inset #999; padding: 6px 10px; width: 100%; font-family: inherit; font-size: 14px; color: #000;"
+                    autocomplete="off"
+                >
+            </div>
+
+            <ul class="list-none p-0 m-0" id="toolsList">
                 ${toolsList}
             </ul>
+             <p id="noResults" class="hidden text-text2 text-center py-8">No tools match your search.</p>
         </section>
+
+        <script>
+            (function() {
+                var searchInput = document.getElementById('toolSearch');
+                var list = document.getElementById('toolsList');
+                var items = list.getElementsByTagName('li');
+                var noResults = document.getElementById('noResults');
+                
+                searchInput.addEventListener('input', function(e) {
+                    var query = e.target.value.toLowerCase();
+                    var visibleCount = 0;
+                    
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        var text = item.textContent.toLowerCase();
+                        var show = text.indexOf(query) !== -1;
+                        
+                        item.style.display = show ? '' : 'none';
+                        if (show) visibleCount++;
+                    }
+                    
+                    noResults.classList.toggle('hidden', visibleCount > 0);
+                });
+            })();
+        </script>
     `;
 }
 
 // Custom Pages Generator - generates pages from content/pages/*.md
-async function generateCustomPages() {
+async function generateCustomPages(posts: PostData[], media: PostData[]) {
     const pagesDir = 'content/pages';
 
     try {
@@ -324,44 +361,8 @@ async function generateCustomPages() {
 
             // Special handling for specific pages
             if (pageName === 'home') {
-                // Home page uses the index layout with posts and media
-                const posts: PostData[] = [];
-                const media: PostData[] = [];
-
-                // Load posts and media for home page
-                const postFiles = await readdir('content/posts');
-                for (const pf of postFiles) {
-                    if (!pf.endsWith('.md')) continue;
-                    const raw = await Bun.file(`content/posts/${pf}`).text();
-                    const { attributes } = frontMatter<any>(raw);
-                    const slug = pf.replace('.md', '');
-                    const fileStats = await stat(`content/posts/${pf}`);
-                    const date = attributes?.date ? new Date(attributes.date).toISOString().split('T')[0] : fileStats.mtime.toISOString().split('T')[0];
-                    const titleFromFilename = slug.replace(/[-_]/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                    posts.push({ title: attributes?.title || titleFromFilename, date, slug } as any);
-                }
-
-                try {
-                    const mediaFiles = await readdir('content/media');
-                    for (const mf of mediaFiles) {
-                        if (!mf.endsWith('.md')) continue;
-                        const raw = await Bun.file(`content/media/${mf}`).text();
-                        const { attributes } = frontMatter<any>(raw);
-                        const slug = mf.replace('.md', '');
-                        const titleFromFilename = slug.replace(/[-_]/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                        media.push({
-                            title: attributes?.title || titleFromFilename,
-                            slug,
-                            image: attributes?.cover || attributes?.image,
-                            mediaType: attributes?.type || 'book'
-                        } as any);
-                    }
-                } catch (e) { }
-
-                posts.sort((a, b) => b.date.localeCompare(a.date));
-
                 content = IndexPage({
-                    posts: posts.map(p => ({ title: p.title, date: p.date, url: `/posts/${p.slug}.html` })),
+                    posts: posts.slice(0, 5).map(p => ({ title: p.title, date: p.date, url: `/posts/${p.slug}.html` })),
                     media: media.slice(0, 4).map(m => ({
                         title: m.title,
                         image: m.image,
@@ -373,49 +374,12 @@ async function generateCustomPages() {
                 });
             } else if (pageName === 'writing') {
                 // Writing page uses archive layout
-                const posts: any[] = [];
-                const postFiles = await readdir('content/posts');
-                for (const pf of postFiles) {
-                    if (!pf.endsWith('.md')) continue;
-                    const raw = await Bun.file(`content/posts/${pf}`).text();
-                    const { attributes } = frontMatter<any>(raw);
-                    const slug = pf.replace('.md', '');
-                    const fileStats = await stat(`content/posts/${pf}`);
-                    const date = attributes?.date ? new Date(attributes.date).toISOString().split('T')[0] : fileStats.mtime.toISOString().split('T')[0];
-                    const titleFromFilename = slug.replace(/[-_]/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                    posts.push({ title: attributes?.title || titleFromFilename, date, slug });
-                }
-                posts.sort((a, b) => b.date.localeCompare(a.date));
                 content = ArchivePage({
                     posts: posts.map(p => ({ title: p.title, date: p.date, url: `/posts/${p.slug}.html` })),
                     intro: htmlContent
                 });
             } else if (pageName === 'media') {
                 // Media page uses media grid layout
-                const media: any[] = [];
-                try {
-                    const mediaFiles = await readdir('content/media');
-                    for (const mf of mediaFiles) {
-                        if (!mf.endsWith('.md')) continue;
-                        const raw = await Bun.file(`content/media/${mf}`).text();
-                        const { attributes } = frontMatter<any>(raw);
-                        const slug = mf.replace('.md', '');
-                        const fileStats = await stat(`content/media/${mf}`);
-                        const date = attributes?.date ? new Date(attributes.date).toISOString().split('T')[0] : fileStats.mtime.toISOString().split('T')[0];
-                        const titleFromFilename = slug.replace(/[-_]/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                        media.push({
-                            title: attributes?.title || titleFromFilename,
-                            slug,
-                            image: attributes?.cover || attributes?.image,
-                            mediaType: attributes?.type || 'book',
-                            author: attributes?.author,
-                            year: attributes?.year,
-                            rating: attributes?.rating,
-                            date
-                        });
-                    }
-                } catch (e) { }
-                media.sort((a, b) => b.date.localeCompare(a.date));
                 content = MediaPage({
                     media: media.map(m => ({
                         title: m.title,
