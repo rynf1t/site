@@ -1,5 +1,11 @@
 [
   {
+    "title": "Test Note",
+    "url": "/posts/test note.html",
+    "type": "post",
+    "date": "2025-12-17"
+  },
+  {
     "title": "Note C",
     "url": "/posts/note-c.html",
     "type": "post",

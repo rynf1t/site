@@ -28,3 +28,6 @@ next-env.d.ts
 
 # archived themes
 static/archived-themes/
+
+# templates folder (organization only)
+content/templates/
