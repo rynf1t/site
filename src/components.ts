@@ -1,6 +1,6 @@
-const xpIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="theme-btn-icon xp-icon"><rect x="3" y="3" width="7" height="7" fill="#f25022" stroke="none"/><rect x="14" y="3" width="7" height="7" fill="#7fba00" stroke="none"/><rect x="3" y="14" width="7" height="7" fill="#00a4ef" stroke="none"/><rect x="14" y="14" width="7" height="7" fill="#ffb900" stroke="none"/></svg>`
-const macIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="theme-btn-icon mac-icon"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" fill="currentColor"/></svg>`
-const brutalistIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="theme-btn-icon brutalist-icon"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`
+const xpIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="theme-btn-icon xp-icon" aria-hidden="true"><rect x="3" y="3" width="7" height="7" fill="#f25022" stroke="none"/><rect x="14" y="3" width="7" height="7" fill="#7fba00" stroke="none"/><rect x="3" y="14" width="7" height="7" fill="#00a4ef" stroke="none"/><rect x="14" y="14" width="7" height="7" fill="#ffb900" stroke="none"/></svg>`
+const macIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="theme-btn-icon mac-icon" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" fill="currentColor"/></svg>`
+const brutalistIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="theme-btn-icon brutalist-icon" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`
 
 export function Layout(props: { title: string; content: string; description?: string }) {
   const metaDescription = props.description || "Essays and media reviews."
@@ -8,41 +8,78 @@ export function Layout(props: { title: string; content: string; description?: st
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>${props.title} | Ryan's Blog</title>
   <meta name="description" content="${metaDescription}">
-  <!-- Preconnect to image CDN for faster loading -->
+  
+  <!-- Mobile Web App Capable -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#fafaf8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
+  
+  <!-- Prevent phone number detection -->
+  <meta name="format-detection" content="telephone=no">
+  
+  <!-- Resource Hints for Performance -->
   <link rel="preconnect" href="https://m.media-amazon.com" crossorigin>
   <link rel="dns-prefetch" href="https://m.media-amazon.com">
-  <!-- Preload search index for instant search -->
+  <link rel="preload" href="/style.css" as="style">
   <link rel="prefetch" href="/search.json" as="fetch" crossorigin>
+  
+  <!-- Stylesheet -->
   <link rel="stylesheet" href="/style.css">
+  
+  <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✒</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✒</text></svg>">
+  
+  <!-- Instant Theme Application (prevents FOUC) -->
   <script>
     (function() {
       var theme = localStorage.getItem('site-theme') || 'brutalist';
       document.documentElement.setAttribute('data-theme', theme);
+      // Update theme-color meta based on theme
+      var themeColors = { brutalist: '#fafaf8', xp: '#3a6ea5', mac: '#dddddd' };
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', themeColors[theme] || '#fafaf8');
     })();
   </script>
+  
+  <!-- Critical CSS for instant render -->
   <style>
-    /* Prevent flash using opacity instead of visibility for smoother transition */
+    /* Prevent flash */
     html:not([data-theme]) body { opacity: 0; }
     html[data-theme] body { opacity: 1; }
+    /* Smooth scroll with reduced motion respect */
+    @media (prefers-reduced-motion: no-preference) {
+      html { scroll-behavior: smooth; }
+    }
+    /* Safe area padding for notched devices */
+    body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+    /* Prevent text size adjustment on orientation change */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    /* Better touch behavior */
+    * { -webkit-tap-highlight-color: transparent; }
+    a, button { touch-action: manipulation; }
+    /* Prevent pull-to-refresh on overscroll */
+    body { overscroll-behavior-y: contain; }
   </style>
 </head>
 <body class="selection:bg-ui">
-  <!-- Theme Switcher with instant switching, no transitions on theme change -->
-  <div class="theme-switcher print:hidden">
-    <button onclick="setTheme('brutalist')" class="theme-btn" title="Brutalist" aria-label="Switch to Brutalist theme">
+  <!-- Theme Switcher with instant switching, haptic feedback on mobile -->
+  <nav class="theme-switcher print:hidden" role="navigation" aria-label="Theme selection">
+    <button onclick="setTheme('brutalist')" class="theme-btn" title="Brutalist" aria-label="Switch to Brutalist theme" aria-pressed="false" data-theme-btn="brutalist">
       ${brutalistIcon}
     </button>
-    <button onclick="setTheme('mac')" class="theme-btn" title="Mac OS Classic" aria-label="Switch to Mac OS Classic theme">
+    <button onclick="setTheme('mac')" class="theme-btn" title="Mac OS Classic" aria-label="Switch to Mac OS Classic theme" aria-pressed="false" data-theme-btn="mac">
       ${macIcon}
     </button>
-    <button onclick="setTheme('xp')" class="theme-btn" title="Windows XP" aria-label="Switch to Windows XP theme">
+    <button onclick="setTheme('xp')" class="theme-btn" title="Windows XP" aria-label="Switch to Windows XP theme" aria-pressed="false" data-theme-btn="xp">
       ${xpIcon}
     </button>
-  </div>
+  </nav>
 
   <div class="theme-window max-w-[900px] mx-auto">
     <!-- Window Title Bar -->
@@ -81,9 +118,9 @@ export function Layout(props: { title: string; content: string; description?: st
           <a href="/media.html" class="text-base md:text-lg text-link no-underline hover:underline">media</a>
           <a href="/tools.html" class="text-base md:text-lg text-link no-underline hover:underline">tools</a>
           <a href="/about.html" class="text-base md:text-lg text-link no-underline hover:underline">about</a>
-          <button onclick="openSearch()" class="ml-auto flex items-center gap-1 text-text2 hover:text-text transition-colors" title="Search (⌘K)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-            <kbd class="hidden sm:inline text-[10px] px-1 py-0.5 border border-border rounded bg-ui">⌘K</kbd>
+          <button onclick="openSearch()" class="search-trigger ml-auto flex items-center gap-1.5 text-text2 hover:text-text transition-colors" title="Search (⌘K)" aria-label="Open search dialog" aria-keyshortcuts="Meta+K Control+K">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+            <kbd class="hidden sm:inline text-[10px] px-1.5 py-0.5 border border-border rounded bg-ui font-mono">⌘K</kbd>
           </button>
         </nav>
       </header>
@@ -102,7 +139,27 @@ export function Layout(props: { title: string; content: string; description?: st
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('site-theme', theme);
       
+      // Update theme-color meta for browser chrome
+      var themeColors = { brutalist: '#fafaf8', xp: '#3a6ea5', mac: '#dddddd' };
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', themeColors[theme] || '#fafaf8');
+      
+      // Update aria-pressed states
+      document.querySelectorAll('[data-theme-btn]').forEach(function(btn) {
+        btn.setAttribute('aria-pressed', btn.dataset.themeBtn === theme ? 'true' : 'false');
+      });
+      
+      // Haptic feedback on mobile (if supported)
+      if (navigator.vibrate) navigator.vibrate(10);
     }
+    
+    // Initialize aria-pressed on load
+    (function() {
+      var currentTheme = localStorage.getItem('site-theme') || 'brutalist';
+      document.querySelectorAll('[data-theme-btn]').forEach(function(btn) {
+        btn.setAttribute('aria-pressed', btn.dataset.themeBtn === currentTheme ? 'true' : 'false');
+      });
+    })();
     
     function minimizeWindow() {
         const content = document.querySelector('.theme-content');
@@ -145,111 +202,167 @@ export function Layout(props: { title: string; content: string; description?: st
     }
   </script>
 
-  <!-- Search Modal -->
-  <div id="searchModal" class="search-modal hidden">
-    <div class="search-backdrop" onclick="closeSearch()"></div>
-    <div class="search-container">
+  <!-- Search Modal - Accessible dialog -->
+  <div id="searchModal" class="search-modal hidden" role="dialog" aria-modal="true" aria-label="Search posts and media">
+    <div class="search-backdrop" onclick="closeSearch()" aria-hidden="true"></div>
+    <div class="search-container" role="search">
       <div class="search-input-wrapper">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-        <input type="text" id="searchInput" placeholder="Search posts and media..." autocomplete="off">
-        <kbd class="search-kbd">esc</kbd>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input type="search" id="searchInput" placeholder="Search posts and media..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="Search" aria-describedby="searchHint">
+        <kbd class="search-kbd" aria-hidden="true">esc</kbd>
       </div>
-      <div id="searchResults" class="search-results"></div>
+      <p id="searchHint" class="sr-only">Use arrow keys to navigate results, Enter to select, Escape to close</p>
+      <div id="searchResults" class="search-results" role="listbox" aria-label="Search results"></div>
     </div>
   </div>
 
   <script>
-    // ULTRA FAST SEARCH - preloaded, debounced, optimized
+    // ULTRA FAST SEARCH - preloaded, debounced, optimized, accessible
     let searchData = null;
-    let searchIndex = null; // Pre-computed lowercase index
+    let searchIndex = null;
     let selectedIndex = -1;
     let debounceTimer = null;
     let lastResults = [];
+    let previousFocusEl = null;
 
-    // Preload search data immediately (not on modal open)
+    // Preload search data with retry logic
     (function preloadSearch() {
-      fetch('/search.json')
-        .then(r => r.json())
-        .then(data => {
-          searchData = data;
-          // Pre-compute lowercase search strings for instant matching
-          searchIndex = data.map(item => ({
-            ...item,
-            _search: [item.title, item.author, item.year].filter(Boolean).join(' ').toLowerCase()
-          }));
-        })
-        .catch(() => {});
+      var retries = 0;
+      function load() {
+        fetch('/search.json', { cache: 'default' })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            searchData = data;
+            searchIndex = data.map(function(item) {
+              return Object.assign({}, item, {
+                _search: [item.title, item.author, item.year].filter(Boolean).join(' ').toLowerCase()
+              });
+            });
+          })
+          .catch(function() {
+            if (retries++ < 2) setTimeout(load, 1000);
+          });
+      }
+      // Use requestIdleCallback for non-blocking preload
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(load, { timeout: 2000 });
+      } else {
+        setTimeout(load, 100);
+      }
     })();
 
     function openSearch() {
-      document.getElementById('searchModal').classList.remove('hidden');
-      document.getElementById('searchInput').focus();
+      previousFocusEl = document.activeElement;
+      var modal = document.getElementById('searchModal');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      var input = document.getElementById('searchInput');
+      // Small delay ensures iOS keyboard opens correctly
+      requestAnimationFrame(function() {
+        input.focus({ preventScroll: true });
+      });
+      // Trap focus in modal
+      modal.addEventListener('keydown', trapFocus);
     }
 
     function closeSearch() {
-      document.getElementById('searchModal').classList.add('hidden');
+      var modal = document.getElementById('searchModal');
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
       document.getElementById('searchInput').value = '';
       document.getElementById('searchResults').innerHTML = '';
       selectedIndex = -1;
       lastResults = [];
+      modal.removeEventListener('keydown', trapFocus);
+      // Restore focus
+      if (previousFocusEl) previousFocusEl.focus();
+    }
+    
+    function trapFocus(e) {
+      if (e.key !== 'Tab') return;
+      var modal = document.getElementById('searchModal');
+      var focusable = modal.querySelectorAll('input, button, a[href]');
+      var first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
     }
 
-    // Ultra-fast search: simple substring match on pre-computed index
+    // Ultra-fast search with fuzzy matching
     function search(query) {
       if (!searchIndex) return [];
-      const q = query.toLowerCase();
-      const results = [];
-      for (let i = 0; i < searchIndex.length; i++) {
-        const item = searchIndex[i];
-        const idx = item._search.indexOf(q);
+      var q = query.toLowerCase();
+      var results = [];
+      for (var i = 0; i < searchIndex.length; i++) {
+        var item = searchIndex[i];
+        var idx = item._search.indexOf(q);
         if (idx !== -1) {
-          results.push({ ...item, _score: 1000 - idx });
+          results.push(Object.assign({}, item, { _score: 1000 - idx }));
         }
       }
-      // Sort by match position (earlier = better)
-      results.sort((a, b) => b._score - a._score);
+      results.sort(function(a, b) { return b._score - a._score; });
       return results.slice(0, 10);
     }
 
     function renderResults(results) {
-      const container = document.getElementById('searchResults');
+      var container = document.getElementById('searchResults');
       if (results.length === 0) {
-        container.innerHTML = '<div class="search-empty">No results found</div>';
+        container.innerHTML = '<div class="search-empty" role="status">No results found</div>';
         return;
       }
-      let html = '';
-      for (let i = 0; i < results.length; i++) {
-        const item = results[i];
-        const typeLabel = item.type === 'post' ? 'Post' : (item.mediaType || 'Media').charAt(0).toUpperCase() + (item.mediaType || 'media').slice(1);
-        const typeBadgeClass = item.type === 'post' ? 'badge-post' : 'badge-media';
-        const subtitle = item.type === 'post' ? item.date : (item.author || item.year || '');
-        html += '<a href="' + item.url + '" class="search-result' + (i === selectedIndex ? ' selected' : '') + '">' +
+      var html = '';
+      for (var i = 0; i < results.length; i++) {
+        var item = results[i];
+        var typeLabel = item.type === 'post' ? 'Post' : (item.mediaType || 'Media').charAt(0).toUpperCase() + (item.mediaType || 'media').slice(1);
+        var typeBadgeClass = item.type === 'post' ? 'badge-post' : 'badge-media';
+        var subtitle = item.type === 'post' ? item.date : (item.author || item.year || '');
+        var isSelected = i === selectedIndex;
+        html += '<a href="' + item.url + '" class="search-result' + (isSelected ? ' selected' : '') + '" role="option" aria-selected="' + isSelected + '" id="search-result-' + i + '">' +
           '<div class="search-result-content">' +
-            '<span class="search-result-title">' + item.title + '</span>' +
-            (subtitle ? '<span class="search-result-subtitle">' + subtitle + '</span>' : '') +
+            '<span class="search-result-title">' + escapeHtml(item.title) + '</span>' +
+            (subtitle ? '<span class="search-result-subtitle">' + escapeHtml(String(subtitle)) + '</span>' : '') +
           '</div>' +
           '<span class="search-result-badge ' + typeBadgeClass + '">' + typeLabel + '</span>' +
         '</a>';
       }
       container.innerHTML = html;
+      // Update aria-activedescendant
+      var input = document.getElementById('searchInput');
+      input.setAttribute('aria-activedescendant', selectedIndex >= 0 ? 'search-result-' + selectedIndex : '');
+    }
+    
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
     }
 
     function updateSelection() {
-      const items = document.querySelectorAll('.search-result');
-      for (let i = 0; i < items.length; i++) {
-        items[i].classList.toggle('selected', i === selectedIndex);
+      var items = document.querySelectorAll('.search-result');
+      for (var i = 0; i < items.length; i++) {
+        var isSelected = i === selectedIndex;
+        items[i].classList.toggle('selected', isSelected);
+        items[i].setAttribute('aria-selected', isSelected);
+      }
+      var input = document.getElementById('searchInput');
+      input.setAttribute('aria-activedescendant', selectedIndex >= 0 ? 'search-result-' + selectedIndex : '');
+      // Scroll selected into view
+      if (selectedIndex >= 0 && items[selectedIndex]) {
+        items[selectedIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       }
     }
 
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', function(e) {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        const modal = document.getElementById('searchModal');
+        var modal = document.getElementById('searchModal');
         modal.classList.contains('hidden') ? openSearch() : closeSearch();
         return;
       }
 
-      const modal = document.getElementById('searchModal');
+      var modal = document.getElementById('searchModal');
       if (modal.classList.contains('hidden')) return;
 
       if (e.key === 'Escape') { closeSearch(); return; }
@@ -264,15 +377,14 @@ export function Layout(props: { title: string; content: string; description?: st
         updateSelection();
       } else if (e.key === 'Enter' && selectedIndex >= 0) {
         e.preventDefault();
-        const items = document.querySelectorAll('.search-result');
+        var items = document.querySelectorAll('.search-result');
         if (items[selectedIndex]) items[selectedIndex].click();
       }
     });
 
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const query = e.target.value.trim();
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      var query = e.target.value.trim();
       
-      // Clear previous debounce
       if (debounceTimer) clearTimeout(debounceTimer);
       
       if (!query) {
@@ -282,8 +394,8 @@ export function Layout(props: { title: string; content: string; description?: st
         return;
       }
 
-      // Debounce: wait 50ms after last keystroke (feels instant but prevents jank)
-      debounceTimer = setTimeout(() => {
+      // Debounce: 50ms feels instant but prevents layout thrashing
+      debounceTimer = setTimeout(function() {
         lastResults = search(query);
         selectedIndex = lastResults.length > 0 ? 0 : -1;
         renderResults(lastResults);
@@ -335,9 +447,18 @@ export function Post(props: {
 
 export function MediaGridItem(props: { title: string; url: string; image: string }) {
   return `
-    <a href="${props.url}" class="group block overflow-hidden rounded border border-transparent hover:border-text transition-colors">
+    <a href="${props.url}" class="group block overflow-hidden rounded border border-transparent hover:border-text transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link">
       <div class="aspect-[2/3] overflow-hidden bg-border relative">
-        <img src="${props.image}" alt="${props.title}" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 opacity-90 group-hover:opacity-100">
+        <img 
+          src="${props.image}" 
+          alt="${props.title}" 
+          loading="lazy" 
+          decoding="async"
+          fetchpriority="low"
+          class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 opacity-90 group-hover:opacity-100 will-change-transform"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+        >
+        <div class="hidden absolute inset-0 items-center justify-center text-text2 text-xs p-2 text-center bg-ui">${props.title}</div>
       </div>
     </a>
   `
@@ -478,24 +599,35 @@ export function ArchivePage(props: { posts: any[] }) {
 }
 
 export function MediaPage(props: { media: { title: string; image?: string; url: string; type: string; author?: string; year?: number; rating?: number }[] }) {
-  const mediaItems = props.media.map(item => {
+  const escapeAttr = (str: string) => str.replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+  
+  const mediaItems = props.media.map((item, index) => {
     const searchText = [item.title, item.author, item.year].filter(Boolean).join(' ').toLowerCase()
+    const isPriority = index < 6 // First 6 items load eagerly
     return `
-    <div class="media-item" data-type="${item.type}" data-search="${searchText}" data-rating="${item.rating || 0}">
-      <a href="${item.url}" class="group block overflow-hidden rounded border border-transparent hover:border-text transition-colors">
+    <article class="media-item" data-type="${item.type}" data-search="${escapeAttr(searchText)}" data-rating="${item.rating || 0}">
+      <a href="${item.url}" class="group block overflow-hidden rounded border border-transparent hover:border-text transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link">
         <div class="aspect-[2/3] overflow-hidden bg-border relative">
-          ${item.image ? `<img src="${item.image}" alt="${item.title || ''}" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 opacity-90 group-hover:opacity-100">` : `<div class="w-full h-full flex items-center justify-center text-text2 text-sm p-2 text-center">${item.title || 'Untitled'}</div>`}
+          ${item.image ? `<img 
+            src="${item.image}" 
+            alt="" 
+            loading="${isPriority ? 'eager' : 'lazy'}" 
+            decoding="async"
+            ${isPriority ? 'fetchpriority="high"' : 'fetchpriority="low"'}
+            class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 opacity-90 group-hover:opacity-100 will-change-transform"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+          ><div class="hidden absolute inset-0 items-center justify-center text-text2 text-xs p-2 text-center bg-ui">${item.title || 'Untitled'}</div>` : `<div class="w-full h-full flex items-center justify-center text-text2 text-sm p-2 text-center">${item.title || 'Untitled'}</div>`}
         </div>
         <div class="p-2">
           <h3 class="font-medium text-sm truncate">${item.title || 'Untitled'}</h3>
           ${item.author ? `<p class="text-text2 text-xs truncate">${item.author}</p>` : ''}
           <div class="flex items-center gap-2 text-xs text-text2 mt-1">
             ${item.year ? `<span>${item.year}</span>` : ''}
-            ${item.rating ? `<span>${'★'.repeat(item.rating)}</span>` : ''}
+            ${item.rating ? `<span aria-label="${item.rating} out of 5 stars">${'★'.repeat(item.rating)}</span>` : ''}
           </div>
         </div>
       </a>
-    </div>
+    </article>
   `}).join('')
 
   return `
@@ -505,41 +637,48 @@ export function MediaPage(props: { media: { title: string; image?: string; url: 
       
       <!-- Search -->
       <div class="mb-4">
+        <label for="mediaSearch" class="sr-only">Search media</label>
         <input 
-          type="text" 
+          type="search" 
           id="mediaSearch" 
           placeholder="Search by title, author, year..." 
-          class="w-full px-3 py-2 text-sm border border-border rounded bg-bg focus:outline-none focus:border-text"
+          class="w-full px-3 py-2.5 text-base border border-border rounded bg-bg focus:outline-none focus:ring-2 focus:ring-link focus:border-transparent"
+          autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          enterkeyhint="search"
         >
       </div>
 
-      <!-- Filters -->
-      <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+      <!-- Filters - horizontal scroll on mobile with momentum -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6" role="group" aria-label="Filter media">
         <!-- Type Filters -->
-        <div class="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
-          <button class="media-filter active px-3 py-1.5 text-sm border border-border rounded hover:bg-ui whitespace-nowrap" data-filter="all">All</button>
-          <button class="media-filter px-3 py-1.5 text-sm border border-border rounded hover:bg-ui whitespace-nowrap" data-filter="book">Books</button>
-          <button class="media-filter px-3 py-1.5 text-sm border border-border rounded hover:bg-ui whitespace-nowrap" data-filter="film">Films</button>
-          <button class="media-filter px-3 py-1.5 text-sm border border-border rounded hover:bg-ui whitespace-nowrap" data-filter="tv">TV</button>
+        <div class="flex gap-1.5 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide snap-x snap-mandatory" role="radiogroup" aria-label="Filter by type">
+          <button class="media-filter active snap-start min-h-[44px] px-4 py-2 text-sm border border-border rounded hover:bg-ui whitespace-nowrap transition-colors" data-filter="all" role="radio" aria-checked="true">All</button>
+          <button class="media-filter snap-start min-h-[44px] px-4 py-2 text-sm border border-border rounded hover:bg-ui whitespace-nowrap transition-colors" data-filter="book" role="radio" aria-checked="false">Books</button>
+          <button class="media-filter snap-start min-h-[44px] px-4 py-2 text-sm border border-border rounded hover:bg-ui whitespace-nowrap transition-colors" data-filter="film" role="radio" aria-checked="false">Films</button>
+          <button class="media-filter snap-start min-h-[44px] px-4 py-2 text-sm border border-border rounded hover:bg-ui whitespace-nowrap transition-colors" data-filter="tv" role="radio" aria-checked="false">TV</button>
         </div>
         
         <!-- Rating Filters -->
-        <div class="flex gap-1.5 items-center overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
-          <span class="text-sm text-text2 whitespace-nowrap">Rating:</span>
-          <button class="rating-filter active px-2 py-1 text-sm border border-border rounded hover:bg-ui whitespace-nowrap" data-rating="all">Any</button>
-          <button class="rating-filter px-2 py-1 text-sm border border-border rounded hover:bg-ui" data-rating="5">★★★★★</button>
-          <button class="rating-filter px-2 py-1 text-sm border border-border rounded hover:bg-ui" data-rating="4">★★★★</button>
-          <button class="rating-filter px-2 py-1 text-sm border border-border rounded hover:bg-ui" data-rating="3">★★★</button>
-          <button class="rating-filter px-2 py-1 text-sm border border-border rounded hover:bg-ui" data-rating="2">★★</button>
-          <button class="rating-filter px-2 py-1 text-sm border border-border rounded hover:bg-ui" data-rating="1">★</button>
+        <div class="flex gap-1.5 items-center overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide snap-x snap-mandatory" role="radiogroup" aria-label="Filter by rating">
+          <span class="text-sm text-text2 whitespace-nowrap flex-shrink-0">Rating:</span>
+          <button class="rating-filter active snap-start min-h-[44px] px-3 py-2 text-sm border border-border rounded hover:bg-ui whitespace-nowrap transition-colors" data-rating="all" role="radio" aria-checked="true">Any</button>
+          <button class="rating-filter snap-start min-h-[44px] px-3 py-2 text-sm border border-border rounded hover:bg-ui transition-colors" data-rating="5" role="radio" aria-checked="false" aria-label="5 stars">★★★★★</button>
+          <button class="rating-filter snap-start min-h-[44px] px-3 py-2 text-sm border border-border rounded hover:bg-ui transition-colors" data-rating="4" role="radio" aria-checked="false" aria-label="4 stars">★★★★</button>
+          <button class="rating-filter snap-start min-h-[44px] px-3 py-2 text-sm border border-border rounded hover:bg-ui transition-colors" data-rating="3" role="radio" aria-checked="false" aria-label="3 stars">★★★</button>
+          <button class="rating-filter snap-start min-h-[44px] px-3 py-2 text-sm border border-border rounded hover:bg-ui transition-colors" data-rating="2" role="radio" aria-checked="false" aria-label="2 stars">★★</button>
+          <button class="rating-filter snap-start min-h-[44px] px-3 py-2 text-sm border border-border rounded hover:bg-ui transition-colors" data-rating="1" role="radio" aria-checked="false" aria-label="1 star">★</button>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 sm:gap-4" id="mediaGrid">
+      <div class="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 sm:gap-4" id="mediaGrid" role="list" aria-live="polite">
         ${mediaItems}
       </div>
       
-      <p id="noResults" class="hidden text-text2 text-center py-8">No items match your filters.</p>
+      <p id="noResults" class="hidden text-text2 text-center py-8" role="status">No items match your filters.</p>
+      <p id="resultsCount" class="sr-only" role="status" aria-live="polite"></p>
     </section>
 
     <script>
@@ -548,25 +687,34 @@ export function MediaPage(props: { media: { title: string; image?: string; url: 
         var activeRating = 'all';
         var searchQuery = '';
         var searchInput = document.getElementById('mediaSearch');
-        var items = document.querySelectorAll('.media-item'); // Cache once
+        var items = document.querySelectorAll('.media-item');
         var noResults = document.getElementById('noResults');
+        var resultsCount = document.getElementById('resultsCount');
         var debounceTimer = null;
+        var totalItems = items.length;
         
         function filterMedia() {
           var visibleCount = 0;
           var ratingNum = activeRating === 'all' ? -1 : parseInt(activeRating);
           
-          for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            var show = (activeType === 'all' || item.dataset.type === activeType) &&
-                       (ratingNum === -1 || parseInt(item.dataset.rating) === ratingNum) &&
-                       (!searchQuery || item.dataset.search.indexOf(searchQuery) !== -1);
+          // Use requestAnimationFrame for smooth DOM updates
+          requestAnimationFrame(function() {
+            for (var i = 0; i < items.length; i++) {
+              var item = items[i];
+              var show = (activeType === 'all' || item.dataset.type === activeType) &&
+                         (ratingNum === -1 || parseInt(item.dataset.rating) === ratingNum) &&
+                         (!searchQuery || item.dataset.search.indexOf(searchQuery) !== -1);
+              
+              item.style.display = show ? '' : 'none';
+              if (show) visibleCount++;
+            }
             
-            item.style.display = show ? '' : 'none';
-            if (show) visibleCount++;
-          }
-          
-          noResults.classList.toggle('hidden', visibleCount > 0);
+            noResults.classList.toggle('hidden', visibleCount > 0);
+            // Announce results to screen readers
+            resultsCount.textContent = visibleCount === totalItems 
+              ? 'Showing all ' + totalItems + ' items' 
+              : 'Showing ' + visibleCount + ' of ' + totalItems + ' items';
+          });
         }
         
         searchInput.addEventListener('input', function() {
@@ -574,26 +722,29 @@ export function MediaPage(props: { media: { title: string; image?: string; url: 
           debounceTimer = setTimeout(function() {
             searchQuery = searchInput.value.toLowerCase();
             filterMedia();
-          }, 30);
+          }, 50);
         });
         
-        document.querySelectorAll('.media-filter').forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            document.querySelectorAll('.media-filter').forEach(function(b) { b.classList.remove('active', 'bg-ui'); });
-            btn.classList.add('active', 'bg-ui');
-            activeType = btn.dataset.filter;
-            filterMedia();
+        // Unified filter button handler
+        function setupFilters(selector, updateFn) {
+          document.querySelectorAll(selector).forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              document.querySelectorAll(selector).forEach(function(b) { 
+                b.classList.remove('active', 'bg-ui');
+                b.setAttribute('aria-checked', 'false');
+              });
+              btn.classList.add('active', 'bg-ui');
+              btn.setAttribute('aria-checked', 'true');
+              updateFn(btn);
+              filterMedia();
+              // Haptic feedback
+              if (navigator.vibrate) navigator.vibrate(10);
+            });
           });
-        });
+        }
         
-        document.querySelectorAll('.rating-filter').forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            document.querySelectorAll('.rating-filter').forEach(function(b) { b.classList.remove('active', 'bg-ui'); });
-            btn.classList.add('active', 'bg-ui');
-            activeRating = btn.dataset.rating;
-            filterMedia();
-          });
-        });
+        setupFilters('.media-filter', function(btn) { activeType = btn.dataset.filter; });
+        setupFilters('.rating-filter', function(btn) { activeRating = btn.dataset.rating; });
       })();
     </script>
   `
