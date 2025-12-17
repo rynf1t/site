@@ -75,6 +75,7 @@ interface PostData {
 
 async function build() {
     console.log('📍 Building Ryan\'s Blog...');
+    console.log('Current working directory:', process.cwd());
 
     const posts: PostData[] = [];
     const media: PostData[] = [];

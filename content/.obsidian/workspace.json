@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "media/Trust.md",
+                "file": "posts/how-this-site-works.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Trust"
+              "title": "how-this-site-works"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "media/Trust.md",
+                "file": "posts/how-this-site-works.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Trust"
+              "title": "Backlinks for how-this-site-works"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "media/Trust.md",
+                "file": "posts/how-this-site-works.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Trust"
+              "title": "Outgoing links from how-this-site-works"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "media/Trust.md",
+                "file": "posts/how-this-site-works.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Trust"
+              "title": "Outline of how-this-site-works"
             }
           }
         ]
@@ -186,6 +186,9 @@
   },
   "active": "89c55660bb198395",
   "lastOpenFiles": [
+    "media/Trust.md",
+    "posts/how-this-site-works.md",
+    "posts/how this site is built.md",
     "pages/tools.md",
     "media/Trust Test.md",
     "pages/media.md",
@@ -194,7 +197,6 @@
     "pages/home.md",
     "posts/completely just a test.md",
     "posts/test note.md",
-    "media/Trust.md",
     "templates/book template.md",
     "media/project-hail-mary.md",
     "media/the-office.md",
@@ -210,9 +212,7 @@
     "media/shawshank-redemption.md",
     "media/severance.md",
     "media/inception.md",
-    "media/1984.md",
     "media",
-    "templates",
-    "posts/note-c.md"
+    "templates"
   ]
 }
