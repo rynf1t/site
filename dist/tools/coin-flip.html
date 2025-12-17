@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Randomly generates a coin flip result with retro arcade-style animation and visual feedback showing heads or tails.">
+    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/manifest.json">
+    <title>Coin Flip</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: "Press Start 2P", monospace;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background: #ffffff;
+            color: #000;
+            min-height: 100vh;
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 0px #000;
+            color: #000;
+        }
+        
+        .display {
+            background: #f5f5f5;
+            border: 4px solid #000;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 
+                inset 0 0 20px rgba(0, 0, 0, 0.1),
+                0 0 30px rgba(0, 0, 0, 0.1);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.02) 0px,
+                    transparent 1px,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.02) 3px
+                );
+            pointer-events: none;
+        }
+        
+        .result {
+            font-size: 3rem;
+            text-shadow: 2px 2px 0px #000;
+            position: relative;
+            z-index: 1;
+            animation: glitch 0.3s;
+            color: #000;
+        }
+        
+        .result.flashing {
+            animation: flash 0.1s infinite;
+        }
+        
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        
+        button {
+            font-family: "Press Start 2P", monospace;
+            font-size: 0.8rem;
+            padding: 1rem 2rem;
+            background: #fff;
+            color: #000;
+            border: 3px solid #000;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 
+                0 4px 0 #000,
+                inset 0 0 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        button:hover {
+            background: #000;
+            color: #fff;
+            box-shadow: 
+                0 4px 0 #666,
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #000;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: 0 2px 0 #999;
+        }
+        
+        button:disabled:hover {
+            background: #fff;
+            color: #000;
+        }
+        
+        .choices {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .choice {
+            font-size: 1.2rem;
+            padding: 0.5rem 1rem;
+            background: #fff;
+            border: 2px solid #000;
+            color: #000;
+            opacity: 0.3;
+            transition: opacity 0.3s, background 0.3s, color 0.3s, border-color 0.3s;
+            display: inline-block;
+            vertical-align: top;
+            line-height: 1.2;
+            box-sizing: border-box;
+        }
+        
+        .choice.active {
+            opacity: 1;
+            background: #000;
+            color: #fff;
+        }
+        
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(0, 0, 0, 0.3);
+            animation: scan 3s linear infinite;
+            z-index: 2;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { top: 100%; opacity: 1; }
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #000000;
+                color: #fff;
+            }
+            
+            h1 {
+                color: #fff;
+                text-shadow: 2px 2px 0px #fff;
+            }
+            
+            .display {
+                background: #1a1a1a;
+                border-color: #fff;
+            }
+            
+            .result {
+                color: #fff;
+                text-shadow: 2px 2px 0px #fff;
+            }
+            
+            button {
+                background: #000;
+                color: #fff;
+                border-color: #fff;
+            }
+            
+            button:hover {
+                background: #fff;
+                color: #000;
+                box-shadow: 
+                    0 4px 0 #999,
+                    inset 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+            
+            button:disabled {
+                box-shadow: 0 2px 0 #666;
+            }
+            
+            button:disabled:hover {
+                background: #000;
+                color: #fff;
+            }
+            
+            .choice {
+                background: #000;
+                color: #fff;
+                border-color: #fff;
+            }
+            
+            .choice.active {
+                background: #fff;
+                color: #000;
+            }
+            
+            .scanline {
+                background: rgba(255, 255, 255, 0.3);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body { 
+                padding: 10px 15px 15px 15px; 
+                justify-content: flex-start;
+                padding-top: 5vh;
+            }
+            h1 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+            .result { font-size: 2rem; }
+            button { font-size: 0.7rem; padding: 0.75rem 1.5rem; }
+            .display { padding: 1.5rem; min-height: 150px; margin: 0.75rem 0; }
+            .choices { margin-top: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>COIN FLIP</h1>
+    
+    <div class="display" id="display">
+        <div class="scanline"></div>
+        <div class="result" id="result">?</div>
+    </div>
+    
+    <button id="flipButton" onclick="flip()">FLIP</button>
+    
+    <div class="choices">
+        <div class="choice" id="headsChoice">HEADS</div>
+        <div class="choice" id="tailsChoice">TAILS</div>
+    </div>
+
+
+        <script>
+        function flip() {
+            const button = document.getElementById('flipButton');
+            const result = document.getElementById('result');
+            const headsChoice = document.getElementById('headsChoice');
+            const tailsChoice = document.getElementById('tailsChoice');
+            
+            button.disabled = true;
+            result.classList.add('flashing');
+            result.textContent = '?';
+            headsChoice.classList.remove('active');
+            tailsChoice.classList.remove('active');
+            
+            setTimeout(() => {
+                const outcome = Math.random() < 0.5 ? 'HEADS' : 'TAILS';
+                result.textContent = outcome;
+                result.classList.remove('flashing');
+                if (outcome === 'HEADS') {
+                    headsChoice.classList.add('active');
+                } else {
+                    tailsChoice.classList.add('active');
+                }
+                button.disabled = false;
+            }, 1000);
+        }
+        
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
+    </script>
+</body>
+</html>
