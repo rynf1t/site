@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "pages/media.md",
+                "file": "pages/tools.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "media"
+              "title": "tools"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "pages/media.md",
+                "file": "pages/tools.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for media"
+              "title": "Backlinks for tools"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "pages/media.md",
+                "file": "pages/tools.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from media"
+              "title": "Outgoing links from tools"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "pages/media.md",
+                "file": "pages/tools.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of media"
+              "title": "Outline of tools"
             }
           }
         ]
@@ -186,9 +186,9 @@
   },
   "active": "89c55660bb198395",
   "lastOpenFiles": [
+    "pages/media.md",
     "pages/writing.md",
     "pages/tools.md",
-    "pages/media.md",
     "pages/about.md",
     "pages/home.md",
     "posts/completely just a test.md",
