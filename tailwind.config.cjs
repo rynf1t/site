@@ -6,8 +6,6 @@ module.exports = {
             fontFamily: {
                 sans: ['"Times New Roman"', 'Times', 'serif'],
                 serif: ['"Times New Roman"', 'Times', 'serif'],
-                xp: ['Tahoma', '"Segoe UI"', 'Verdana', 'sans-serif'],
-                mac: ['Geneva', '"Lucida Grande"', '"Helvetica Neue"', 'sans-serif'],
             },
             colors: {
                 bg: 'var(--color-bg)',
@@ -16,7 +14,7 @@ module.exports = {
                 link: 'var(--color-link)',
                 ui: 'var(--color-ui)',
                 bg2: '#f5f5f5',
-                text2: '#555555',
+                text2: 'var(--color-text2)',
                 text3: '#1a1a1a',
             },
             typography: (theme) => ({

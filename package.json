@@ -4,7 +4,6 @@
   "type": "module",
   "scripts": {
     "build": "tailwindcss -i src/input.css -o dist/style.css --config tailwind.config.cjs --minify && bun run src/build.ts",
-    "css": "tailwindcss -i src/input.css -o dist/style.css --config tailwind.config.cjs --minify",
     "dev": "bun run src/build.ts"
   },
   "dependencies": {

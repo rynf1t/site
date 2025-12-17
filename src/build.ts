@@ -10,33 +10,8 @@ const md = new MarkdownIt({
     typographer: true,
 }).use(footnote);
 
-// --- Sidenote Render Rules ---
-// Override 'footnote_ref' to output: <label for="sn-N" class="sidenote-toggle">N</label><input ...>
-md.renderer.rules.footnote_ref = (tokens, idx, options, env, slf) => {
-    const id = slf.rules.footnote_anchor_name!(tokens, idx, options, env, slf);
-    const caption = slf.rules.footnote_caption!(tokens, idx, options, env, slf);
-    // We use the ID as the Checkbox ID
-    return `<label for="sn-${id}" class="sidenote-toggle">${caption}</label><input type="checkbox" id="sn-${id}" class="sidenote-toggle-checkbox">`;
-};
-
-// Override 'footnote_block_open/close' to hide the bottom list (we will inject the content inline if possible, or handle it via CSS)
-// Wait, the standard footnote plugin puts the *content* at the bottom of the document in a block. 
-// For Sidenotes, we want the content *IMMEDIATELY AFTER* the reference in the HTML (so we can float it).
-// This is tricky with standard markdown-it-footnote because it collects them for the end.
-// HACK: We will let markdown-it-footnote generate the block at the end, 
-// AND THEN we will Regex move the content up to the marker 🤯
-// OR: We just write a simple "Inline Footnote" plugin. 
-// Given the time, let's Stick to the "Bottom Footnotes" standard for now BUT styled as sidenotes? 
-// No, the CSS expects them to be siblings.
-// Let's use the USER'S approach: they probably use [^1] but the output is inline.
-// We will write a custom Tokenizer hook or just a Regex post-processor on the Markdown before render?
-// Regex on Markdown is fragile. 
-// Let's use a simpler approach: Regex on the HTML output? No, the content is far away.
-
-// BETTER APPROACH: "Inline Sidenotes" 
-// We will parse `[^1]` markers, look up the `[^1]: content` definition, and INJECT it right there.
-// We can do this by pre-processing the Markdown string to replace `[^1]` with the full HTML, removing the definition.
-
+// --- Sidenote Processing ---
+// Pre-process markdown to convert footnote syntax into inline sidenotes
 function preProcessSidenotes(markdown: string, slug: string): string {
     // 1. Extract definitions: [^1]: content
     // We match the key and the content. basic single line support for now to match user style.
@@ -187,7 +162,7 @@ async function build() {
 
     for (const post of allContent) {
         let postHtml: string;
-        
+
         if (post.type === 'media') {
             postHtml = MediaPost({
                 title: post.title,
@@ -221,12 +196,12 @@ async function build() {
     // Generate Index
     posts.sort((a, b) => b.date.localeCompare(a.date));
     media.sort((a, b) => b.date.localeCompare(a.date));
-    
+
     const indexContent = IndexPage({
         posts: posts.map(p => ({ title: p.title, date: p.date, url: `/posts/${p.slug}.html` })),
-        media: media.slice(0, 4).map(m => ({ 
-            title: m.title, 
-            image: m.image, 
+        media: media.slice(0, 4).map(m => ({
+            title: m.title,
+            image: m.image,
             url: `/posts/${m.slug}.html`,
             type: m.mediaType
         })),
@@ -284,60 +259,31 @@ async function build() {
     const aboutContent = await generateAboutPage();
     await Bun.write('dist/about.html', Layout({ title: 'About', content: aboutContent }));
 
-    // Copy static tools to dist
-    try {
-        await mkdir('dist/tools', { recursive: true });
-        const toolFiles = await readdir('static/tools');
-        for (const file of toolFiles) {
-            if (file.endsWith('.html')) {
-                const content = await Bun.file(`static/tools/${file}`).text();
-                await Bun.write(`dist/tools/${file}`, content);
+    // Copy static files to dist
+    const staticDirs = [
+        { src: 'static/tools', dest: 'dist/tools', extensions: ['.html'] },
+        { src: 'static/images', dest: 'dist/images', skipExtensions: ['.md'] },
+        { src: 'static/icons', dest: 'dist/icons' },
+        { src: 'static/fonts', dest: 'dist/fonts' }
+    ];
+
+    for (const dir of staticDirs) {
+        try {
+            await mkdir(dir.dest, { recursive: true });
+            const files = await readdir(dir.src);
+
+            for (const file of files) {
+                // Skip files based on extension filters
+                if (dir.extensions && !dir.extensions.some(ext => file.endsWith(ext))) continue;
+                if (dir.skipExtensions && dir.skipExtensions.some(ext => file.endsWith(ext))) continue;
+
+                const content = await Bun.file(`${dir.src}/${file}`).arrayBuffer();
+                await Bun.write(`${dir.dest}/${file}`, content);
             }
+            console.log(`📦 Copied ${dir.src} to ${dir.dest}`);
+        } catch (e) {
+            // Directory doesn't exist, skip silently
         }
-        console.log('📦 Copied tools to dist/tools/');
-    } catch (e) {
-        console.log('⚠️  No tools to copy (static/tools/ not found)');
-    }
-
-    // Copy static images to dist
-    try {
-        await mkdir('dist/images', { recursive: true });
-        const imageFiles = await readdir('static/images');
-        for (const file of imageFiles) {
-            if (!file.endsWith('.md')) { // Skip README
-                const content = await Bun.file(`static/images/${file}`).arrayBuffer();
-                await Bun.write(`dist/images/${file}`, content);
-            }
-        }
-        console.log('📦 Copied images to dist/images/');
-    } catch (e) {
-        // No images yet, that's fine
-    }
-
-    // Copy static icons to dist
-    try {
-        await mkdir('dist/icons', { recursive: true });
-        const iconFiles = await readdir('static/icons');
-        for (const file of iconFiles) {
-            const content = await Bun.file(`static/icons/${file}`).arrayBuffer();
-            await Bun.write(`dist/icons/${file}`, content);
-        }
-        console.log('📦 Copied icons to dist/icons/');
-    } catch (e) {
-        // No icons yet, that's fine
-    }
-
-    // Copy static fonts to dist
-    try {
-        await mkdir('dist/fonts', { recursive: true });
-        const fontFiles = await readdir('static/fonts');
-        for (const file of fontFiles) {
-            const content = await Bun.file(`static/fonts/${file}`).arrayBuffer();
-            await Bun.write(`dist/fonts/${file}`, content);
-        }
-        console.log('📦 Copied fonts to dist/fonts/');
-    } catch (e) {
-        // No fonts yet, that's fine
     }
 
     console.log('✅ Build Complete!');

@@ -3,105 +3,100 @@
 @tailwind utilities;
 
 /* ==================== BASE UTILITIES ==================== */
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-/* Chicago font for authentic Mac OS 9 look */
-@font-face {
-  font-family: 'Chicago';
-  src: url('/fonts/ChicagoFLF.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 @layer base {
+
+  /* ==================== COLOR SYSTEM ==================== */
   :root {
-    /* Brutalist theme - classic academic serif */
-    --color-bg: #fafaf8;
-    --color-text: #1a1a1a;
-    --color-border: #1a1a1a;
+    /* Mac OS 9 Platinum - Light Mode */
+    --color-bg: #c0c0c0;
+    --color-bg-alt: #d0d0d0;
+    --color-text: #000000;
+    --color-text2: #333333;
+    --color-border: #808080;
     --color-link: #0000ee;
     --color-link-visited: #551a8b;
-    --color-ui: #e8e8e8;
-    --color-highlight: #ffff00;
-    --font-main: "Georgia", "Times New Roman", "Times", serif;
+    --color-ui: #dddddd;
+    --color-accent: #6668a6;
+    --color-highlight: #000080;
+    --color-window: #ffffff;
+    --color-platinum: #cccccc;
+    --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   }
 
-  html[data-theme="xp"],
-  [data-theme="xp"] {
-    /* Windows XP Luna - Tahoma was THE XP font */
-    --color-bg: #ece9d8;
-    --color-text: #000000;
-    --color-border: #003c74;
-    --color-link: #0000ff;
-    --color-link-visited: #800080;
-    --color-ui: #d4d0c8;
-    --color-xp-blue: #0055e5;
-    --color-xp-blue-light: #4393ff;
-    --color-xp-gradient-start: #0053ee;
-    --color-xp-gradient-end: #2561c9;
-    --font-main: "Tahoma", "Trebuchet MS", "Segoe UI", Verdana, sans-serif;
-  }
-
-  html[data-theme="mac"],
-  [data-theme="mac"] {
-    /* Mac OS 9 Platinum - Geneva was the main system font */
-    --mac-plat: #dddddd;
-    --mac-dark-plat: #999999;
-    --mac-shadow: rgba(0, 0, 0, 0.6);
-    --mac-highlight: #ffffff;
-    --mac-pattern: #c0c0c0;
-    --mac-pattern-dark: #999999;
-
-    --color-bg: #dddddd;
-    --color-text: #000000;
-    --color-border: #000000;
-    --color-link: #0000ee;
-    --color-link-visited: #551a8b;
-    --color-ui: #cccccc;
-    --font-main: "Chicago", "Geneva", "Lucida Grande", Helvetica, sans-serif;
-  }
-
-  body {
-    @apply transition-none p-0;
-    font-family: var(--font-main);
-    opacity: 1;
-  }
-
-  html:not([data-theme]) body {
-    opacity: 0;
-  }
-
-  html[data-theme] body {
-    opacity: 1;
-  }
-
-  /* Brutalist layout - same 900px max-width as other themes for consistency */
-  html[data-theme="brutalist"] body,
-  html:not([data-theme]) body {
-    background: #fafaf8;
-    line-height: 1.65;
-    font-size: 14px;
-    padding: 1rem 1rem 4rem 1rem; /* Extra bottom padding for mobile theme switcher */
-    max-width: 900px;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  @media (min-width: 640px) {
-    html[data-theme="brutalist"] body,
-    html:not([data-theme]) body {
-      padding-bottom: 2rem; /* Normal padding on desktop */
+  /* Dark mode via system preference or manual toggle */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-mode="light"]) {
+      --color-bg: #1e1e24;
+      --color-bg-alt: #2a2a32;
+      --color-text: #f5f5f5;
+      --color-text2: #cccccc;
+      --color-border: #4a4a55;
+      --color-link: #6699ff;
+      --color-link-visited: #a388cc;
+      --color-ui: #3a3a44;
+      --color-accent: #8888cc;
+      --color-highlight: #4477dd;
+      --color-window: #2a2a32;
     }
   }
 
-  /* Sidenote Styles - inline expandable notes for all themes */
+  /* Manual dark mode override */
+  :root[data-mode="dark"] {
+    --color-bg: #1e1e24;
+    --color-bg-alt: #2a2a32;
+    --color-text: #f5f5f5;
+    --color-text2: #cccccc;
+    --color-border: #4a4a55;
+    --color-link: #6699ff;
+    --color-link-visited: #a388cc;
+    --color-ui: #3a3a44;
+    --color-accent: #8888cc;
+    --color-highlight: #4477dd;
+    --color-window: #2a2a32;
+  }
+
+  /* ==================== BODY ==================== */
+  body {
+    @apply transition-colors duration-200;
+    font-family: var(--font-main);
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    font-size: 15px;
+    padding: 1rem;
+    min-height: 100vh;
+
+    /* Clean, readable font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (min-width: 640px) {
+    body {
+      font-size: 16px;
+      padding: 1.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    body {
+      font-size: 17px;
+      padding: 2rem;
+    }
+  }
+
+  /* ==================== SIDENOTES ==================== */
   .sidenote-toggle {
     color: var(--color-link);
     cursor: pointer;
@@ -120,7 +115,6 @@
     display: none;
   }
 
-  /* Default: hidden, click to expand */
   .sidenote {
     display: none;
     font-size: 0.85em;
@@ -132,698 +126,294 @@
     border-radius: 2px;
   }
 
-  .sidenote-toggle-checkbox:checked + .sidenote {
+  .sidenote-toggle-checkbox:checked+.sidenote {
     display: block;
   }
 
-  /* XP themed sidenotes */
-  [data-theme="xp"] .sidenote {
-    background: #ffffc0;
-    border: 1px solid #d4d0c8;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
-  }
-
-  /* Mac themed sidenotes */
-  [data-theme="mac"] .sidenote {
-    background: #f5f5f5;
-    border: 1px solid #000;
-    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
-  }
-
-  /* Backdrop element - hidden by default */
-  .sidenote-backdrop {
-    display: none;
-  }
-
-  /* Small screens: modal popup for sidenotes */
+  /* Mobile: modal popup for sidenotes */
   @media (max-width: 767px) {
-    /* Hide default inline expansion on mobile */
-    .sidenote-toggle-checkbox:checked + .sidenote {
-      display: none;
-    }
-
-    /* Show as modal instead */
-    .sidenote-toggle-checkbox:checked + .sidenote {
-      display: block !important;
-      position: fixed !important;
-      top: 50% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) !important;
-      width: 85vw !important;
-      max-width: 380px !important;
-      z-index: 10000 !important;
-      padding: 1.25rem !important;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
-      background: #fff !important;
-      border: 2px solid #000 !important;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-
-    /* Backdrop when sidenote modal is open - clicking closes the modal */
-    .sidenote-toggle-checkbox:checked ~ .sidenote-backdrop {
-      display: block;
+    .sidenote-toggle-checkbox:checked+.sidenote {
       position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 9999;
-      cursor: pointer;
-    }
-  }
-
-  /* Conservative font sizing for better readability */
-  @media (min-width: 640px) {
-    html[data-theme="brutalist"] body,
-    html:not([data-theme]) body {
-      font-size: 15px;
-      padding: 1.5rem 1.5rem;
-    }
-  }
-
-  @media (min-width: 768px) {
-    html[data-theme="brutalist"] body,
-    html:not([data-theme]) body {
-      font-size: 16px;
-      padding: 2rem 2rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    html[data-theme="brutalist"] body,
-    html:not([data-theme]) body {
-      font-size: 16px;
-      padding: 3rem 2rem;
-    }
-  }
-
-  /* More authentic XP Bliss background gradient */
-  html[data-theme="xp"] body {
-    background: linear-gradient(180deg, #3a6ea5 0%, #4888c4 15%, #5fa0d8 40%, #74b2e3 60%, #a0d468 82%, #8bc34a 100%)
-      no-repeat fixed;
-    background-size: 100% 100%;
-    min-height: 100vh;
-    font-size: 13px;
-    line-height: 1.5;
-    padding: 0.75rem 0.5rem 4rem 0.5rem; /* Extra bottom for mobile switcher */
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-  }
-
-  @media (min-width: 640px) {
-    html[data-theme="xp"] body {
-      font-size: 13.5px;
-      padding: 1.5rem 1rem;
-    }
-  }
-
-  @media (min-width: 768px) {
-    html[data-theme="xp"] body {
-      font-size: 14px;
-      padding: 2rem 1.5rem;
-    }
-  }
-
-  /* More authentic Mac OS platinum texture */
-  html[data-theme="mac"] body {
-    background-color: #dddddd;
-    background-image: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 1px,
-        rgba(0, 0, 0, 0.02) 1px,
-        rgba(0, 0, 0, 0.02) 2px
-      ),
-      repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(0, 0, 0, 0.02) 1px, rgba(0, 0, 0, 0.02) 2px);
-    background-size: 2px 2px;
-    background-attachment: fixed;
-    min-height: 100vh;
-    font-size: 13px;
-    line-height: 1.55;
-    padding: 0.75rem 0.5rem 4rem 0.5rem; /* Extra bottom for mobile switcher */
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-  }
-
-  @media (min-width: 640px) {
-    html[data-theme="mac"] body {
-      font-size: 14px;
-      padding: 1.5rem 1rem;
-    }
-  }
-
-  @media (min-width: 768px) {
-    html[data-theme="mac"] body {
-      font-size: 15px;
-      padding: 2rem 1rem;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: 0;
+      padding: 1.25rem;
+      border-radius: 12px 12px 0 0;
+      border: 1px solid var(--color-border);
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+      z-index: 100;
+      max-height: 50vh;
+      overflow-y: auto;
     }
   }
 }
 
 @layer components {
+
   /* ==================== WINDOW CONTAINER ==================== */
-  /* Wider window container (850px -> 900px) for better content space */
   .theme-window {
-    @apply transition-none;
     width: 100%;
-    max-width: 900px;
-  }
-
-  /* More authentic XP window with refined Luna shadows */
-  [data-theme="xp"] .theme-window,
-  html[data-theme="xp"] .theme-window {
-    @apply overflow-hidden;
-    border-radius: 8px 8px 0 0;
-    box-shadow: 0 0 0 1px #0053ee, 0 2px 8px rgba(0, 83, 238, 0.25), 0 10px 30px rgba(0, 0, 0, 0.2);
-    background: #ece9d8;
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--color-window);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   }
 
   @media (min-width: 768px) {
-    [data-theme="xp"] .theme-window {
-      min-width: 600px;
+    .theme-window {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
     }
   }
 
-  @media (max-width: 767px) {
-    [data-theme="xp"] .theme-window {
-      border-radius: 0;
-      box-shadow: 0 2px 6px rgba(0, 83, 238, 0.2);
-    }
+  /* ==================== CONTENT AREA ==================== */
+  .theme-content {
+    padding: 1rem;
   }
 
-  /* More authentic Mac window with proper vintage shadow */
-  [data-theme="mac"] .theme-window {
-    @apply bg-[#DDDDDD];
-    border: 1px solid #000;
-    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5), 0 0 0 1px #fff inset;
+  @media (min-width: 640px) {
+    .theme-content {
+      padding: 1.5rem;
+    }
   }
 
   @media (min-width: 768px) {
-    [data-theme="mac"] .theme-window {
-      min-width: 550px;
+    .theme-content {
+      padding: 2rem;
     }
   }
 
-  @media (max-width: 767px) {
-    [data-theme="mac"] .theme-window {
-      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5), 0 0 0 1px #fff inset;
-    }
-  }
-
-  /* ==================== TITLE BAR ==================== */
-  .window-title-bar {
-    @apply hidden;
-  }
-
-  /* Enhanced XP title bar with more accurate Luna gradient */
-  [data-theme="xp"] .window-title-bar,
-  html[data-theme="xp"] .window-title-bar {
-    @apply flex items-center justify-between px-2 text-white font-bold text-xs relative;
-    background: linear-gradient(180deg, #4080d8 0%, #3169c6 40%, #2558b0 60%, #1f4a8e 100%);
-    height: 30px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75);
-    border-radius: 8px 8px 0 0;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  @media (max-width: 767px) {
-    [data-theme="xp"] .window-title-bar,
-    html[data-theme="xp"] .window-title-bar {
-      border-radius: 0;
-      height: 26px;
-      font-size: 11px;
-      padding-left: 0.5rem;
-      padding-right: 0.5rem;
-    }
-  }
-
-  /* Enhanced Mac title bar with proper platinum texture */
-  [data-theme="mac"] .window-title-bar {
-    @apply flex items-center px-1 py-0 border-b border-black relative;
-    height: 19px;
-    background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 15%, #e8e8e8 50%, #dddddd 85%, #cccccc 100%);
-    box-shadow: inset 0 1px 0 #fff;
-  }
-
-  /* ==================== MAC STRIPES (Spacer) ==================== */
-  .mac-stripes {
-    @apply hidden;
-  }
-
-  [data-theme="mac"] .mac-stripes {
-    @apply block flex-1 h-full;
-  }
-
-  /* ==================== XP CONTROLS ==================== */
-  .xp-controls {
-    @apply hidden;
-  }
-
-  [data-theme="xp"] .xp-controls {
-    @apply flex gap-[2px];
-  }
-
-  /* Authentic XP Luna button styling with proper symbols */
-  .xp-btn,
-  .xp-close {
-    @apply w-[21px] h-[21px] flex items-center justify-center rounded-sm border-0;
-    font-family: "Marlett", sans-serif;
-    font-size: 9px;
-    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.5), inset -1px -1px 0 rgba(0, 0, 0, 0.2), 0 1px 2px
-      rgba(0, 0, 0, 0.25);
+  /* ==================== MODE TOGGLE ==================== */
+  .mode-toggle {
+    position: fixed;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 50;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-window);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
     cursor: pointer;
+    color: var(--color-text);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
-  .xp-btn {
-    background: linear-gradient(180deg, #a0c8f5 0%, #6fa5e8 100%);
-    color: #003c74;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  .mode-toggle:hover {
+    background: var(--color-ui);
   }
 
-  .xp-btn:hover {
-    background: linear-gradient(180deg, #b5d5ff 0%, #85b5ef 100%);
-  }
-
-  .xp-btn:active {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-    background: linear-gradient(180deg, #7fa5d8 0%, #5585c8 100%);
-  }
-
-  .xp-close {
-    background: linear-gradient(180deg, #ff9973 0%, #e85535 100%);
-    color: #fff;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
-  }
-
-  .xp-close:hover {
-    background: linear-gradient(180deg, #ffb088 0%, #f56545 100%);
-  }
-
-  .xp-close:active {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-    background: linear-gradient(180deg, #e87555 0%, #c84525 100%);
-  }
-
-  /* ==================== MAC CLOSE BOX ==================== */
-  .mac-close-box {
-    @apply hidden;
-  }
-
-  /* Enhanced Mac close box with better 3D effect */
-  [data-theme="mac"] .mac-close-box {
-    @apply block w-[13px] h-[13px] cursor-pointer flex-shrink-0 relative;
-    background: linear-gradient(135deg, #fff 0%, #e8e8e8 40%, #bbb 70%, #999 100%);
-    border: 1px solid #000;
-    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.75), inset -1px -1px 0 rgba(0, 0, 0, 0.3), 1px 1px 0
-      rgba(0, 0, 0, 0.35);
-  }
-
-  [data-theme="mac"] .mac-close-box:hover {
-    background: linear-gradient(135deg, #fff 0%, #f0f0f0 50%, #ccc 100%);
-  }
-
-  [data-theme="mac"] .mac-close-box:active {
-    background: #888;
-    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.5);
-  }
-
-  /* ==================== MAC ZOOM BOX ==================== */
-  .mac-zoom-box {
-    @apply hidden;
-  }
-
-  /* Mac zoom box (right side) - toggles window size */
-  [data-theme="mac"] .mac-zoom-box {
-    @apply block w-[13px] h-[13px] cursor-pointer flex-shrink-0 relative;
-    background: linear-gradient(135deg, #fff 0%, #e8e8e8 40%, #bbb 70%, #999 100%);
-    border: 1px solid #000;
-    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.75), inset -1px -1px 0 rgba(0, 0, 0, 0.3), 1px 1px 0
-      rgba(0, 0, 0, 0.35);
-  }
-
-  /* Inner square for zoom box */
-  [data-theme="mac"] .mac-zoom-box::after {
-    content: "";
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 5px;
-    height: 5px;
-    border: 1px solid #666;
-  }
-
-  [data-theme="mac"] .mac-zoom-box:hover {
-    background: linear-gradient(135deg, #fff 0%, #f0f0f0 50%, #ccc 100%);
-  }
-
-  [data-theme="mac"] .mac-zoom-box:active {
-    background: #888;
-    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.5);
-  }
-
-  /* Mac window title with authentic styling */
-  .mac-title {
-    @apply hidden;
-  }
-
-  [data-theme="mac"] .mac-title {
-    @apply block text-[11px] font-bold text-center px-3 flex-1;
-    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.75);
-  }
-
-  /* ==================== XP TITLE CONTENT ==================== */
-  .xp-title-content {
-    @apply hidden;
-  }
-
-  [data-theme="xp"] .xp-title-content {
-    @apply flex items-center gap-2 flex-1;
-  }
-
-  .xp-title-icon {
-    @apply w-4 h-4;
-    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
-  }
-
-  /* ==================== CONTENT STYLING ==================== */
-  /* Enhanced XP content with better inset shadows */
-  [data-theme="xp"] .theme-content {
-    @apply bg-white m-[3px];
-    padding: 1rem;
-    border: 1px solid #7f9db9;
-    box-shadow: inset 1px 1px 0 rgba(127, 157, 185, 0.4), inset -1px -1px 0 rgba(255, 255, 255, 0.7);
-  }
-
-  @media (min-width: 640px) {
-    [data-theme="xp"] .theme-content {
-      padding: 1.25rem;
-    }
-  }
-
-  @media (min-width: 768px) {
-    [data-theme="xp"] .theme-content {
-      padding: 1.75rem;
-    }
-  }
-
-  /* Enhanced Mac content with better padding */
-  [data-theme="mac"] .theme-content {
-    @apply bg-white relative border border-black min-h-[400px];
-    padding: 1rem;
-    box-shadow: inset 0 0 0 1px #999;
-  }
-
-  @media (min-width: 640px) {
-    [data-theme="mac"] .theme-content {
-      padding: 1.25rem;
-    }
-  }
-
-  @media (min-width: 768px) {
-    [data-theme="mac"] .theme-content {
-      padding: 1.75rem;
-    }
-  }
-
-  /* Mac resize grip with better detail */
-  [data-theme="mac"] .theme-content::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 15px;
-    height: 15px;
-    background: linear-gradient(135deg, transparent 40%, #000 40%, #000 41%, transparent 41%),
-      linear-gradient(135deg, transparent 47%, #000 47%, #000 48%, transparent 48%),
-      linear-gradient(135deg, transparent 54%, #000 54%, #000 55%, transparent 55%),
-      linear-gradient(135deg, transparent 61%, #000 61%, #000 62%, transparent 62%),
-      linear-gradient(135deg, transparent 68%, #000 68%, #000 69%, transparent 69%);
-    cursor: se-resize;
-  }
-
-  /* ==================== THEME SWITCHER ==================== */
-  .theme-switcher {
-    @apply fixed z-50 flex gap-1;
-    bottom: 0.75rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.95);
-    border: 2px solid #000;
-    padding: 2px;
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
-  }
-
-  @media (min-width: 640px) {
-    .theme-switcher {
-      top: 1rem;
-      right: 1rem;
-      bottom: auto;
-      left: auto;
-      transform: none;
-      padding: 4px;
-    }
-  }
-
-  .theme-btn {
-    @apply flex items-center justify-center bg-white border-2 border-black cursor-pointer;
-    width: 32px;
-    height: 32px;
-  }
-
-  @media (min-width: 640px) {
-    .theme-btn {
-      width: 38px;
-      height: 38px;
-    }
-  }
-
-  .theme-btn:hover {
-    @apply bg-black;
-  }
-
-  .theme-btn:hover .theme-btn-icon {
-    filter: invert(1) brightness(2);
-  }
-
-  .theme-btn-icon {
+  .mode-toggle svg {
     width: 18px;
     height: 18px;
   }
 
-  @media (min-width: 640px) {
-    .theme-btn-icon {
-      width: 22px;
-      height: 22px;
-    }
+  /* ==================== MAC OS 9 SCROLLBARS ==================== */
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
   }
 
-  .brutalist-icon {
-    stroke-width: 2.5;
+  ::-webkit-scrollbar-track {
+    background: #dddddd;
+    border-left: 1px solid #999;
+    border-right: 1px solid #fff;
   }
 
-  .xp-icon {
-    stroke-width: 1.5;
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #fff 0%, #ddd 50%, #bbb 100%);
+    border: 1px solid #888;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.3);
   }
 
-  .mac-icon {
-    stroke: none;
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #fff 0%, #e8e8e8 50%, #ccc 100%);
   }
 
-  /* XP-styled theme switcher with better Luna aesthetic */
-  [data-theme="xp"] .theme-switcher {
-    background: linear-gradient(180deg, #f5f5f5 0%, #e0ddd5 100%);
-    border: 1px solid #0053ee;
-    border-radius: 5px;
-    box-shadow: 0 2px 6px rgba(0, 83, 238, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  ::-webkit-scrollbar-button {
+    background: linear-gradient(180deg, #fff 0%, #ddd 50%, #bbb 100%);
+    border: 1px solid #888;
+    height: 16px;
+    width: 16px;
   }
 
-  [data-theme="xp"] .theme-btn {
-    background: linear-gradient(180deg, #fff 0%, #f0ede5 100%);
-    border: 1px solid #aca899;
-    border-radius: 3px;
+  ::-webkit-scrollbar-button:hover {
+    background: linear-gradient(180deg, #fff 0%, #e8e8e8 50%, #ccc 100%);
   }
 
-  [data-theme="xp"] .theme-btn:hover {
-    background: linear-gradient(180deg, #fff 0%, #dbe9f7 100%);
-    border-color: #0053ee;
+  /* Up arrow */
+  ::-webkit-scrollbar-button:vertical:decrement {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 4 L4 10 L12 10 Z" fill="%23000"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px;
   }
 
-  /* Mac-styled theme switcher with platinum effect */
-  [data-theme="mac"] .theme-switcher {
-    background: linear-gradient(180deg, #fff 0%, #e5e5e5 100%);
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 #fff;
+  /* Down arrow */
+  ::-webkit-scrollbar-button:vertical:increment {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 12 L4 6 L12 6 Z" fill="%23000"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px;
   }
 
-  [data-theme="mac"] .theme-btn {
-    background: linear-gradient(180deg, #fff 0%, #f0f0f0 100%);
+  /* Dark mode scrollbars */
+  [data-mode="dark"] ::-webkit-scrollbar-track {
+    background: #2a2a32;
+    border-left: 1px solid #1a1a20;
+    border-right: 1px solid #3a3a44;
   }
 
-  [data-theme="mac"] .theme-btn:hover {
-    background: #000;
+  [data-mode="dark"] ::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #4a4a55 0%, #3a3a44 50%, #2a2a32 100%);
+    border: 1px solid #1a1a20;
   }
 
-  /* ==================== TYPOGRAPHY & CONTENT ==================== */
-  /* Smaller prose font sizes - matching body font for comfortable reading */
+  /* ==================== PLATINUM BACKGROUND ==================== */
+  body {
+    background-image:
+      repeating-linear-gradient(0deg,
+        transparent,
+        transparent 1px,
+        rgba(0, 0, 0, 0.03) 1px,
+        rgba(0, 0, 0, 0.03) 2px);
+  }
+
+  [data-mode="dark"] body {
+    background-image: none;
+  }
+
+  /* ==================== TYPOGRAPHY ==================== */
   .prose {
-    @apply max-w-none;
-    font-size: inherit;
-    /* Optimal line length for readability */
     max-width: 65ch;
+    font-size: inherit;
+  }
+
+  /* Force all prose content to use our color variables */
+  .prose,
+  .prose p,
+  .prose li,
+  .prose td,
+  .prose th,
+  .prose blockquote,
+  .prose strong,
+  .prose em {
+    color: var(--color-text);
   }
 
   .prose h1,
   .prose h2,
   .prose h3 {
     color: var(--color-text);
-    /* Better anchor link targeting */
     scroll-margin-top: 2rem;
   }
 
   .prose h1 {
-    @apply font-bold mb-3 mt-5;
-    font-size: 1.35rem;
+    @apply font-bold mb-3 mt-6;
+    font-size: 1.4rem;
     line-height: 1.25;
-    letter-spacing: -0.01em;
   }
 
   @media (min-width: 640px) {
-    .prose h1 {
-      font-size: 1.45rem;
-    }
-  }
-
-  @media (min-width: 768px) {
     .prose h1 {
       font-size: 1.5rem;
     }
   }
 
   .prose h2 {
-    @apply font-bold mb-2 mt-4;
-    font-size: 1.15rem;
+    @apply font-bold mb-2 mt-5;
+    font-size: 1.2rem;
     line-height: 1.3;
   }
 
   @media (min-width: 640px) {
-    .prose h2 {
-      font-size: 1.25rem;
-    }
-  }
-
-  @media (min-width: 768px) {
     .prose h2 {
       font-size: 1.3rem;
     }
   }
 
   .prose h3 {
-    @apply font-bold mb-2 mt-3;
-    font-size: 1.05rem;
+    @apply font-bold mb-2 mt-4;
+    font-size: 1.1rem;
     line-height: 1.35;
   }
 
-  @media (min-width: 640px) {
-    .prose h3 {
-      font-size: 1.1rem;
-    }
-  }
-
-  @media (min-width: 768px) {
-    .prose h3 {
-      font-size: 1.15rem;
-    }
-  }
-
-  /* Paragraph text with optimal line height for reading */
   .prose p {
-    @apply mb-3;
-    line-height: 1.65;
-    font-size: 1em;
-    /* Hyphenation for better mobile text wrapping */
-    hyphens: auto;
-    -webkit-hyphens: auto;
-  }
-
-  @media (min-width: 640px) {
-    .prose p {
-      hyphens: none;
-      -webkit-hyphens: none;
-    }
+    @apply mb-4;
+    line-height: 1.7;
   }
 
   .prose ul,
   .prose ol {
-    @apply mb-3 pl-5;
+    @apply mb-4 pl-5;
   }
 
   .prose li {
     @apply mb-1.5;
-    line-height: 1.6;
+    line-height: 1.65;
   }
 
   .prose code {
     @apply px-1.5 py-0.5 rounded text-sm;
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--color-ui);
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-    /* Prevent code from breaking awkwardly */
-    word-break: break-word;
   }
 
   .prose pre {
     @apply p-4 rounded mb-4;
-    background: rgba(0, 0, 0, 0.05);
-    /* Better horizontal scrolling */
+    background: var(--color-ui);
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    /* Tab size */
-    tab-size: 2;
-    -moz-tab-size: 2;
   }
 
   .prose pre code {
     @apply p-0 bg-transparent;
-    word-break: normal;
   }
 
   .prose blockquote {
     @apply border-l-4 pl-4 italic my-4;
     border-color: var(--color-border);
-    color: var(--color-text2, #555);
+    color: var(--color-text2);
   }
-  
-  /* Better image handling in prose */
+
   .prose img {
     @apply rounded my-4;
     max-width: 100%;
     height: auto;
   }
-  
-  /* Better table handling */
+
   .prose table {
     @apply w-full mb-4;
     border-collapse: collapse;
   }
-  
+
   .prose th,
   .prose td {
-    @apply px-3 py-2 border border-border text-left;
+    @apply px-3 py-2 border text-left;
+    border-color: var(--color-border);
   }
-  
+
   .prose th {
-    @apply font-bold bg-ui;
+    @apply font-bold;
+    background: var(--color-ui);
   }
-  
-  /* Horizontal rule */
+
   .prose hr {
-    @apply my-8 border-t border-border;
+    @apply my-8 border-t;
+    border-color: var(--color-border);
   }
 
   /* ==================== LINKS ==================== */
   .prose a {
-    @apply text-link underline decoration-2 underline-offset-2;
-    transition: background-color 0.1s ease;
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .prose a:visited {
@@ -831,67 +421,44 @@
   }
 
   .prose a:hover {
-    background-color: var(--color-highlight);
-    color: #000;
+    background: var(--color-highlight);
+    color: #fff;
     text-decoration: none;
+    padding: 0 2px;
+    margin: 0 -2px;
+    border-radius: 2px;
   }
 
-  [data-theme="xp"] .prose a {
-    color: #0000ff;
-    text-decoration: underline;
+  /* ==================== NAVIGATION ==================== */
+  header nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
   }
 
-  [data-theme="xp"] .prose a:visited {
-    color: #800080;
-  }
-
-  [data-theme="xp"] .prose a:hover {
-    background: none;
-    color: #ff6600;
-  }
-
-  [data-theme="mac"] .prose a {
-    color: #0000ee;
-  }
-
-  [data-theme="mac"] .prose a:visited {
-    color: #551a8b;
-  }
-
-  [data-theme="mac"] .prose a:hover {
-    background: none;
-    text-decoration: none;
-    border-bottom: 2px solid #0000ee;
-  }
-
-  /* ==================== HEADER & NAV ==================== */
   header nav a {
-    @apply no-underline;
-    font-size: 1rem;
+    display: block;
+    padding: 0.25rem 0.5rem;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 0.95rem;
   }
 
   header nav a:hover {
-    @apply underline;
+    background: var(--color-text);
+    color: var(--color-window);
   }
 
-  [data-theme="xp"] header nav a {
-    @apply no-underline rounded;
+  /* Search button in nav */
+  header nav button {
     padding: 0.25rem 0.5rem;
+    color: var(--color-text2);
+    margin-left: auto;
   }
 
-  [data-theme="xp"] header nav a:hover {
-    background: linear-gradient(180deg, #fff 0%, #e5f3ff 100%);
-  }
-
-  [data-theme="mac"] header nav a {
-    @apply no-underline;
-    padding: 0.15rem 0.4rem;
-    color: #000;
-  }
-
-  [data-theme="mac"] header nav a:hover {
-    background: #000;
-    color: #fff;
+  header nav button:hover {
+    color: var(--color-text);
   }
 
   /* ==================== SEARCH MODAL ==================== */
@@ -920,8 +487,9 @@
     width: 100%;
     max-width: 500px;
     margin: 0 1rem;
-    background: var(--color-bg, #fafaf8);
-    border: 2px solid var(--color-border, #1a1a1a);
+    background: var(--color-window);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     max-height: 60vh;
     display: flex;
@@ -933,7 +501,7 @@
     align-items: center;
     gap: 0.75rem;
     padding: 1rem;
-    border-bottom: 1px solid var(--color-border, #1a1a1a);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .search-icon {
@@ -948,19 +516,22 @@
     font-size: 16px;
     outline: none;
     font-family: inherit;
+    color: var(--color-text);
   }
 
   .search-input-wrapper input::placeholder {
-    opacity: 0.5;
+    color: var(--color-text2);
+    opacity: 0.7;
   }
 
   .search-kbd {
     flex-shrink: 0;
     font-size: 0.7rem;
     padding: 0.2rem 0.4rem;
-    border: 1px solid var(--color-border, #1a1a1a);
+    border: 1px solid var(--color-border);
     border-radius: 3px;
     opacity: 0.5;
+    color: var(--color-text);
   }
 
   .search-results {
@@ -971,7 +542,7 @@
   .search-empty {
     padding: 2rem;
     text-align: center;
-    opacity: 0.5;
+    color: var(--color-text2);
   }
 
   .search-result {
@@ -981,12 +552,13 @@
     padding: 0.75rem 1rem;
     text-decoration: none;
     color: inherit;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--color-ui);
   }
 
   .search-result:hover,
   .search-result.selected {
-    background: var(--color-ui, #e8e8e8);
+    background: var(--color-text);
+    color: var(--color-window);
   }
 
   .search-result-content {
@@ -1008,6 +580,11 @@
     opacity: 0.6;
   }
 
+  .search-result:hover .search-result-subtitle,
+  .search-result.selected .search-result-subtitle {
+    opacity: 0.8;
+  }
+
   .search-result-badge {
     flex-shrink: 0;
     font-size: 0.65rem;
@@ -1015,116 +592,44 @@
     text-transform: uppercase;
     padding: 0.2rem 0.5rem;
     border-radius: 3px;
+    background: var(--color-ui);
   }
 
-  .badge-post {
-    background: rgba(0, 0, 238, 0.1);
-    color: #0000ee;
-  }
-
-  .badge-media {
-    background: rgba(0, 0, 0, 0.1);
-  }
-
-  /* XP themed search modal */
-  [data-theme="xp"] .search-container {
-    background: #ece9d8;
-    border-radius: 8px 8px 0 0;
-    border: 1px solid #0053ee;
-    box-shadow: 0 0 0 1px #0053ee, 0 4px 20px rgba(0, 83, 238, 0.3);
-  }
-
-  [data-theme="xp"] .search-input-wrapper {
-    background: linear-gradient(180deg, #4080d8 0%, #3169c6 40%, #2558b0 60%, #1f4a8e 100%);
-    border-bottom: none;
-  }
-
-  [data-theme="xp"] .search-input-wrapper input {
-    background: white;
-    border: 1px solid #7f9db9;
-    border-radius: 2px;
-    padding: 0.25rem 0.5rem;
-    margin: 0.25rem 0;
-  }
-
-  [data-theme="xp"] .search-icon {
-    color: white;
-  }
-
-  [data-theme="xp"] .search-kbd {
+  .search-result:hover .search-result-badge,
+  .search-result.selected .search-result-badge {
     background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
-    color: white;
   }
 
-  [data-theme="xp"] .search-result:hover,
-  [data-theme="xp"] .search-result.selected {
-    background: linear-gradient(180deg, #fff 0%, #dbe9f7 100%);
-  }
-
-  /* Mac themed search modal */
-  [data-theme="mac"] .search-container {
-    background: #dddddd;
-    border: 1px solid #000;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 #fff;
-  }
-
-  [data-theme="mac"] .search-input-wrapper {
-    background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 15%, #e8e8e8 50%, #dddddd 85%, #cccccc 100%);
-    border-bottom: 1px solid #000;
-  }
-
-  [data-theme="mac"] .search-input-wrapper input {
-    background: white;
-    border: 1px solid #000;
-    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
-  }
-
-  [data-theme="mac"] .search-results {
-    background: white;
-  }
-
-  [data-theme="mac"] .search-result:hover,
-  [data-theme="mac"] .search-result.selected {
-    background: #000;
-    color: #fff;
-  }
-
-  [data-theme="mac"] .search-result:hover .search-result-subtitle,
-  [data-theme="mac"] .search-result.selected .search-result-subtitle {
-    color: #ccc;
-  }
-
-  /* ==================== MEDIA FILTER BUTTONS ==================== */
+  /* ==================== MEDIA FILTERS ==================== */
   .media-filter,
   .rating-filter {
     cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    color: var(--color-text2, #555);
-    border-radius: 3px;
+    padding: 0.2rem 0.5rem;
+    font-size: inherit;
+    color: var(--color-text2);
+    border-radius: 2px;
+    border: 1px solid transparent;
+    background: none;
   }
-  
+
   .media-filter:hover,
   .rating-filter:hover {
-    color: var(--color-text, #1a1a1a);
+    color: var(--color-text);
+    background: var(--color-ui);
   }
-  
+
   .media-filter.active,
   .rating-filter.active {
-    background: var(--color-text, #1a1a1a);
-    color: var(--color-bg, #fafaf8);
+    background: var(--color-text);
+    color: var(--color-window);
+    border-color: var(--color-text);
   }
 
   /* ==================== PRINT STYLES ==================== */
   @media print {
-    .theme-switcher,
-    .window-title-bar,
-    .xp-controls,
-    .mac-close-box,
-    .mac-zoom-box,
+
+    .mode-toggle,
     .search-modal,
-    .search-trigger,
     .media-filter,
     .rating-filter,
     #mediaSearch {
@@ -1134,10 +639,8 @@
     body {
       background: white !important;
       font-size: 12pt !important;
-      line-height: 1.5 !important;
       color: #000 !important;
       padding: 0 !important;
-      max-width: none !important;
     }
 
     .theme-window {
@@ -1147,37 +650,36 @@
     }
 
     .theme-content {
-      border: none !important;
-      box-shadow: none !important;
       padding: 0 !important;
     }
-    
+
     a {
       color: #000 !important;
       text-decoration: underline !important;
     }
-    
-    /* Show URL after links */
+
     a[href^="http"]:after {
       content: " (" attr(href) ")";
       font-size: 0.8em;
       color: #666;
     }
-    
-    /* Avoid page breaks in bad places */
-    h1, h2, h3, h4, h5, h6 {
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       page-break-after: avoid;
       break-after: avoid;
     }
-    
-    img, figure, table, pre {
+
+    img,
+    figure,
+    table,
+    pre {
       page-break-inside: avoid;
       break-inside: avoid;
-    }
-    
-    p, li {
-      orphans: 3;
-      widows: 3;
     }
   }
 }
