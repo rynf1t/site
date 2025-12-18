@@ -303,7 +303,9 @@
   .prose th,
   .prose blockquote,
   .prose strong,
-  .prose em {
+  .prose em,
+  .prose code,
+  .prose pre {
     color: var(--color-text);
   }
 
@@ -362,18 +364,21 @@
   .prose code {
     @apply px-1.5 py-0.5 rounded text-sm;
     background: var(--color-ui);
+    color: var(--color-text);
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   }
 
   .prose pre {
     @apply p-4 rounded mb-4;
-    background: var(--color-ui);
+    background: var(--color-ui) !important;
+    color: var(--color-text) !important;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
   .prose pre code {
     @apply p-0 bg-transparent;
+    color: inherit !important;
   }
 
   .prose blockquote {

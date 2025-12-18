@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "tailwindcss -i src/input.css -o dist/style.css --config tailwind.config.cjs --minify && bun run src/build.ts",
-    "dev": "bun run src/build.ts"
+    "dev": "bun run src/build.ts",
+    "update-tools": "bun run scripts/update-tool-descriptions.ts"
   },
   "dependencies": {
     "front-matter": "^4.0.2",

@@ -59,15 +59,13 @@
         <h1 class="text-2xl font-bold mb-2">How This Site Works</h1>
         <time class="text-text2 text-sm whitespace-nowrap">2024-05-21</time>
       </div>
-      <p>This site is a reaction to complexity.</p>
-<p>After years of attempting to build a site with Next.js, Gatsby, and various other “modern” frameworks to simply render a few markdown files, I decided to burn it all down. I wanted something that I could understand completely, from start to finish. I wanted speed, simplicity, and zero magic.</p>
-<p>So, I built a custom Static Site Generator (SSG) in about 400 lines of TypeScript. Inspired almost entirely by <a href="https://www.jmduke.com/posts/2026.html">Justin Duke</a>.</p>
+      <p>I’ve always wanted something that I could understand completely, from start to finish. That is not necessarily the case with blogging frameworks. I wanted speed, simplicity, and zero magic.  I saw a post and was Ionspired almost entirely by <a href="https://www.jmduke.com/posts/2026.html">Justin Duke’s</a>set-up.</p>
 <h2>The Stack</h2>
 <p>The technology choices were driven by a desire for raw speed and minimal dependencies:</p>
 <ul>
 <li><strong><a href="https://bun.sh/">Bun</a></strong>: The all-in-one JavaScript runtime. It replaces Node.js, npm, and even part of the bundler. It is fast. Absurdly fast.</li>
 <li><strong><a href="https://www.typescriptlang.org/">TypeScript</a></strong>: Because I still want type safety, even in a script.</li>
-<li><strong><a href="https://tailwindcss.com/">Tailwind CSS</a></strong>: For styling. I know, I said “minimal,” but the utility-first approach lets me iterate on the design (like this Mac OS 9 theme) without fighting global CSS specificity wars.</li>
+<li><strong><a href="https://tailwindcss.com/">Tailwind CSS</a></strong>: For styling.</li>
 <li><strong><a href="https://github.com/markdown-it/markdown-it">Markdown-It</a></strong>: To turn words into HTML.</li>
 </ul>
 <p>That’s basically it. No React, no hydration, no client-side routing, no heavy JavaScript bundles sent to your browser. Just HTML and CSS.</p>
@@ -79,11 +77,14 @@
 <li><strong>Processes Markdown</strong>: This is where the fun happens. I run the content through <code>markdown-it</code>, but with some custom logic:
 <ul>
 <li><strong>Wikilinks</strong>: It scans for <code>[[Wiki Links]]</code> and converts them to internal anchor tags, mimicking Obsidian’s linking style.</li>
-<li><strong>Sidenotes</strong>: It parses footnotes <code>[^1]</code> and converts them into CSS-only interactive sidenotes (more on this later).</li>
+<li><strong>References</strong>: It parses footnotes <code>&lt;label for=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-toggle&quot;&gt;1&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-toggle-checkbox&quot;&gt;&lt;span class=&quot;sidenote&quot;&gt;In reality, it's less than this.I use Obsidian + Git Plug-in, and so commits and pushes happen automatically. &lt;/span&gt;&lt;label for=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-backdrop&quot;&gt;&lt;/label&gt;</code> and converts them into CSS-only interactive expanded references (more on this later).</li>
 </ul>
 </li>
-<li><strong>Computes Backlinks</strong>: It does a naive O(N²) scan of all posts to see who links to whom, generating the “Linked to this note” section at the bottom of pages.</li>
+<li><strong>Computes Backlinks</strong>: It does a naive O(N²) scan of all posts to see who links to whom, generating the “Linked to this note” section at the bottom of pages.
+<ol>
 <li><strong>Generates HTML</strong>: It wraps the content in a simple template string (no JSX, just template literals) and writes the files to the <code>dist</code> directory.</li>
+</ol>
+</li>
 </ol>
 <h2>Speed</h2>
 <p>Because Bun is so fast and the logic is so simple, the entire site builds in a fraction of a second.</p>
@@ -94,25 +95,7 @@
 ...
 ✅ Build Complete!
 </code></pre>
-<p>There is no “waiting for webpack to compile.” There is no hot-module-reloading server that takes 10 seconds to start. I change a file, I run the script, and it is done.</p>
-<h2>Cool Features</h2>
-<p>Despite the simplicity, I didn’t want to compromise on the reading experience.</p>
-<h3>CSS-Only Sidenotes</h3>
-<p>I love the sidenote aesthetic (popularized by Tufte CSS). Most implementations require JavaScript to toggle them on mobile. I used the “checkbox hack” instead.</p>
-<pre><code class="language-html">&lt;label for=&quot;sn-1&quot; class=&quot;sidenote-toggle&quot;&gt;1&lt;/label&gt;
-&lt;input type=&quot;checkbox&quot; id=&quot;sn-1&quot; class=&quot;sidenote-toggle-checkbox&quot;&gt;
-&lt;span class=&quot;sidenote&quot;&gt;This is the note content.&lt;/span&gt;
-</code></pre>
-<p>In <code>input.css</code>, I have rules that say “when this checkbox is checked, show the adjacent span.” It works perfectly without a single line of client-side JS.</p>
-<h3>Client-Side Search</h3>
-<p>I didn’t want to run a server for search (Algolia, Elasticsearch, etc.). So, during the build, I generate a <code>search.json</code> file containing the title and basic metadata of every post. The client fetches this lightweight JSON file (~10KB) once, and all searching happens instantly in your browser using a simple filter function.</p>
-<h2>The Aesthetic</h2>
-<p>The design is a love letter to <strong>Mac OS 9</strong>. I missed the platinum interfaces, the bevels, and the pinstripes.</p>
-<p>I implemented this using extensive CSS variables (<code>--color-bg</code>, <code>--color-window</code>, etc.) defined in Tailwind’s base layer. This allows me to switch themes (light/dark) by simply changing the data-attribute on the HTML tag, and every component updates instantly.</p>
-<p>The “window” container you’re reading this in? It has a <code>box-shadow</code> carefully tuned to look like a floating OS window. The scrollbars? Custom WebKit pseudo-elements to match the retro look.</p>
-<h2>Why?</h2>
-<p>We’ve over-engineered everything. Sometimes, you just need a loop that reads a file and writes an HTML string.</p>
-<p>You can view the full source code for this site <a href="https://github.com/rynf1t/site">on GitHub</a>.</p>
+<p>There is no “waiting for webpack to compile.” There is no hot-module-reloading server that takes 10 seconds to start. I change a file, I run the script, and it is done <label for="sn-how-this-site-works-1" class="sidenote-toggle">1</label><input type="checkbox" id="sn-how-this-site-works-1" class="sidenote-toggle-checkbox"><span class="sidenote">In reality, it’s less than this.I use Obsidian + Git Plug-in, and so commits and pushes happen automatically. </span><label for="sn-how-this-site-works-1" class="sidenote-backdrop"></label>.</p>
 
       
     </article>

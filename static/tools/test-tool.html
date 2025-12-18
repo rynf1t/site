@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Tool</title>
+    <meta name="description" content="This free online square calculator instantly computes the squared value of any number you enter.">
+</head>
+<body>
+    <h1>Test Tool</h1>
+    <p>This tool is for testing the LLM description generator. It calculates the square of a number.</p>
+    <input type="number" id="num">
+    <button onclick="calc()">Calc</button>
+    <div id="res"></div>
+    <script>
+        function calc() {
+            const n = document.getElementById('num').value;
+            document.getElementById('res').textContent = n * n;
+        }
+    </script>
+</body>
+</html>

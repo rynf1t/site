@@ -5,4 +5,4 @@ order: 4
 
 # About
 
-This is my site
+I care about context. This will be a place for me to mark my own context. 
