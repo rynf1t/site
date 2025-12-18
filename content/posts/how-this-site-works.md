@@ -3,7 +3,7 @@ title: How This Site Works
 date: 2024-05-21
 description: A deep dive into the custom static site generator powering this blog, built with Bun and TypeScript.
 ---
-I've always wanted something that I could understand completely, from start to finish. That is not necessarily the case with blogging frameworks. I wanted speed, simplicity, and zero magic.  I saw a post and was Ionspired almost entirely by [Justin Duke's](https://www.jmduke.com/posts/2026.html)set-up.
+I've always wanted something that I could understand completely, from start to finish. That is not necessarily the case with blogging frameworks. I wanted speed, simplicity, and zero magic.  I saw a post on such a build and was inspired almost entirely by [Justin Duke's](https://www.jmduke.com/posts/2026.html) set-up.
 
 ## The Stack
 
@@ -23,7 +23,7 @@ The entire build process lives in a single file: `src/build.ts`. It runs top-to-
 2. **Parses Frontmatter**: Using `front-matter` to extract metadata like title, date, and custom fields (like ratings for my media stash).
 3. **Processes Markdown**: This is where the fun happens. I run the content through `markdown-it`, but with some custom logic:
     *  **Wikilinks**: It scans for `[[Wiki Links]]` and converts them to internal anchor tags, mimicking Obsidian's linking style.
-    * **References**: It parses footnotes `[^1]` and converts them into CSS-only interactive expanded references (more on this later).
+    * **References**:  It parses footnotes `[^1]` and converts them into CSS-only interactive expanded references (more on this later).
 4. **Computes Backlinks**: It does a naive O(N²) scan of all posts to see who links to whom, generating the "Linked to this note" section at the bottom of pages.
 	1. **Generates HTML**: It wraps the content in a simple template string (no JSX, just template literals) and writes the files to the `dist` directory.
 
@@ -40,6 +40,6 @@ $ bun run build
 ✅ Build Complete!
 ```
 
-There is no "waiting for webpack to compile." There is no hot-module-reloading server that takes 10 seconds to start. I change a file, I run the script, and it is done [^1].
+There is no "waiting for webpack to compile." There is no hot-module-reloading server that takes 10 seconds to start. I change a file, I run the script, and it is done. [^1]
 
 [^1]: In reality, it's less than this.I use Obsidian + Git Plug-in, and so commits and pushes happen automatically. 

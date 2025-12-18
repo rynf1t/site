@@ -20,12 +20,14 @@ async function updateTools() {
     const htmlFiles = files.filter(f => f.endsWith('.html'));
 
     for (const file of htmlFiles) {
+        console.log(`📄 Processing ${file}...`);
         const filePath = join(TOOLS_DIR, file);
         const content = await readFile(filePath, 'utf-8');
 
         // Check if description exists and is not generic
         const descMatch = content.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i);
-        const hasDescription = descMatch && descMatch[1].trim().length > 0;
+        const hasDescription = !!(descMatch && descMatch[1].trim().length > 0);
+        console.log(`  - Has description: ${hasDescription}`);
 
         if (!hasDescription) {
             console.log(`✨ Generating description for ${file}...`);

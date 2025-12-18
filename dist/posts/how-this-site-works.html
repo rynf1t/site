@@ -59,7 +59,7 @@
         <h1 class="text-2xl font-bold mb-2">How This Site Works</h1>
         <time class="text-text2 text-sm whitespace-nowrap">2024-05-21</time>
       </div>
-      <p>I’ve always wanted something that I could understand completely, from start to finish. That is not necessarily the case with blogging frameworks. I wanted speed, simplicity, and zero magic.  I saw a post and was Ionspired almost entirely by <a href="https://www.jmduke.com/posts/2026.html">Justin Duke’s</a>set-up.</p>
+      <p>I’ve always wanted something that I could understand completely, from start to finish. That is not necessarily the case with blogging frameworks. I wanted speed, simplicity, and zero magic.  I saw a post on such a build and was inspired almost entirely by <a href="https://www.jmduke.com/posts/2026.html">Justin Duke’s</a> set-up.</p>
 <h2>The Stack</h2>
 <p>The technology choices were driven by a desire for raw speed and minimal dependencies:</p>
 <ul>
@@ -77,7 +77,7 @@
 <li><strong>Processes Markdown</strong>: This is where the fun happens. I run the content through <code>markdown-it</code>, but with some custom logic:
 <ul>
 <li><strong>Wikilinks</strong>: It scans for <code>[[Wiki Links]]</code> and converts them to internal anchor tags, mimicking Obsidian’s linking style.</li>
-<li><strong>References</strong>: It parses footnotes <code>&lt;label for=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-toggle&quot;&gt;1&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-toggle-checkbox&quot;&gt;&lt;span class=&quot;sidenote&quot;&gt;In reality, it's less than this.I use Obsidian + Git Plug-in, and so commits and pushes happen automatically. &lt;/span&gt;&lt;label for=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-backdrop&quot;&gt;&lt;/label&gt;</code> and converts them into CSS-only interactive expanded references (more on this later).</li>
+<li><strong>References</strong>:  It parses footnotes <code>&lt;label for=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-toggle&quot;&gt;1&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-toggle-checkbox&quot;&gt;&lt;span class=&quot;sidenote&quot;&gt;In reality, it's less than this.I use Obsidian + Git Plug-in, and so commits and pushes happen automatically. &lt;/span&gt;&lt;label for=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-backdrop&quot;&gt;&lt;/label&gt;</code> and converts them into CSS-only interactive expanded references (more on this later).</li>
 </ul>
 </li>
 <li><strong>Computes Backlinks</strong>: It does a naive O(N²) scan of all posts to see who links to whom, generating the “Linked to this note” section at the bottom of pages.
@@ -95,7 +95,7 @@
 ...
 ✅ Build Complete!
 </code></pre>
-<p>There is no “waiting for webpack to compile.” There is no hot-module-reloading server that takes 10 seconds to start. I change a file, I run the script, and it is done <label for="sn-how-this-site-works-1" class="sidenote-toggle">1</label><input type="checkbox" id="sn-how-this-site-works-1" class="sidenote-toggle-checkbox"><span class="sidenote">In reality, it’s less than this.I use Obsidian + Git Plug-in, and so commits and pushes happen automatically. </span><label for="sn-how-this-site-works-1" class="sidenote-backdrop"></label>.</p>
+<p>There is no “waiting for webpack to compile.” There is no hot-module-reloading server that takes 10 seconds to start. I change a file, I run the script, and it is done. <label for="sn-how-this-site-works-1" class="sidenote-toggle">1</label><input type="checkbox" id="sn-how-this-site-works-1" class="sidenote-toggle-checkbox"><span class="sidenote">In reality, it’s less than this.I use Obsidian + Git Plug-in, and so commits and pushes happen automatically. </span><label for="sn-how-this-site-works-1" class="sidenote-backdrop"></label></p>
 
       
     </article>

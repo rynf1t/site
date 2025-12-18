@@ -369,8 +369,9 @@
   }
 
   .prose pre {
-    @apply p-4 rounded mb-4;
-    background: var(--color-ui) !important;
+    @apply p-4 rounded mb-4 border;
+    border-color: var(--color-border);
+    background: var(--color-bg-alt) !important;
     color: var(--color-text) !important;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
