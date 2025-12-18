@@ -275,7 +275,7 @@ async function build() {
 // Tools Page Generator
 async function generateToolsPage(intro?: string): Promise<string> {
     const toolsDir = 'static/tools';
-    let htmlTools: { name: string; title: string; description: string; url: string }[] = [];
+    let htmlTools: { name: string; title: string; description: string; tags: string[]; url: string }[] = [];
 
     try {
         const files = await readdir(toolsDir);
@@ -294,7 +294,11 @@ async function generateToolsPage(intro?: string): Promise<string> {
             const descMatch = content.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i);
             const description = descMatch ? descMatch[1].trim() : '';
 
-            htmlTools.push({ name, title, description, url: `/tools/${file}` });
+            // Extract keywords from <meta name="keywords">
+            const keyMatch = content.match(/<meta\s+name=["']keywords["']\s+content=["']([^"']+)["']/i);
+            const tags = keyMatch ? keyMatch[1].split(',').map((t: string) => t.trim()) : [];
+
+            htmlTools.push({ name, title, description, tags, url: `/tools/${file}` });
         }
     } catch (e) {
         // No tools directory yet
@@ -305,7 +309,10 @@ async function generateToolsPage(intro?: string): Promise<string> {
             <li class="mb-3 leading-relaxed">
                 <a href="${tool.url}" class="text-link font-bold no-underline hover:underline">${tool.title}</a>
                 ${tool.description ? `<span class="text-text2"> — ${tool.description}</span>` : ''}
-                <a href="https://github.com/rynf1t/site/blob/main/static/tools/${tool.name}.html" class="text-sm ml-2 text-link hover:underline">[code]</a>
+                <div class="mt-1">
+                    ${tool.tags.map((tag: string) => `<span class="inline-block bg-stone-100 text-stone-600 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded mr-1 border border-stone-200">${tag}</span>`).join('')}
+                    <a href="https://github.com/rynf1t/site/blob/main/static/tools/${tool.name}.html" class="text-xs text-link hover:underline ml-1">[code]</a>
+                </div>
             </li>
         `).join('')
         : '<p>No tools yet.</p>';

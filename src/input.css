@@ -381,7 +381,7 @@
   }
 
   .prose pre code {
-    @apply p-0 bg-transparent;
+    @apply p-0 bg-transparent border-none;
     color: inherit !important;
   }
 
