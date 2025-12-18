@@ -5,6 +5,7 @@ import { spawnSync } from 'node:child_process';
 const TOOLS_DIR = join(process.cwd(), 'static/tools');
 
 async function getLLMData(content: string): Promise<{ description: string; tags: string[] }> {
+    const LLM_PATH = '/opt/homebrew/bin/llm';
     const prompt = `Based on the following HTML tool code, generate:
 1. A concise, one-sentence SEO-friendly description.
 2. 3-5 relevant technology or category tags (e.g. "JavaScript", "Utilities", "Retro").
@@ -14,7 +15,7 @@ Return your response in JSON format: {"description": "...", "tags": ["...", "...
 Code snippet (first 3000 chars):
 ${content.slice(0, 3000)}`;
 
-    const result = spawnSync('llm', [prompt]);
+    const result = spawnSync(LLM_PATH, [prompt]);
     if (result.status === 0) {
         try {
             const data = JSON.parse(result.stdout.toString().trim().replace(/```json|```/g, ''));

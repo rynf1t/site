@@ -294,9 +294,14 @@ async function generateToolsPage(intro?: string): Promise<string> {
             const descMatch = content.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i);
             const description = descMatch ? descMatch[1].trim() : '';
 
-            // Extract keywords from <meta name="keywords">
+            // Extract keywords from <meta name="keywords"> and filter to only languages
             const keyMatch = content.match(/<meta\s+name=["']keywords["']\s+content=["']([^"']+)["']/i);
-            const tags = keyMatch ? keyMatch[1].split(',').map((t: string) => t.trim()) : [];
+            const languages = ['javascript', 'go', 'sql', 'python', 'typescript', 'rust', 'bash', 'html', 'css', 'ruby', 'java'];
+            const tags = keyMatch
+                ? keyMatch[1].split(',')
+                    .map((t: string) => t.trim())
+                    .filter((t: string) => languages.includes(t.toLowerCase()))
+                : [];
 
             htmlTools.push({ name, title, description, tags, url: `/tools/${file}` });
         }
