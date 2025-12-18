@@ -1,36 +1,9 @@
 [
   {
-    "title": "Test Note",
-    "url": "/posts/test-note.html",
+    "title": "How This Site Works",
+    "url": "/posts/how-this-site-works.html",
     "type": "post",
-    "date": "2025-12-17"
-  },
-  {
-    "title": "Note C",
-    "url": "/posts/note-c.html",
-    "type": "post",
-    "date": "2025-01-03"
-  },
-  {
-    "title": "Note B",
-    "url": "/posts/note-b.html",
-    "type": "post",
-    "date": "2025-01-02"
-  },
-  {
-    "title": "Note A",
-    "url": "/posts/note-a.html",
-    "type": "post",
-    "date": "2025-01-01"
-  },
-  {
-    "title": "Trust",
-    "url": "/posts/trust-test.html",
-    "type": "media",
-    "mediaType": "book",
-    "image": "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1631246461i/58210933.jpg",
-    "author": "Hernan Diaz",
-    "year": "2022"
+    "date": "2024-05-21"
   },
   {
     "title": "Trust",

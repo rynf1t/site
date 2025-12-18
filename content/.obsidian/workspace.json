@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "ada6e29a401ffaee",
+        "id": "f98372ff8eef290b",
         "type": "tabs",
         "children": [
           {
-            "id": "89c55660bb198395",
+            "id": "b42299dab386dc62",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "posts/how-this-site-works.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "how-this-site-works"
+              "title": "New tab"
             }
           }
         ]
@@ -94,7 +90,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "posts/how-this-site-works.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +99,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for how-this-site-works"
+              "title": "Backlinks"
             }
           },
           {
@@ -113,12 +108,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "posts/how-this-site-works.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from how-this-site-works"
+              "title": "Outgoing links"
             }
           },
           {
@@ -156,13 +150,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "posts/how-this-site-works.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of how-this-site-works"
+              "title": "Outline"
             }
           }
         ]
@@ -184,10 +177,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "89c55660bb198395",
+  "active": "b42299dab386dc62",
   "lastOpenFiles": [
-    "media/Trust.md",
     "posts/how-this-site-works.md",
+    "media/Trust.md",
     "posts/how this site is built.md",
     "pages/tools.md",
     "media/Trust Test.md",
