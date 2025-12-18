@@ -13,28 +13,43 @@ const md = new MarkdownIt({
 // --- Sidenote Processing ---
 // Pre-process markdown to convert footnote syntax into inline sidenotes
 function preProcessSidenotes(markdown: string, slug: string): string {
-    // 1. Extract definitions: [^1]: content
-    // We match the key and the content. basic single line support for now to match user style.
+    // Regex to match code blocks and inline code to exclude them
+    const codeRegex = /(```[\s\S]*?```|`[^`]*`)/g;
+
+    // Split the markdown into parts: [text, code, text, code, ...]
+    // Capturing group in split means delimiters are included in the array
+    const parts = markdown.split(codeRegex);
+
+    // 1. First Pass: Extract definitions from text parts only
     const definitions = new Map<string, string>();
     const defRegex = /^\[\^([^\s\]]+)\]:\s*(.+)$/gm;
 
-    // We need to strip definitions from the markdown so they don't render at bottom
-    // We'll rebuild the string without them
-    let cleanMarkdown = markdown.replace(defRegex, (match, id, content) => {
-        definitions.set(id, content);
-        return '';
-    });
+    for (let i = 0; i < parts.length; i++) {
+        // Only process text parts (even indices)
+        if (i % 2 === 0) {
+            parts[i] = parts[i].replace(defRegex, (match, id, content) => {
+                definitions.set(id, content);
+                return '';
+            });
+        }
+    }
 
-    // 2. Replace markers: [^1] with HTML
-    // We use a unique ID derived from slug + noteId to avoid collisions on index page
+    // 2. Second Pass: Replace markers in text parts only
     const markerRegex = /\[\^([^\s\]]+)\]/g;
-    return cleanMarkdown.replace(markerRegex, (match, id) => {
-        const content = definitions.get(id);
-        if (!content) return match; // Missing def, leave as text
+    for (let i = 0; i < parts.length; i++) {
+        // Only process text parts (even indices)
+        if (i % 2 === 0) {
+            parts[i] = parts[i].replace(markerRegex, (match, id) => {
+                const content = definitions.get(id);
+                if (!content) return match;
 
-        const uniqueId = `sn-${slug}-${id}`;
-        return `<label for="${uniqueId}" class="sidenote-toggle">${id}</label><input type="checkbox" id="${uniqueId}" class="sidenote-toggle-checkbox"><span class="sidenote">${content}</span><label for="${uniqueId}" class="sidenote-backdrop"></label>`;
-    });
+                const uniqueId = `sn-${slug}-${id}`;
+                return `<label for="${uniqueId}" class="sidenote-toggle">${id}</label><input type="checkbox" id="${uniqueId}" class="sidenote-toggle-checkbox"><span class="sidenote">${content}</span><label for="${uniqueId}" class="sidenote-backdrop"></label>`;
+            });
+        }
+    }
+
+    return parts.join('');
 }
 
 // Wikilinks: [[Link]] -> <a href="/posts/link.html">Link</a>
@@ -257,48 +272,10 @@ async function build() {
     console.log('✅ Build Complete!');
 }
 
-// Helper to extract tech tags from tool content
-function getToolTechTags(content: string): string[] {
-    const tags: string[] = [];
-
-    // 1. Check for manual tags in meta keywords
-    const keywordsMatch = content.match(/<meta\s+name=["']keywords["']\s+content=["']([^"']+)["']/i);
-    if (keywordsMatch) {
-        const manualTags = keywordsMatch[1].split(',').map(t => t.trim().toLowerCase());
-        tags.push(...manualTags);
-    }
-
-    const contentLower = content.toLowerCase();
-
-    // 2. Check for libraries and tech
-    if (contentLower.includes('sql.js') || contentLower.includes('sqlite-wasm')) tags.push('sqlite');
-    if (contentLower.includes('markdown-it') || contentLower.includes('marked.js') || contentLower.includes('markdown')) tags.push('markdown');
-    if (contentLower.includes('tailwindcss') || contentLower.includes('tailwind.config')) tags.push('tailwind');
-    if (contentLower.includes('react') && (contentLower.includes('jsx') || contentLower.includes('react-dom'))) tags.push('react');
-    if (contentLower.includes('gemini') || contentLower.includes('openai') || contentLower.includes('anthropic')) tags.push('ai');
-    if (contentLower.includes('chart.js') || contentLower.includes('d3.js')) tags.push('charts');
-    if (contentLower.includes('go install') || contentLower.includes('go build') || contentLower.includes('golang')) tags.push('go');
-
-    // Heuristics
-    if (contentLower.includes('<canvas')) tags.push('canvas');
-    if (contentLower.includes('localstorage')) tags.push('storage');
-    if (contentLower.includes('fetch(') || contentLower.includes('axios')) tags.push('api');
-
-    // CSS-in-JS or specific styles
-    if (contentLower.includes('press start 2p')) tags.push('retro');
-
-    // Catch-all
-    if (tags.length === 0) {
-        if (contentLower.includes('<script')) tags.push('js');
-    }
-
-    return Array.from(new Set(tags)).filter(tag => tag.length > 0); // Unique non-empty tags
-}
-
 // Tools Page Generator
 async function generateToolsPage(intro?: string): Promise<string> {
     const toolsDir = 'static/tools';
-    let htmlTools: { name: string; title: string; description: string; url: string; tags: string[] }[] = [];
+    let htmlTools: { name: string; title: string; description: string; url: string }[] = [];
 
     try {
         const files = await readdir(toolsDir);
@@ -317,56 +294,35 @@ async function generateToolsPage(intro?: string): Promise<string> {
             const descMatch = content.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i);
             const description = descMatch ? descMatch[1].trim() : '';
 
-            // Extract tags
-            const tags = getToolTechTags(content);
-
-            htmlTools.push({ name, title, description, url: `/tools/${file}`, tags });
+            htmlTools.push({ name, title, description, url: `/tools/${file}` });
         }
     } catch (e) {
         // No tools directory yet
     }
 
-    // Sort tools by title
-    htmlTools.sort((a, b) => a.title.localeCompare(b.title));
-
-    const allTags = Array.from(new Set(htmlTools.flatMap(t => t.tags))).sort();
-
     const toolsList = htmlTools.length > 0
         ? htmlTools.map(tool => `
-            <li class="tool-item mb-4 leading-relaxed" data-tags="${tool.tags.join(' ')}" data-search="${(tool.title + ' ' + tool.description + ' ' + tool.tags.join(' ')).toLowerCase()}">
-                <div class="flex flex-wrap items-baseline gap-x-2">
-                    <a href="${tool.url}" class="text-link font-bold no-underline hover:underline">${tool.title}</a>
-                    <span class="flex gap-1">
-                        ${tool.tags.map(tag => `<span class="tool-tag text-[10px] px-1.5 py-0.5 bg-border/50 text-text2 rounded hover:bg-link hover:text-white cursor-pointer transition-colors" onclick="filterByTag('${tag}')">${tag}</span>`).join('')}
-                    </span>
-                    <a href="https://github.com/rynf1t/site/blob/main/static/tools/${tool.name}.html" class="text-xs text-link hover:underline ml-auto">[code]</a>
-                </div>
-                ${tool.description ? `<p class="text-text2 text-sm mt-1">${tool.description}</p>` : ''}
+            <li class="mb-3 leading-relaxed">
+                <a href="${tool.url}" class="text-link font-bold no-underline hover:underline">${tool.title}</a>
+                ${tool.description ? `<span class="text-text2"> — ${tool.description}</span>` : ''}
+                <a href="https://github.com/rynf1t/site/blob/main/static/tools/${tool.name}.html" class="text-sm ml-2 text-link hover:underline">[code]</a>
             </li>
         `).join('')
         : '<p>No tools yet.</p>';
-
-    const tagFilters = allTags.map(tag =>
-        `<button class="tool-filter-btn text-xs px-2 py-1 border border-border rounded hover:border-link hover:text-link transition-colors" data-tag="${tag}">${tag}</button>`
-    ).join('');
 
     return `
         <section>
             <h1 class="font-bold text-2xl mb-8">Tools</h1>
             ${intro ? `<div class="prose prose-stone prose-lg max-w-none mb-8">${intro}</div>` : ''}
 
-            <div class="mb-6 space-y-4">
+            <div class="mb-6">
                 <input 
                     type="text" 
                     id="toolSearch" 
-                    placeholder="Search tools by name, description, or tech..." 
+                    placeholder="Search tools..." 
                     style="background: white; border: 2px inset #999; padding: 6px 10px; width: 100%; font-family: inherit; font-size: 14px; color: #000;"
                     autocomplete="off"
                 >
-                <div class="flex flex-wrap gap-2" id="tagFilters">
-                    <button class="tool-filter-btn active text-xs px-2 py-1 border border-border rounded hover:border-link hover:text-link transition-colors" data-tag="all">all</button>
-                    ${tagFilters}
-                </div>
             </div>
 
             <ul class="list-none p-0 m-0" id="toolsList">
@@ -375,63 +331,28 @@ async function generateToolsPage(intro?: string): Promise<string> {
              <p id="noResults" class="hidden text-text2 text-center py-8">No tools match your search.</p>
         </section>
 
-        <style>
-            .tool-filter-btn.active {
-                background: var(--color-link);
-                color: white;
-                border-color: var(--color-link);
-            }
-        </style>
-
         <script>
             (function() {
                 var searchInput = document.getElementById('toolSearch');
-                var items = document.querySelectorAll('.tool-item');
+                var list = document.getElementById('toolsList');
+                var items = list.getElementsByTagName('li');
                 var noResults = document.getElementById('noResults');
-                var filterBtns = document.querySelectorAll('.tool-filter-btn');
-                var activeTag = 'all';
-                var searchQuery = '';
-                
-                function updateFilters() {
-                    var visibleCount = 0;
-                    items.forEach(function(item) {
-                        var tags = item.dataset.tags.split(' ');
-                        var searchStr = item.dataset.search;
-                        
-                        var matchesTag = activeTag === 'all' || tags.indexOf(activeTag) !== -1;
-                        var matchesSearch = !searchQuery || searchStr.indexOf(searchQuery) !== -1;
-                        
-                        var show = matchesTag && matchesSearch;
-                        item.style.display = show ? '' : 'none';
-                        if (show) visibleCount++;
-                    });
-                    
-                    noResults.classList.toggle('hidden', visibleCount > 0);
-                }
                 
                 searchInput.addEventListener('input', function(e) {
-                    searchQuery = e.target.value.toLowerCase();
-                    updateFilters();
+                    var query = e.target.value.toLowerCase();
+                    var visibleCount = 0;
+                    
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        var text = item.textContent.toLowerCase();
+                        var show = text.indexOf(query) !== -1;
+                        
+                        item.style.display = show ? '' : 'none';
+                        if (show) visibleCount++;
+                    }
+                    
+                    noResults.classList.toggle('hidden', visibleCount > 0);
                 });
-                
-                filterBtns.forEach(function(btn) {
-                    btn.addEventListener('click', function() {
-                        filterBtns.forEach(function(b) { b.classList.remove('active'); });
-                        btn.classList.add('active');
-                        activeTag = btn.dataset.tag;
-                        updateFilters();
-                    });
-                });
-                
-                window.filterByTag = function(tag) {
-                    searchInput.value = '';
-                    searchQuery = '';
-                    filterBtns.forEach(function(btn) {
-                        if (btn.dataset.tag === tag) {
-                            btn.click();
-                        }
-                    });
-                };
             })();
         </script>
     `;

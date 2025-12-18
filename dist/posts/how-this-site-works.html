@@ -77,7 +77,7 @@
 <li><strong>Processes Markdown</strong>: This is where the fun happens. I run the content through <code>markdown-it</code>, but with some custom logic:
 <ul>
 <li><strong>Wikilinks</strong>: It scans for <code>[[Wiki Links]]</code> and converts them to internal anchor tags, mimicking Obsidian’s linking style.</li>
-<li><strong>References</strong>:  It parses footnotes <code>&lt;label for=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-toggle&quot;&gt;1&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-toggle-checkbox&quot;&gt;&lt;span class=&quot;sidenote&quot;&gt;In reality, it's less than this.I use Obsidian + Git Plug-in, and so commits and pushes happen automatically. &lt;/span&gt;&lt;label for=&quot;sn-how-this-site-works-1&quot; class=&quot;sidenote-backdrop&quot;&gt;&lt;/label&gt;</code> and converts them into CSS-only interactive expanded references (more on this later).</li>
+<li><strong>References</strong>:  It parses footnotes <code>[^1]</code> and converts them into CSS-only interactive expanded references (more on this later).</li>
 </ul>
 </li>
 <li><strong>Computes Backlinks</strong>: It does a naive O(N²) scan of all posts to see who links to whom, generating the “Linked to this note” section at the bottom of pages.

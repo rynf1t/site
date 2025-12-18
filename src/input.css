@@ -362,10 +362,13 @@
   }
 
   .prose code {
-    @apply px-1.5 py-0.5 rounded text-sm;
-    background: var(--color-ui);
+    @apply px-1.5 py-0.5 rounded-sm text-sm border;
+    background: var(--color-bg-alt);
+    border-color: var(--color-border);
     color: var(--color-text);
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
   }
 
   .prose pre {

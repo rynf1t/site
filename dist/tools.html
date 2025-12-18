@@ -64,138 +64,74 @@
 <p>The source code for each can be viewed by clicking [code]. While my site is a monorepo, the files linked should stand on it’s own in most cases and can be exported and used immediately.</p>
 </div>
 
-            <div class="mb-6 space-y-4">
+            <div class="mb-6">
                 <input 
                     type="text" 
                     id="toolSearch" 
-                    placeholder="Search tools by name, description, or tech..." 
+                    placeholder="Search tools..." 
                     style="background: white; border: 2px inset #999; padding: 6px 10px; width: 100%; font-family: inherit; font-size: 14px; color: #000;"
                     autocomplete="off"
                 >
-                <div class="flex flex-wrap gap-2" id="tagFilters">
-                    <button class="tool-filter-btn active text-xs px-2 py-1 border border-border rounded hover:border-link hover:text-link transition-colors" data-tag="all">all</button>
-                    <button class="tool-filter-btn text-xs px-2 py-1 border border-border rounded hover:border-link hover:text-link transition-colors" data-tag="api">api</button><button class="tool-filter-btn text-xs px-2 py-1 border border-border rounded hover:border-link hover:text-link transition-colors" data-tag="go">go</button><button class="tool-filter-btn text-xs px-2 py-1 border border-border rounded hover:border-link hover:text-link transition-colors" data-tag="js">js</button><button class="tool-filter-btn text-xs px-2 py-1 border border-border rounded hover:border-link hover:text-link transition-colors" data-tag="markdown">markdown</button><button class="tool-filter-btn text-xs px-2 py-1 border border-border rounded hover:border-link hover:text-link transition-colors" data-tag="retro">retro</button><button class="tool-filter-btn text-xs px-2 py-1 border border-border rounded hover:border-link hover:text-link transition-colors" data-tag="sqlite">sqlite</button><button class="tool-filter-btn text-xs px-2 py-1 border border-border rounded hover:border-link hover:text-link transition-colors" data-tag="storage">storage</button>
-                </div>
             </div>
 
             <ul class="list-none p-0 m-0" id="toolsList">
                 
-            <li class="tool-item mb-4 leading-relaxed" data-tags="retro" data-search="coin flip randomly generates a coin flip result with retro arcade-style animation and visual feedback showing heads or tails. retro">
-                <div class="flex flex-wrap items-baseline gap-x-2">
-                    <a href="/tools/coin-flip.html" class="text-link font-bold no-underline hover:underline">Coin Flip</a>
-                    <span class="flex gap-1">
-                        <span class="tool-tag text-[10px] px-1.5 py-0.5 bg-border/50 text-text2 rounded hover:bg-link hover:text-white cursor-pointer transition-colors" onclick="filterByTag('retro')">retro</span>
-                    </span>
-                    <a href="https://github.com/rynf1t/site/blob/main/static/tools/coin-flip.html" class="text-xs text-link hover:underline ml-auto">[code]</a>
-                </div>
-                <p class="text-text2 text-sm mt-1">Randomly generates a coin flip result with retro arcade-style animation and visual feedback showing heads or tails.</p>
+            <li class="mb-3 leading-relaxed">
+                <a href="/tools/sqlite-csv-playground.html" class="text-link font-bold no-underline hover:underline">SQLite CSV Playground Pro</a>
+                <span class="text-text2"> — Execute SQL queries and analyze CSV data directly in your browser with support for query chaining, visual query building, and real-time autocomplete.</span>
+                <a href="https://github.com/rynf1t/site/blob/main/static/tools/sqlite-csv-playground.html" class="text-sm ml-2 text-link hover:underline">[code]</a>
             </li>
         
-            <li class="tool-item mb-4 leading-relaxed" data-tags="markdown go" data-search="fmtmd convert markdown to slack-compatible html format for pasting into slack, google docs, and other apps that recognize html clipboard format. markdown go">
-                <div class="flex flex-wrap items-baseline gap-x-2">
-                    <a href="/tools/fmtmd.html" class="text-link font-bold no-underline hover:underline">fmtmd</a>
-                    <span class="flex gap-1">
-                        <span class="tool-tag text-[10px] px-1.5 py-0.5 bg-border/50 text-text2 rounded hover:bg-link hover:text-white cursor-pointer transition-colors" onclick="filterByTag('markdown')">markdown</span><span class="tool-tag text-[10px] px-1.5 py-0.5 bg-border/50 text-text2 rounded hover:bg-link hover:text-white cursor-pointer transition-colors" onclick="filterByTag('go')">go</span>
-                    </span>
-                    <a href="https://github.com/rynf1t/site/blob/main/static/tools/fmtmd.html" class="text-xs text-link hover:underline ml-auto">[code]</a>
-                </div>
-                <p class="text-text2 text-sm mt-1">Convert Markdown to Slack-compatible HTML format for pasting into Slack, Google Docs, and other apps that recognize HTML clipboard format.</p>
+            <li class="mb-3 leading-relaxed">
+                <a href="/tools/test-tool.html" class="text-link font-bold no-underline hover:underline">Test Tool</a>
+                <span class="text-text2"> — This free online square calculator instantly computes the squared value of any number you enter.</span>
+                <a href="https://github.com/rynf1t/site/blob/main/static/tools/test-tool.html" class="text-sm ml-2 text-link hover:underline">[code]</a>
             </li>
         
-            <li class="tool-item mb-4 leading-relaxed" data-tags="markdown" data-search="slack formatter converts markdown formatting into slack-compatible text with html clipboard support for pasting into slack, google docs, and other applications. markdown">
-                <div class="flex flex-wrap items-baseline gap-x-2">
-                    <a href="/tools/slack-formatter.html" class="text-link font-bold no-underline hover:underline">Slack Formatter</a>
-                    <span class="flex gap-1">
-                        <span class="tool-tag text-[10px] px-1.5 py-0.5 bg-border/50 text-text2 rounded hover:bg-link hover:text-white cursor-pointer transition-colors" onclick="filterByTag('markdown')">markdown</span>
-                    </span>
-                    <a href="https://github.com/rynf1t/site/blob/main/static/tools/slack-formatter.html" class="text-xs text-link hover:underline ml-auto">[code]</a>
-                </div>
-                <p class="text-text2 text-sm mt-1">Converts Markdown formatting into Slack-compatible text with HTML clipboard support for pasting into Slack, Google Docs, and other applications.</p>
+            <li class="mb-3 leading-relaxed">
+                <a href="/tools/slack-formatter.html" class="text-link font-bold no-underline hover:underline">Slack Formatter</a>
+                <span class="text-text2"> — Converts Markdown formatting into Slack-compatible text with HTML clipboard support for pasting into Slack, Google Docs, and other applications.</span>
+                <a href="https://github.com/rynf1t/site/blob/main/static/tools/slack-formatter.html" class="text-sm ml-2 text-link hover:underline">[code]</a>
             </li>
         
-            <li class="tool-item mb-4 leading-relaxed" data-tags="sqlite storage api" data-search="sqlite csv playground pro execute sql queries and analyze csv data directly in your browser with support for query chaining, visual query building, and real-time autocomplete. sqlite storage api">
-                <div class="flex flex-wrap items-baseline gap-x-2">
-                    <a href="/tools/sqlite-csv-playground.html" class="text-link font-bold no-underline hover:underline">SQLite CSV Playground Pro</a>
-                    <span class="flex gap-1">
-                        <span class="tool-tag text-[10px] px-1.5 py-0.5 bg-border/50 text-text2 rounded hover:bg-link hover:text-white cursor-pointer transition-colors" onclick="filterByTag('sqlite')">sqlite</span><span class="tool-tag text-[10px] px-1.5 py-0.5 bg-border/50 text-text2 rounded hover:bg-link hover:text-white cursor-pointer transition-colors" onclick="filterByTag('storage')">storage</span><span class="tool-tag text-[10px] px-1.5 py-0.5 bg-border/50 text-text2 rounded hover:bg-link hover:text-white cursor-pointer transition-colors" onclick="filterByTag('api')">api</span>
-                    </span>
-                    <a href="https://github.com/rynf1t/site/blob/main/static/tools/sqlite-csv-playground.html" class="text-xs text-link hover:underline ml-auto">[code]</a>
-                </div>
-                <p class="text-text2 text-sm mt-1">Execute SQL queries and analyze CSV data directly in your browser with support for query chaining, visual query building, and real-time autocomplete.</p>
+            <li class="mb-3 leading-relaxed">
+                <a href="/tools/coin-flip.html" class="text-link font-bold no-underline hover:underline">Coin Flip</a>
+                <span class="text-text2"> — Randomly generates a coin flip result with retro arcade-style animation and visual feedback showing heads or tails.</span>
+                <a href="https://github.com/rynf1t/site/blob/main/static/tools/coin-flip.html" class="text-sm ml-2 text-link hover:underline">[code]</a>
             </li>
         
-            <li class="tool-item mb-4 leading-relaxed" data-tags="js" data-search="test tool this free online square calculator instantly computes the squared value of any number you enter. js">
-                <div class="flex flex-wrap items-baseline gap-x-2">
-                    <a href="/tools/test-tool.html" class="text-link font-bold no-underline hover:underline">Test Tool</a>
-                    <span class="flex gap-1">
-                        <span class="tool-tag text-[10px] px-1.5 py-0.5 bg-border/50 text-text2 rounded hover:bg-link hover:text-white cursor-pointer transition-colors" onclick="filterByTag('js')">js</span>
-                    </span>
-                    <a href="https://github.com/rynf1t/site/blob/main/static/tools/test-tool.html" class="text-xs text-link hover:underline ml-auto">[code]</a>
-                </div>
-                <p class="text-text2 text-sm mt-1">This free online square calculator instantly computes the squared value of any number you enter.</p>
+            <li class="mb-3 leading-relaxed">
+                <a href="/tools/fmtmd.html" class="text-link font-bold no-underline hover:underline">fmtmd</a>
+                <span class="text-text2"> — Convert Markdown to Slack-compatible HTML format for pasting into Slack, Google Docs, and other apps that recognize HTML clipboard format.</span>
+                <a href="https://github.com/rynf1t/site/blob/main/static/tools/fmtmd.html" class="text-sm ml-2 text-link hover:underline">[code]</a>
             </li>
         
             </ul>
              <p id="noResults" class="hidden text-text2 text-center py-8">No tools match your search.</p>
         </section>
 
-        <style>
-            .tool-filter-btn.active {
-                background: var(--color-link);
-                color: white;
-                border-color: var(--color-link);
-            }
-        </style>
-
         <script>
             (function() {
                 var searchInput = document.getElementById('toolSearch');
-                var items = document.querySelectorAll('.tool-item');
+                var list = document.getElementById('toolsList');
+                var items = list.getElementsByTagName('li');
                 var noResults = document.getElementById('noResults');
-                var filterBtns = document.querySelectorAll('.tool-filter-btn');
-                var activeTag = 'all';
-                var searchQuery = '';
-                
-                function updateFilters() {
-                    var visibleCount = 0;
-                    items.forEach(function(item) {
-                        var tags = item.dataset.tags.split(' ');
-                        var searchStr = item.dataset.search;
-                        
-                        var matchesTag = activeTag === 'all' || tags.indexOf(activeTag) !== -1;
-                        var matchesSearch = !searchQuery || searchStr.indexOf(searchQuery) !== -1;
-                        
-                        var show = matchesTag && matchesSearch;
-                        item.style.display = show ? '' : 'none';
-                        if (show) visibleCount++;
-                    });
-                    
-                    noResults.classList.toggle('hidden', visibleCount > 0);
-                }
                 
                 searchInput.addEventListener('input', function(e) {
-                    searchQuery = e.target.value.toLowerCase();
-                    updateFilters();
+                    var query = e.target.value.toLowerCase();
+                    var visibleCount = 0;
+                    
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        var text = item.textContent.toLowerCase();
+                        var show = text.indexOf(query) !== -1;
+                        
+                        item.style.display = show ? '' : 'none';
+                        if (show) visibleCount++;
+                    }
+                    
+                    noResults.classList.toggle('hidden', visibleCount > 0);
                 });
-                
-                filterBtns.forEach(function(btn) {
-                    btn.addEventListener('click', function() {
-                        filterBtns.forEach(function(b) { b.classList.remove('active'); });
-                        btn.classList.add('active');
-                        activeTag = btn.dataset.tag;
-                        updateFilters();
-                    });
-                });
-                
-                window.filterByTag = function(tag) {
-                    searchInput.value = '';
-                    searchQuery = '';
-                    filterBtns.forEach(function(btn) {
-                        if (btn.dataset.tag === tag) {
-                            btn.click();
-                        }
-                    });
-                };
             })();
         </script>
     
