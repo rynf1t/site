@@ -7,4 +7,4 @@ order: 4
 
 I care about context. This will be a place for me to mark my own context.
 
-This site is built with Bun and TypeScript. [Read about how it works](/posts/how-this-site-works.html). 
+This site is built with Bun and TypeScript. [[how-this-site-works | Read about how it works]]
