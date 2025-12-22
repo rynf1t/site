@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "pages/tools.md",
+                "file": "posts/iOS test.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "tools"
+              "title": "iOS test"
             }
           }
         ],
@@ -212,18 +212,18 @@
   },
   "active": "391f1359580c198f",
   "lastOpenFiles": [
+    "templates/book template.md",
+    "pages/about.md",
+    "pages/home.md",
+    "pages/media.md",
+    "pages/tools.md",
     "pages/writing.md",
     "posts/How this site works.md",
-    "pages/about.md",
     "posts/iOS test.md",
     "media/Michael Clayton.md",
     "media/Trust.md",
-    "pages/tools.md",
-    "pages/media.md",
-    "pages/home.md",
     "[How this site works.md",
     "pages/About.md",
-    "templates/book template.md",
     "posts/how this site is built.md",
     "media/Trust Test.md",
     "posts/completely just a test.md",

@@ -357,13 +357,11 @@ export function IndexPage(props: { posts: any[]; media: any[]; totalMedia?: numb
       <div class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2">
         ${mediaGrid}
       </div>
-      ${totalMediaCount > props.media.length ? `
       <div class="mt-4">
         <a href="/media.html" class="inline-block text-sm text-text2 hover:text-link border-b border-border hover:border-link transition-colors">
-          View all ${totalMediaCount} items →
+          View all media →
         </a>
       </div>
-      ` : ''}
     </section>
   `
 }
@@ -382,7 +380,6 @@ export function ArchivePage(props: { posts: any[]; intro?: string }) {
 
   return `
     <section class="mb-12">
-      <h1 class="font-bold text-2xl mb-8">Archive</h1>
       ${props.intro ? `<div class="prose prose-stone prose-lg max-w-none mb-8">${props.intro}</div>` : ''}
       <div class="space-y-2">
         ${postList}
@@ -416,8 +413,7 @@ export function MediaPage(props: { media: { title: string; image?: string; url: 
 
   return `
     <section class="mb-12">
-      <h1 class="font-bold text-2xl mb-4">Media</h1>
-      ${props.intro ? `<div class="prose prose-stone prose-lg max-w-none mb-6">${props.intro}</div>` : '<p class="text-text2 mb-6">Books, films, and TV I\'ve consumed.</p>'}
+      ${props.intro ? `<div class="prose prose-stone prose-lg max-w-none mb-6">${props.intro}</div>` : ''}
       
       <!-- Search -->
       <div class="mb-4">

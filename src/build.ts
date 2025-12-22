@@ -317,7 +317,6 @@ async function generateToolsPage(intro?: string): Promise<string> {
 
     return `
         <section>
-            <h1 class="font-bold text-2xl mb-8">Tools</h1>
             ${intro ? `<div class="prose prose-stone prose-lg max-w-none mb-8">${intro}</div>` : ''}
 
             <div class="mb-6">
