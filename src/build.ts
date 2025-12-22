@@ -173,7 +173,11 @@ async function build() {
         }
     }
 
-    // 4. Generate Output
+    // 4. Sort posts and media before generating
+    posts.sort((a, b) => b.date.localeCompare(a.date));
+    media.sort((a, b) => b.date.localeCompare(a.date));
+
+    // 5. Generate Output
     await mkdir('dist/posts', { recursive: true });
 
     for (const post of allContent) {
@@ -192,11 +196,18 @@ async function build() {
                 backlinks: post.backlinks
             });
         } else {
+            // Find current post index in sorted posts array
+            const currentIndex = posts.findIndex(p => p.slug === post.slug);
+            const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : undefined;
+            const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : undefined;
+
             postHtml = Post({
                 title: post.title,
                 date: post.date,
                 html: post.html,
-                backlinks: post.backlinks
+                backlinks: post.backlinks,
+                nextPost: nextPost ? { title: nextPost.title, url: `/posts/${nextPost.slug}.html` } : undefined,
+                prevPost: prevPost ? { title: prevPost.title, url: `/posts/${prevPost.slug}.html` } : undefined
             });
         }
 
@@ -208,10 +219,6 @@ async function build() {
 
         await Bun.write(`dist/posts/${post.slug}.html`, finalHtml);
     }
-
-    // Sort for use in custom pages
-    posts.sort((a, b) => b.date.localeCompare(a.date));
-    media.sort((a, b) => b.date.localeCompare(a.date));
 
     // Generate search index JSON
     const searchIndex = [
@@ -424,7 +431,7 @@ async function generateCustomPages(posts: PostData[], media: PostData[]) {
             const title = attributes?.title || pageName.charAt(0).toUpperCase() + pageName.slice(1);
             const outputFile = pageName === 'home' ? 'dist/index.html' : `dist/${pageName}.html`;
 
-            await Bun.write(outputFile, Layout({ title, content, description: attributes?.description }));
+            await Bun.write(outputFile, Layout({ title, content, description: attributes?.description, currentPage: pageName }));
             console.log(`📄 Generated ${outputFile}`);
         }
     } catch (e) {

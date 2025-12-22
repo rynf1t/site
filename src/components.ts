@@ -1,4 +1,4 @@
-export function Layout(props: { title: string; content: string; description?: string }) {
+export function Layout(props: { title: string; content: string; description?: string; currentPage?: string }) {
   const metaDescription = props.description || "Essays and media reviews."
   return `<!DOCTYPE html>
 <html lang="en">
@@ -40,13 +40,13 @@ export function Layout(props: { title: string; content: string; description?: st
     <!-- Main Content Area -->
     <div class="theme-content">
       <!-- Header -->
-      <header class="mb-6 pb-3 border-b" style="border-color: var(--color-border);">
+      <header class="mb-8 pb-4 border-b" style="border-color: var(--color-border);">
         <nav>
-          <a href="/">home</a>
-          <a href="/writing.html">writing</a>
-          <a href="/media.html">media</a>
-          <a href="/tools.html">tools</a>
-          <a href="/about.html">about</a>
+          <a href="/" ${props.currentPage === 'home' ? 'class="active"' : ''}>Home</a>
+          <a href="/writing.html" ${props.currentPage === 'writing' ? 'class="active"' : ''}>Writing</a>
+          <a href="/media.html" ${props.currentPage === 'media' ? 'class="active"' : ''}>Media</a>
+          <a href="/tools.html" ${props.currentPage === 'tools' ? 'class="active"' : ''}>Tools</a>
+          <a href="/about.html" ${props.currentPage === 'about' ? 'class="active"' : ''}>About</a>
           <button onclick="openSearch()" title="Search (⌘K)">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
           </button>
@@ -185,12 +185,14 @@ export function Post(props: {
   date: string
   html: string
   backlinks?: { title: string; url: string; context?: string }[]
+  nextPost?: { title: string; url: string }
+  prevPost?: { title: string; url: string }
 }) {
   const backlinksHtml =
     props.backlinks && props.backlinks.length > 0
       ? `
-      <div class="mt-16 pt-8 border-t border-border">
-        <h3 class="font-bold text-lg mb-4">Linked to this note</h3>
+      <div class="mt-20 pt-10 border-t border-border">
+        <h3 class="font-bold text-lg mb-6">Linked to this note</h3>
         <ul class="space-y-4">
           ${props.backlinks
         .map(
@@ -207,13 +209,28 @@ export function Post(props: {
     `
       : ""
 
+  const navHtml = (props.nextPost || props.prevPost) ? `
+    <nav class="mt-16 pt-10 border-t border-border flex justify-between items-center gap-4">
+      ${props.prevPost ? `<a href="${props.prevPost.url}" class="text-link hover:underline">← ${props.prevPost.title}</a>` : '<span></span>'}
+      ${props.nextPost ? `<a href="${props.nextPost.url}" class="text-link hover:underline text-right">${props.nextPost.title} →</a>` : '<span></span>'}
+    </nav>
+  ` : ''
+
   return `
     <article class="prose prose-stone prose-lg max-w-none">
-      <div class="mb-8 not-prose">
-        <h1 class="text-2xl font-bold mb-2">${props.title}</h1>
+      <nav class="mb-6 text-sm not-prose">
+        <a href="/" class="text-text2 hover:text-link">Home</a>
+        <span class="text-text2 mx-2">→</span>
+        <a href="/writing.html" class="text-text2 hover:text-link">Writing</a>
+        <span class="text-text2 mx-2">→</span>
+        <span class="text-text2">${props.title}</span>
+      </nav>
+      <div class="mb-10 not-prose">
+        <h1 class="text-2xl font-bold mb-3">${props.title}</h1>
         <time class="text-text2 text-sm whitespace-nowrap">${props.date}</time>
       </div>
       ${props.html}
+      ${navHtml}
       ${backlinksHtml}
     </article>
   `
@@ -265,8 +282,15 @@ export function MediaPost(props: {
 
   return `
     <article class="max-w-none">
+      <nav class="mb-6 text-sm">
+        <a href="/" class="text-text2 hover:text-link">Home</a>
+        <span class="text-text2 mx-2">→</span>
+        <a href="/media.html" class="text-text2 hover:text-link">Media</a>
+        <span class="text-text2 mx-2">→</span>
+        <span class="text-text2">${props.title}</span>
+      </nav>
       <!-- Media Header -->
-      <div class="flex gap-6 mb-8">
+      <div class="flex gap-6 mb-10">
         ${props.image ? `
         <div class="flex-shrink-0 w-32 md:w-40">
           <div class="aspect-[2/3] overflow-hidden rounded border border-border">
@@ -296,8 +320,8 @@ export function MediaPost(props: {
 
 
 export function IndexPage(props: { posts: any[]; media: any[]; totalMedia?: number; intro?: string }) {
-  // Show only top 5 posts
-  const recentPosts = props.posts.slice(0, 5)
+  // Show only top 3 posts
+  const recentPosts = props.posts.slice(0, 3)
 
   const postList = recentPosts
     .map(
@@ -407,19 +431,22 @@ export function MediaPage(props: { media: { title: string; image?: string; url: 
       </div>
 
       <!-- Filters -->
-      <div class="flex flex-wrap items-center gap-1 sm:gap-2 mb-6 text-sm">
-        <button class="media-filter active" data-filter="all">All</button>
-        <button class="media-filter" data-filter="book">Books</button>
-        <button class="media-filter" data-filter="film">Films</button>
-        <button class="media-filter" data-filter="tv">TV</button>
-        <span class="text-text2 mx-1">|</span>
-        <button class="rating-filter active" data-rating="all">Any</button>
-        <button class="rating-filter" data-rating="5">5★</button>
-        <button class="rating-filter" data-rating="4">4★</button>
-        <button class="rating-filter" data-rating="3">3★</button>
-        <button class="rating-filter" data-rating="2">2★</button>
-        <button class="rating-filter" data-rating="1">1★</button>
-        <button class="rating-filter" data-rating="0">0★</button>
+      <div class="mb-6">
+        <div class="flex flex-wrap items-center gap-1 sm:gap-2 mb-2 text-sm">
+          <button class="media-filter active" data-filter="all">All</button>
+          <button class="media-filter" data-filter="book">Books</button>
+          <button class="media-filter" data-filter="film">Films</button>
+          <button class="media-filter" data-filter="tv">TV</button>
+        </div>
+        <div class="flex flex-wrap items-center gap-1 sm:gap-2 text-sm">
+          <button class="rating-filter active" data-rating="all">Any</button>
+          <button class="rating-filter" data-rating="5">5★</button>
+          <button class="rating-filter" data-rating="4">4★</button>
+          <button class="rating-filter" data-rating="3">3★</button>
+          <button class="rating-filter" data-rating="2">2★</button>
+          <button class="rating-filter" data-rating="1">1★</button>
+          <button class="rating-filter" data-rating="0">0★</button>
+        </div>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 sm:gap-4" id="mediaGrid">

@@ -38,13 +38,13 @@
     <!-- Main Content Area -->
     <div class="theme-content">
       <!-- Header -->
-      <header class="mb-6 pb-3 border-b" style="border-color: var(--color-border);">
+      <header class="mb-8 pb-4 border-b" style="border-color: var(--color-border);">
         <nav>
-          <a href="/">home</a>
-          <a href="/writing.html">writing</a>
-          <a href="/media.html">media</a>
-          <a href="/tools.html">tools</a>
-          <a href="/about.html">about</a>
+          <a href="/" >Home</a>
+          <a href="/writing.html" >Writing</a>
+          <a href="/media.html" >Media</a>
+          <a href="/tools.html" >Tools</a>
+          <a href="/about.html" >About</a>
           <button onclick="openSearch()" title="Search (⌘K)">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
           </button>
@@ -55,48 +55,51 @@
       <main>
         
     <article class="prose prose-stone prose-lg max-w-none">
-      <div class="mb-8 not-prose">
-        <h1 class="text-2xl font-bold mb-2">How This Site Works</h1>
+      <nav class="mb-6 text-sm not-prose">
+        <a href="/" class="text-text2 hover:text-link">Home</a>
+        <span class="text-text2 mx-2">→</span>
+        <a href="/writing.html" class="text-text2 hover:text-link">Writing</a>
+        <span class="text-text2 mx-2">→</span>
+        <span class="text-text2">How This Site Works</span>
+      </nav>
+      <div class="mb-10 not-prose">
+        <h1 class="text-2xl font-bold mb-3">How This Site Works</h1>
         <time class="text-text2 text-sm whitespace-nowrap">2024-05-21</time>
       </div>
-      <p>I’ve always wanted something that I could understand completely, from start to finish. That is not necessarily the case with blogging frameworks. I wanted speed, simplicity, and zero magic.  I saw a post on such a build and was inspired almost entirely by <a href="https://www.jmduke.com/posts/2026.html">Justin Duke’s</a> set-up.</p>
-<h2>The Stack</h2>
-<p>The technology choices were driven by a desire for raw speed and minimal dependencies:</p>
+      <p>I wanted to understand every line of code on my site. Most frameworks are black boxes. I saw <a href="https://www.jmduke.com/posts/2026.html">Justin Duke’s setup</a> and thought: I can do that.</p>
+<h2>Stack</h2>
 <ul>
-<li><strong><a href="https://bun.sh/">Bun</a></strong>: The all-in-one JavaScript runtime. It replaces Node.js, npm, and even part of the bundler. It is fast. Absurdly fast.</li>
-<li><strong><a href="https://www.typescriptlang.org/">TypeScript</a></strong>: Because I still want type safety, even in a script.</li>
-<li><strong><a href="https://tailwindcss.com/">Tailwind CSS</a></strong>: For styling.</li>
-<li><strong><a href="https://github.com/markdown-it/markdown-it">Markdown-It</a></strong>: To turn words into HTML.</li>
+<li><strong><a href="https://bun.sh/">Bun</a></strong>: Replaces Node, npm, and webpack. Fast.</li>
+<li><strong><a href="https://www.typescriptlang.org/">TypeScript</a></strong>: Types keep me honest.</li>
+<li><strong><a href="https://tailwindcss.com/">Tailwind CSS</a></strong>: For styling. Gets out of the way.</li>
+<li><strong><a href="https://github.com/markdown-it/markdown-it">Markdown-It</a></strong>: Markdown → HTML.</li>
 </ul>
-<p>That’s basically it. No React, no hydration, no client-side routing, no heavy JavaScript bundles sent to your browser. Just HTML and CSS.</p>
-<h2>The Build Process</h2>
-<p>The entire build process lives in a single file: <code>src/build.ts</code>. It runs top-to-bottom in milliseconds. Here is exactly what it does:</p>
+<p>No React. No hydration. No 500kb JavaScript bundles. Just HTML and CSS.</p>
+<h2>Build</h2>
+<p>Everything happens in <code>src/build.ts</code>. One file, top to bottom:</p>
 <ol>
-<li><strong>Scans Content</strong>: It reads every <code>.md</code> file in <code>content/posts</code> and <code>content/media</code>.</li>
-<li><strong>Parses Frontmatter</strong>: Using <code>front-matter</code> to extract metadata like title, date, and custom fields (like ratings for my media stash).</li>
-<li><strong>Processes Markdown</strong>: This is where the fun happens. I run the content through <code>markdown-it</code>, but with some custom logic:
+<li>Read markdown files from <code>content/</code></li>
+<li>Extract frontmatter (title, date, ratings)</li>
+<li>Process markdown with custom rules:
 <ul>
-<li><strong>Wikilinks</strong>: It scans for <code>[[Wiki Links]]</code> and converts them to internal anchor tags, mimicking Obsidian’s linking style.</li>
-<li><strong>References</strong>:  It parses footnotes <code>[^1]</code> and converts them into CSS-only interactive expanded references (more on this later).</li>
+<li><strong>Wikilinks</strong>: <code>[[Page Name]]</code> becomes internal links<label for="sn-how-this-site-works-1" class="sidenote-toggle">1</label><input type="checkbox" id="sn-how-this-site-works-1" class="sidenote-toggle-checkbox"><span class="sidenote">Stolen from Obsidian. I write everything in Obsidian anyway.</span><label for="sn-how-this-site-works-1" class="sidenote-backdrop"></label></li>
+<li><strong>Footnotes</strong>: <code>[^1]</code> becomes expandable inline notes</li>
 </ul>
 </li>
-<li><strong>Computes Backlinks</strong>: It does a naive O(N²) scan of all posts to see who links to whom, generating the “Linked to this note” section at the bottom of pages.
-<ol>
-<li><strong>Generates HTML</strong>: It wraps the content in a simple template string (no JSX, just template literals) and writes the files to the <code>dist</code> directory.</li>
+<li>Find backlinks by scanning who links to whom</li>
+<li>Generate HTML using template strings</li>
+<li>Write to <code>dist/</code></li>
 </ol>
-</li>
-</ol>
+<p>That’s it. No bundler, no transpiler, no magic.</p>
 <h2>Speed</h2>
-<p>Because Bun is so fast and the logic is so simple, the entire site builds in a fraction of a second.</p>
+<p>The whole site builds in under a second:</p>
 <pre><code class="language-bash">$ bun run build
 📍 Building Ryan's Blog...
-📦 Copied static/tools to dist/tools
-📦 Copied static/images to dist/images
-...
 ✅ Build Complete!
 </code></pre>
-<p>There is no “waiting for webpack to compile.” There is no hot-module-reloading server that takes 10 seconds to start. I change a file, I run the script, and it is done. <label for="sn-how-this-site-works-1" class="sidenote-toggle">1</label><input type="checkbox" id="sn-how-this-site-works-1" class="sidenote-toggle-checkbox"><span class="sidenote">In reality, it’s less than this.I use Obsidian + Git Plug-in, and so commits and pushes happen automatically. </span><label for="sn-how-this-site-works-1" class="sidenote-backdrop"></label></p>
+<p>I edit a file, run build, it’s done. No webpack. No dev server. <label for="sn-how-this-site-works-2" class="sidenote-toggle">2</label><input type="checkbox" id="sn-how-this-site-works-2" class="sidenote-toggle-checkbox"><span class="sidenote">I use Obsidian with a Git plugin, so commits happen automatically when I save.</span><label for="sn-how-this-site-works-2" class="sidenote-backdrop"></label></p>
 
+      
       
     </article>
   

@@ -38,13 +38,13 @@
     <!-- Main Content Area -->
     <div class="theme-content">
       <!-- Header -->
-      <header class="mb-6 pb-3 border-b" style="border-color: var(--color-border);">
+      <header class="mb-8 pb-4 border-b" style="border-color: var(--color-border);">
         <nav>
-          <a href="/">home</a>
-          <a href="/writing.html">writing</a>
-          <a href="/media.html">media</a>
-          <a href="/tools.html">tools</a>
-          <a href="/about.html">about</a>
+          <a href="/" >Home</a>
+          <a href="/writing.html" >Writing</a>
+          <a href="/media.html" >Media</a>
+          <a href="/tools.html" >Tools</a>
+          <a href="/about.html" >About</a>
           <button onclick="openSearch()" title="Search (⌘K)">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
           </button>
@@ -55,8 +55,15 @@
       <main>
         
     <article class="max-w-none">
+      <nav class="mb-6 text-sm">
+        <a href="/" class="text-text2 hover:text-link">Home</a>
+        <span class="text-text2 mx-2">→</span>
+        <a href="/media.html" class="text-text2 hover:text-link">Media</a>
+        <span class="text-text2 mx-2">→</span>
+        <span class="text-text2">Trust</span>
+      </nav>
       <!-- Media Header -->
-      <div class="flex gap-6 mb-8">
+      <div class="flex gap-6 mb-10">
         
         <div class="flex-shrink-0 w-32 md:w-40">
           <div class="aspect-[2/3] overflow-hidden rounded border border-border">

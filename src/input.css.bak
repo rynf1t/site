@@ -170,18 +170,18 @@
 
   /* ==================== CONTENT AREA ==================== */
   .theme-content {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   @media (min-width: 640px) {
     .theme-content {
-      padding: 2rem;
+      padding: 1.5rem;
     }
   }
 
   @media (min-width: 768px) {
     .theme-content {
-      padding: 3rem;
+      padding: 2rem;
     }
   }
 
@@ -213,6 +213,82 @@
     height: 18px;
   }
 
+  /* ==================== MAC OS 9 SCROLLBARS ==================== */
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #dddddd;
+    border-left: 1px solid #999;
+    border-right: 1px solid #fff;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #fff 0%, #ddd 50%, #bbb 100%);
+    border: 1px solid #888;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #fff 0%, #e8e8e8 50%, #ccc 100%);
+  }
+
+  ::-webkit-scrollbar-button {
+    background: linear-gradient(180deg, #fff 0%, #ddd 50%, #bbb 100%);
+    border: 1px solid #888;
+    height: 16px;
+    width: 16px;
+  }
+
+  ::-webkit-scrollbar-button:hover {
+    background: linear-gradient(180deg, #fff 0%, #e8e8e8 50%, #ccc 100%);
+  }
+
+  /* Up arrow */
+  ::-webkit-scrollbar-button:vertical:decrement {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 4 L4 10 L12 10 Z" fill="%23000"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px;
+  }
+
+  /* Down arrow */
+  ::-webkit-scrollbar-button:vertical:increment {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 12 L4 6 L12 6 Z" fill="%23000"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px;
+  }
+
+  /* Dark mode scrollbars */
+  [data-mode="dark"] ::-webkit-scrollbar-track {
+    background: #2a2a32;
+    border-left: 1px solid #1a1a20;
+    border-right: 1px solid #3a3a44;
+  }
+
+  [data-mode="dark"] ::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #4a4a55 0%, #3a3a44 50%, #2a2a32 100%);
+    border: 1px solid #1a1a20;
+  }
+
+  /* ==================== PLATINUM BACKGROUND ==================== */
+  body {
+    background-image:
+      repeating-linear-gradient(0deg,
+        transparent,
+        transparent 1px,
+        rgba(0, 0, 0, 0.03) 1px,
+        rgba(0, 0, 0, 0.03) 2px);
+  }
+
+  [data-mode="dark"] body {
+    background-image: none;
+  }
+
   /* ==================== TYPOGRAPHY ==================== */
   .prose {
     max-width: 65ch;
@@ -241,7 +317,7 @@
   }
 
   .prose h1 {
-    @apply font-bold mb-4 mt-8;
+    @apply font-bold mb-3 mt-6;
     font-size: 1.4rem;
     line-height: 1.25;
   }
@@ -253,7 +329,7 @@
   }
 
   .prose h2 {
-    @apply font-bold mb-3 mt-8;
+    @apply font-bold mb-2 mt-5;
     font-size: 1.2rem;
     line-height: 1.3;
   }
@@ -265,23 +341,23 @@
   }
 
   .prose h3 {
-    @apply font-bold mb-3 mt-6;
+    @apply font-bold mb-2 mt-4;
     font-size: 1.1rem;
     line-height: 1.35;
   }
 
   .prose p {
-    @apply mb-5;
+    @apply mb-4;
     line-height: 1.7;
   }
 
   .prose ul,
   .prose ol {
-    @apply mb-5 pl-5;
+    @apply mb-4 pl-5;
   }
 
   .prose li {
-    @apply mb-2;
+    @apply mb-1.5;
     line-height: 1.65;
   }
 
@@ -302,41 +378,12 @@
     color: var(--color-text) !important;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    position: relative;
   }
 
   .prose pre code {
     @apply p-0 bg-transparent border-none;
     color: inherit !important;
   }
-
-  /* Code block language labels */
-  .prose pre code[class*="language-"]::before {
-    content: attr(class);
-    position: absolute;
-    top: 0.5rem;
-    right: 0.75rem;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    color: var(--color-text2);
-    opacity: 0.6;
-    letter-spacing: 0.05em;
-  }
-
-  .prose pre code.language-javascript::before { content: "js"; }
-  .prose pre code.language-typescript::before { content: "ts"; }
-  .prose pre code.language-python::before { content: "py"; }
-  .prose pre code.language-bash::before { content: "bash"; }
-  .prose pre code.language-shell::before { content: "sh"; }
-  .prose pre code.language-json::before { content: "json"; }
-  .prose pre code.language-html::before { content: "html"; }
-  .prose pre code.language-css::before { content: "css"; }
-  .prose pre code.language-markdown::before { content: "md"; }
-  .prose pre code.language-yaml::before { content: "yaml"; }
-  .prose pre code.language-sql::before { content: "sql"; }
-  .prose pre code.language-go::before { content: "go"; }
-  .prose pre code.language-rust::before { content: "rust"; }
-  .prose pre code.language-java::before { content: "java"; }
 
   .prose blockquote {
     @apply border-l-4 pl-4 italic my-4;
@@ -408,11 +455,6 @@
   }
 
   header nav a:hover {
-    background: var(--color-text);
-    color: var(--color-window);
-  }
-
-  header nav a.active {
     background: var(--color-text);
     color: var(--color-window);
   }
@@ -492,7 +534,13 @@
   }
 
   .search-kbd {
-    display: none;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    opacity: 0.5;
+    color: var(--color-text);
   }
 
   .search-results {
@@ -547,7 +595,18 @@
   }
 
   .search-result-badge {
-    display: none;
+    flex-shrink: 0;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    background: var(--color-ui);
+  }
+
+  .search-result:hover .search-result-badge,
+  .search-result.selected .search-result-badge {
+    background: rgba(255, 255, 255, 0.2);
   }
 
   /* ==================== MEDIA FILTERS ==================== */
@@ -575,15 +634,61 @@
     border-color: var(--color-text);
   }
 
-  /* Make rating filters smaller and more subtle */
-  .rating-filter {
-    font-size: 0.9em;
-    opacity: 0.8;
-  }
+  /* ==================== PRINT STYLES ==================== */
+  @media print {
 
-  .rating-filter:hover,
-  .rating-filter.active {
-    opacity: 1;
-  }
+    .mode-toggle,
+    .search-modal,
+    .media-filter,
+    .rating-filter,
+    #mediaSearch {
+      display: none !important;
+    }
 
+    body {
+      background: white !important;
+      font-size: 12pt !important;
+      color: #000 !important;
+      padding: 0 !important;
+    }
+
+    .theme-window {
+      box-shadow: none !important;
+      border: none !important;
+      max-width: none !important;
+    }
+
+    .theme-content {
+      padding: 0 !important;
+    }
+
+    a {
+      color: #000 !important;
+      text-decoration: underline !important;
+    }
+
+    a[href^="http"]:after {
+      content: " (" attr(href) ")";
+      font-size: 0.8em;
+      color: #666;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    img,
+    figure,
+    table,
+    pre {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+  }
 }
