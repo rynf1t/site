@@ -2,7 +2,7 @@
 title: Michael Clayton
 type: film
 date: 2025-12-22
-cover: https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1631246461i/58210933.jpg
+cover: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQezz1whRyTyqsC80aslO3_NuDISSqpB2YAJJyo3qnejl5ywpPGtrhqz5J&s=10
 rating: 4
 author: Tony Gilroy
 year: "2007"
