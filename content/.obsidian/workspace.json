@@ -212,8 +212,9 @@
   },
   "active": "391f1359580c198f",
   "lastOpenFiles": [
-    "posts/how-this-site-works.md",
+    "[How this site works.md",
     "pages/about.md",
+    "posts/How this site works.md",
     "pages/writing.md",
     "media/Trust.md",
     "pages/home.md",
@@ -237,7 +238,6 @@
     "media/dune-2021.md",
     "media/the-great-gatsby.md",
     "media/the-bear.md",
-    "media/shawshank-redemption.md",
     "media",
     "templates"
   ]
