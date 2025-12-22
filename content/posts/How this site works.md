@@ -1,4 +1,4 @@
-This site is a custom static site generator built with Bun and TypeScript. I wanted to understand every line of code on my site—well, nearly everything. [^1]  Most frameworks are black boxes. I saw [Justin Duke's setup](https://www.jmduke.com/posts/2026.html) and thought: I can do that.
+This site is a custom static site generator built with Bun and TypeScript. I wanted to understand every line of code on my site ... well, nearly everything. [^1]  Most frameworks are black boxes. I saw [Justin Duke's setup](https://www.jmduke.com/posts/2026.html) and thought: I can do that.
 
 ## Stack
 
