@@ -1,8 +1,3 @@
----
-title: How This Site Works
-date: 2024-05-21
-description: A deep dive into the custom static site generator powering this blog, built with Bun and TypeScript.
----
 I wanted to understand every line of code on my site. Most frameworks are black boxes. I saw [Justin Duke's setup](https://www.jmduke.com/posts/2026.html) and thought: I can do that.
 
 ## Stack
