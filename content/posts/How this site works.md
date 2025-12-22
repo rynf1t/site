@@ -1,4 +1,4 @@
-I wanted to understand every [^1]  line of code on my site. Most frameworks are black boxes. I saw [Justin Duke's setup](https://www.jmduke.com/posts/2026.html) and thought: I can do that.
+This site is a custom static site generator built with Bun and TypeScript. I wanted to understand every line of code on my site—well, nearly everything. [^1]  Most frameworks are black boxes. I saw [Justin Duke's setup](https://www.jmduke.com/posts/2026.html) and thought: I can do that.
 
 ## Stack
 
@@ -17,10 +17,10 @@ Everything happens in `src/build.ts`. One file, top to bottom:
 2. Extract frontmatter (title, date, ratings)
 3. Process markdown with custom rules:
    - **Wikilinks**: `[[Page Name]]` becomes internal links[^1]
-   - **Footnotes**: `[^1]` becomes expandable inline notes
-4. Find backlinks by scanning who links to whom
-5. Generate HTML using template strings
-6. Write to `dist/`
+   - **Footnotes**:  becomes expandable inline notes
+1. Find backlinks by scanning who links to whom
+2. Generate HTML using template strings
+3. Write to `dist/`
 
 That's it. No bundler, no magic.
 

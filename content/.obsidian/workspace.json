@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "media/Michael Clayton.md",
+                "file": "posts/How this site works.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Michael Clayton"
+              "title": "How this site works"
             }
           }
         ],
@@ -213,16 +213,16 @@
   },
   "active": "391f1359580c198f",
   "lastOpenFiles": [
+    "pages/about.md",
+    "media/Michael Clayton.md",
     "pages/tools.md",
     "posts/claude.md",
     "posts/iOS test.md",
     "templates/book template.md",
-    "pages/about.md",
     "pages/home.md",
     "pages/media.md",
     "pages/writing.md",
     "posts/How this site works.md",
-    "media/Michael Clayton.md",
     "media/Trust.md",
     "[How this site works.md",
     "pages/About.md",
