@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "media/Michael Clayton.md",
+                "file": "posts/iOS test.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Michael Clayton"
+              "title": "iOS test"
             }
           }
         ],
@@ -212,8 +212,8 @@
   },
   "active": "391f1359580c198f",
   "lastOpenFiles": [
-    "media/Trust.md",
     "media/Michael Clayton.md",
+    "media/Trust.md",
     "pages/tools.md",
     "pages/media.md",
     "pages/home.md",
