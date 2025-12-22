@@ -7,7 +7,7 @@ rating: 4
 author: Tony Gilroy
 year: "2007"
 ---
-%% I %% love the feeling of watching a film I haven't seen from 10+ years ago that ends up being great. To top it off, this one falls in one my favorite genres (legal thriller). 
+I love the feeling of watching a film I haven't seen from 10+ years ago that ends up being great. To top it off, this one falls in one my favorite genres (legal thriller). 
 
 Gilroy spared nothing. It is a movie plot with no fat. 
 
