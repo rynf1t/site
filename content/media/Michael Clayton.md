@@ -1,3 +1,4 @@
+---
 title: Michael Clayton
 type: film
 date: 2025-12-22
