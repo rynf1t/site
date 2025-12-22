@@ -34,3 +34,4 @@ content/templates/
 
 # claude context files (local only)
 **/claude.md
+writing-style-guide.md

@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "pages/tools.md",
+                "file": "media/Michael Clayton.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "tools"
+              "title": "Michael Clayton"
             }
           }
         ],
@@ -107,7 +107,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "25e44253846c9970",
@@ -212,12 +213,13 @@
   },
   "active": "391f1359580c198f",
   "lastOpenFiles": [
+    "pages/tools.md",
+    "posts/claude.md",
     "posts/iOS test.md",
     "templates/book template.md",
     "pages/about.md",
     "pages/home.md",
     "pages/media.md",
-    "pages/tools.md",
     "pages/writing.md",
     "posts/How this site works.md",
     "media/Michael Clayton.md",
@@ -237,7 +239,6 @@
     "media/book-of-clouds.md",
     "media/dune.md",
     "media/dune-2021.md",
-    "media/the-great-gatsby.md",
     "media",
     "templates"
   ]
