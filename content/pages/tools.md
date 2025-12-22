@@ -2,10 +2,9 @@
 title: Tools
 description: Useful tools I've built
 ---
-Below is a list of useful [small] tools I've created, almost all with the assistance of LLMs.
+I build tools to solve problems I actually have. Most are small utilities I use regularly. Some solve one specific annoyance and never get touched again. Either way, they exist because I needed them.
 
-1. I want these tools, be it regularly or only a handful of times
-2. Using LLMs this way helps me understand how to use them beyond standard chat interfaces and their constraints, i.e. where they fall short. 
+  I build these with LLMs - partly because it's faster, partly to understand where AI-assisted development works well and where it breaks down.
 
-The source code for each can be viewed by clicking [code]. While my site is a monorepo, the files linked should stand on it's own in most cases and can be exported and used immediately. 
+  All source code is available. Click [code] to view. Each tool is self-contained and can be copied directly into your own projects.
 

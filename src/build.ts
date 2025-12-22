@@ -100,7 +100,9 @@ async function build() {
         const raw = await Bun.file(path).text();
         const { attributes, body } = frontMatter<any>(raw);
 
-        const slug = path.split('/').pop()!.replace('.md', '').replace(/ /g, '-').toLowerCase();
+        // Extract filename with original capitalization
+        const filename = path.split('/').pop()!.replace('.md', '');
+        const slug = filename.replace(/ /g, '-').toLowerCase();
 
         // Process Sidenotes (Pre-render) hierarchy
         const processedBody = preProcessSidenotes(body, slug);
@@ -110,12 +112,8 @@ async function build() {
         const fileStats = await stat(path);
         const fileMtime = fileStats.mtime.toISOString().split('T')[0];
 
-        // Use filename as title fallback (capitalize and replace dashes/underscores with spaces)
-        const titleFromFilename = slug
-            .replace(/[-_]/g, ' ')
-            .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
+        // Use filename as-is for title (preserves your exact capitalization)
+        const titleFromFilename = filename;
 
         return {
             slug,

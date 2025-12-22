@@ -1,4 +1,4 @@
-I wanted to understand every line of code on my site. Most frameworks are black boxes. I saw [Justin Duke's setup](https://www.jmduke.com/posts/2026.html) and thought: I can do that.
+I wanted to understand every [^1]  line of code on my site. Most frameworks are black boxes. I saw [Justin Duke's setup](https://www.jmduke.com/posts/2026.html) and thought: I can do that.
 
 ## Stack
 
@@ -22,7 +22,7 @@ Everything happens in `src/build.ts`. One file, top to bottom:
 5. Generate HTML using template strings
 6. Write to `dist/`
 
-That's it. No bundler, no transpiler, no magic.
+That's it. No bundler, no magic.
 
 ## Speed
 
@@ -36,5 +36,6 @@ $ bun run build
 
 I edit a file, run build, it's done. No webpack. No dev server. [^2]
 
-[^1]: Stolen from Obsidian. I write everything in Obsidian anyway.
-[^2]: I use Obsidian with a Git plugin, so commits happen automatically when I save.
+[^2]: Most of the time, I don't even run a build as I use Obsidian with a Git plugin, so commits happen automatically when I save.
+
+[^1]: Well, nearly everything. I'm not a SWE by trade. With the advent of LLMs, I'm able to adopt Robin Sloan's ["Home cooked app"](https://www.robinsloan.com/notes/home-cooked-app/) ethos

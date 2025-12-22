@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>How This Site Works | Ryan's Blog</title>
+  <title>How this site works | Ryan's Blog</title>
   <meta name="description" content="Essays and media reviews.">
   <link rel="preconnect" href="https://m.media-amazon.com" crossorigin>
   <link rel="stylesheet" href="/style.css">
@@ -60,13 +60,13 @@
         <span class="text-text2 mx-2">→</span>
         <a href="/writing.html" class="text-text2 hover:text-link">Writing</a>
         <span class="text-text2 mx-2">→</span>
-        <span class="text-text2">How This Site Works</span>
+        <span class="text-text2">How this site works</span>
       </nav>
       <div class="mb-10 not-prose">
-        <h1 class="text-2xl font-bold mb-3">How This Site Works</h1>
+        <h1 class="text-2xl font-bold mb-3">How this site works</h1>
         <time class="text-text2 text-sm whitespace-nowrap">2025-12-22</time>
       </div>
-      <p>I wanted to understand every line of code on my site. Most frameworks are black boxes. I saw <a href="https://www.jmduke.com/posts/2026.html">Justin Duke’s setup</a> and thought: I can do that.</p>
+      <p>I wanted to understand every <label for="sn-how-this-site-works-1" class="sidenote-toggle">1</label><input type="checkbox" id="sn-how-this-site-works-1" class="sidenote-toggle-checkbox"><span class="sidenote">Well, nearly everything. I’m not a SWE by trade. With the advent of LLMs, I’m able to adopt Robin Sloan’s <a href="https://www.robinsloan.com/notes/home-cooked-app/">“Home cooked app”</a> ethos</span><label for="sn-how-this-site-works-1" class="sidenote-backdrop"></label>  line of code on my site. Most frameworks are black boxes. I saw <a href="https://www.jmduke.com/posts/2026.html">Justin Duke’s setup</a> and thought: I can do that.</p>
 <h2>Stack</h2>
 <ul>
 <li><strong><a href="https://bun.sh/">Bun</a></strong>: Replaces Node, npm, and webpack. Fast.</li>
@@ -82,7 +82,7 @@
 <li>Extract frontmatter (title, date, ratings)</li>
 <li>Process markdown with custom rules:
 <ul>
-<li><strong>Wikilinks</strong>: <code>[[Page Name]]</code> becomes internal links<label for="sn-how-this-site-works-1" class="sidenote-toggle">1</label><input type="checkbox" id="sn-how-this-site-works-1" class="sidenote-toggle-checkbox"><span class="sidenote">Stolen from Obsidian. I write everything in Obsidian anyway.</span><label for="sn-how-this-site-works-1" class="sidenote-backdrop"></label></li>
+<li><strong>Wikilinks</strong>: <code>[[Page Name]]</code> becomes internal links<label for="sn-how-this-site-works-1" class="sidenote-toggle">1</label><input type="checkbox" id="sn-how-this-site-works-1" class="sidenote-toggle-checkbox"><span class="sidenote">Well, nearly everything. I’m not a SWE by trade. With the advent of LLMs, I’m able to adopt Robin Sloan’s <a href="https://www.robinsloan.com/notes/home-cooked-app/">“Home cooked app”</a> ethos</span><label for="sn-how-this-site-works-1" class="sidenote-backdrop"></label></li>
 <li><strong>Footnotes</strong>: <code>[^1]</code> becomes expandable inline notes</li>
 </ul>
 </li>
@@ -90,19 +90,19 @@
 <li>Generate HTML using template strings</li>
 <li>Write to <code>dist/</code></li>
 </ol>
-<p>That’s it. No bundler, no transpiler, no magic.</p>
+<p>That’s it. No bundler, no magic.</p>
 <h2>Speed</h2>
 <p>The whole site builds in under a second:</p>
 <pre><code class="language-bash">$ bun run build
 📍 Building Ryan's Blog...
 ✅ Build Complete!
 </code></pre>
-<p>I edit a file, run build, it’s done. No webpack. No dev server. <label for="sn-how-this-site-works-2" class="sidenote-toggle">2</label><input type="checkbox" id="sn-how-this-site-works-2" class="sidenote-toggle-checkbox"><span class="sidenote">I use Obsidian with a Git plugin, so commits happen automatically when I save.</span><label for="sn-how-this-site-works-2" class="sidenote-backdrop"></label></p>
+<p>I edit a file, run build, it’s done. No webpack. No dev server. <label for="sn-how-this-site-works-2" class="sidenote-toggle">2</label><input type="checkbox" id="sn-how-this-site-works-2" class="sidenote-toggle-checkbox"><span class="sidenote">Most of the time, I don’t even run a build as I use Obsidian with a Git plugin, so commits happen automatically when I save.</span><label for="sn-how-this-site-works-2" class="sidenote-backdrop"></label></p>
 
       
     <nav class="mt-16 pt-10 border-t border-border flex justify-between items-center gap-4">
       <span></span>
-      <a href="/posts/ios-test.html" class="text-link hover:underline text-right">Ios Test →</a>
+      <a href="/posts/ios-test.html" class="text-link hover:underline text-right">iOS test →</a>
     </nav>
   
       
@@ -111,7 +111,7 @@
         <ul class="space-y-4">
           
             <li>
-              <a href="/posts/ios-test.html" class="font-medium text-link hover:underline">Ios Test</a>
+              <a href="/posts/ios-test.html" class="font-medium text-link hover:underline">iOS test</a>
               
             </li>
           
