@@ -1,15 +1,9 @@
 [
   {
-    "title": "How this site works",
-    "url": "/posts/how-this-site-works.html",
-    "type": "post",
-    "date": "2025-12-22"
-  },
-  {
     "title": "New Dad weight training",
     "url": "/posts/new-dad-weight-training.html",
     "type": "post",
-    "date": "2025-12-22"
+    "date": "2025-12-23"
   },
   {
     "title": "claude",
@@ -18,13 +12,10 @@
     "date": "2025-12-22"
   },
   {
-    "title": "Trust",
-    "url": "/posts/trust.html",
-    "type": "media",
-    "mediaType": "book",
-    "image": "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1631246461i/58210933.jpg",
-    "author": "[[Hernan Diaz]]",
-    "year": "2022"
+    "title": "How this site works",
+    "url": "/posts/how-this-site-works.html",
+    "type": "post",
+    "date": "2025-12-17"
   },
   {
     "title": "Michael Clayton",
@@ -34,5 +25,14 @@
     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQezz1whRyTyqsC80aslO3_NuDISSqpB2YAJJyo3qnejl5ywpPGtrhqz5J&s=10",
     "author": "Tony Gilroy",
     "year": "2007"
+  },
+  {
+    "title": "Trust",
+    "url": "/posts/trust.html",
+    "type": "media",
+    "mediaType": "book",
+    "image": "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1631246461i/58210933.jpg",
+    "author": "[[Hernan Diaz]]",
+    "year": "2022"
   }
 ]

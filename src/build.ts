@@ -108,9 +108,20 @@ async function build() {
         const processedBody = preProcessSidenotes(body, slug);
         const html = md.render(processedBody);
 
-        // Get file stats for date fallback
-        const fileStats = await stat(path);
-        const fileMtime = fileStats.mtime.toISOString().split('T')[0];
+        // Get git creation date (when file was first added)
+        let fileDate: string;
+        try {
+            const gitDate = await Bun.$`git log --diff-filter=A --follow --format=%aI -1 -- ${path}`.text();
+            fileDate = gitDate.trim() ? gitDate.trim().split('T')[0] : '';
+        } catch (e) {
+            fileDate = '';
+        }
+
+        // Fall back to file mtime if no git date
+        if (!fileDate) {
+            const fileStats = await stat(path);
+            fileDate = fileStats.mtime.toISOString().split('T')[0];
+        }
 
         // Use filename as-is for title (preserves your exact capitalization)
         const titleFromFilename = filename;
@@ -118,7 +129,7 @@ async function build() {
         return {
             slug,
             title: attributes?.title || titleFromFilename,
-            date: attributes?.date ? new Date(attributes.date).toISOString().split('T')[0] : fileMtime,
+            date: attributes?.date ? new Date(attributes.date).toISOString().split('T')[0] : fileDate,
             content: processedBody, // Keep text for backlink search
             html,
             type,
