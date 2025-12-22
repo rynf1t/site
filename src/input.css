@@ -408,11 +408,15 @@
   }
 
   header nav a:hover {
+    background: var(--color-ui);
+  }
+
+  header nav a.active {
     background: var(--color-text);
     color: var(--color-window);
   }
 
-  header nav a.active {
+  header nav a.active:hover {
     background: var(--color-text);
     color: var(--color-window);
   }
