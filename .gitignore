@@ -31,3 +31,6 @@ static/archived-themes/
 
 # templates folder (organization only)
 content/templates/
+
+# claude context files (local only)
+**/claude.md
