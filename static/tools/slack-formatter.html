@@ -18,9 +18,9 @@
             margin: 0 auto;
             padding: 20px;
             color: #000000;
-            background-color: #c0c0c0;
-            line-height: 1.6;
-            font-size: 15px;
+            background-color: #fafaf9;
+            line-height: 1.7;
+            font-size: 16px;
 
             /* Clean font rendering */
             -webkit-font-smoothing: antialiased;
@@ -30,9 +30,10 @@
 
         .window {
             background: #ffffff;
-            border: 1px solid #808080;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
+            border: 1px solid #d4d4d4;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
         }
 
         h1 {
@@ -120,31 +121,33 @@
         }
 
         button {
-            background-color: #dddddd;
+            background-color: #e7e5e4;
             color: #000000;
-            border: 1px solid #808080;
+            border: 1px solid #d4d4d4;
             padding: 0.5rem 1.5rem;
             cursor: pointer;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
             font-size: 1rem;
-            box-shadow: 1px 1px 0 #ffffff inset, -1px -1px 0 #666666 inset;
+            border-radius: 2px;
         }
 
         button:hover {
-            background-color: #cccccc;
-        }
-
-        button:active {
-            box-shadow: -1px -1px 0 #ffffff inset, 1px 1px 0 #666666 inset;
-        }
-
-        button.copy-btn {
-            background-color: #6668a6;
+            background-color: #000000;
             color: #ffffff;
         }
 
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button.copy-btn {
+            background-color: #c96d5b;
+            color: #ffffff;
+            border-color: #c96d5b;
+        }
+
         button.copy-btn:hover {
-            background-color: #5557a0;
+            background-color: #b85d4b;
         }
 
         button.copy-btn.copied {
@@ -204,16 +207,16 @@
         .back-link a {
             color: #000000;
             text-decoration: none;
-            background: #dddddd;
-            border: 1px solid #808080;
+            background: #e7e5e4;
+            border: 1px solid #d4d4d4;
             padding: 0.5rem 1rem;
             display: inline-block;
+            border-radius: 2px;
         }
 
         .back-link a:hover {
             background: #000000;
             color: #ffffff;
-            border-color: #000000;
         }
     </style>
     <meta name="keywords" content="Markdown, Slack, Text Conversion, Utilities, Clipboard">
