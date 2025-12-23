@@ -7,12 +7,10 @@ rating: 4
 author: Tony Gilroy
 year: "2007"
 ---
-I love discovering a great film I haven't seen from 10+ years ago. To top it off, this one falls in one my favourite genres (legal thriller). 
+Gilroy spared nothing. No fat.
 
-Gilroy spared nothing. No fat. 
+There are no flashy scenes or high-budget fluff, the story unfolds with Michael (Clooney) telling you what’s going on with his face. I’ve not seen many Clooney films aside from the Oceans series, Batman and Up in the Air. After watching his performance, I want to see more.
 
-There are no flashy scenes or high-budget fluff, the story unfolds with Michael (Clooney) telling you what’s going on with his face. I've not seen many Clooney films aside from the Oceans series, Batman and In the Air. After watching his performance, I want to see more. 
+The film has no mystery or case to solve (it’s all obvious and plainly stated) but it doesn’t detract from the ending. Both my wife and I particularly liked how even though he was divorced, there was no drama surrounding it. This often distracts in other films. We don’t know exactly how family life was, but we also don’t care. Most films would mine that for 20 minutes. This doesn’t bother.
 
-While the film has no mystery or case to solve (it's all obvious and plainly stated) it doesn't detract from the ending. This film gets a 'would rewatch' bookmark in my brain. 
-
-Back to fat: both my wife and I particularly liked how even though he was divorced, there was no drama surrounding how bad his family life was, as is so common with many films. This often distracts. We don’t know exactly how family life was, but we also don’t (didn’t) care. 
+Would rewatch (my signal for great movies is rewatchability)
