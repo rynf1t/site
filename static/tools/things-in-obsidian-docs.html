@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Documentation for Things 3 Sync for Obsidian - bidirectional task synchronization between Things 3 and Obsidian.">
+    <title>Things 3 Sync for Obsidian - Documentation</title>
+    <style>
+        /* ==================== THEME VARIABLES ==================== */
+        :root {
+            /* Light Mode - Mac OS 9 Platinum */
+            --color-bg: #fafaf9;
+            --color-bg-alt: #f5f5f4;
+            --color-text: #000000;
+            --color-text2: #525252;
+            --color-border: #d4d4d4;
+            --color-link: #0000ee;
+            --color-link-visited: #551a8b;
+            --color-ui: #e7e5e4;
+            --color-accent: #c96d5b;
+            --color-highlight: #000080;
+            --color-window: #ffffff;
+
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+        }
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-mode="light"]) {
+                --color-bg: #1e1e24;
+                --color-bg-alt: #2a2a32;
+                --color-text: #f5f5f5;
+                --color-text2: #cccccc;
+                --color-border: #4a4a55;
+                --color-link: #6699ff;
+                --color-link-visited: #a388cc;
+                --color-ui: #3a3a44;
+                --color-accent: #8888cc;
+                --color-highlight: #4477dd;
+                --color-window: #2a2a32;
+            }
+        }
+
+        :root[data-mode="dark"] {
+            --color-bg: #1e1e24;
+            --color-bg-alt: #2a2a32;
+            --color-text: #f5f5f5;
+            --color-text2: #cccccc;
+            --color-border: #4a4a55;
+            --color-link: #6699ff;
+            --color-link-visited: #a388cc;
+            --color-ui: #3a3a44;
+            --color-accent: #8888cc;
+            --color-highlight: #4477dd;
+            --color-window: #2a2a32;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--color-window);
+            border: 2px solid var(--color-border);
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--color-text);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: var(--color-text);
+            border-bottom: 2px solid var(--color-border);
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--color-text);
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--color-text2);
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+            color: var(--color-text2);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: var(--color-bg-alt);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+        }
+
+        pre {
+            background: var(--color-bg-alt);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            border: 1px solid var(--color-border);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        a {
+            color: var(--color-link);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:visited {
+            color: var(--color-link-visited);
+        }
+
+        .subtitle {
+            color: var(--color-text2);
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--color-accent);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .warning {
+            background: var(--color-bg-alt);
+            border-left: 4px solid var(--color-accent);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .back-link {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid var(--color-border);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Things 3 Sync for Obsidian</h1>
+        <p class="subtitle">Bidirectional task synchronization between Things 3 and Obsidian</p>
+
+        <div style="margin-bottom: 20px;">
+            <span class="badge">Obsidian Plugin</span>
+            <span class="badge">TypeScript</span>
+            <span class="badge">macOS</span>
+        </div>
+
+        <h2>Overview</h2>
+        <p>An Obsidian plugin that synchronizes tasks from the Things 3 task management app into Obsidian daily notes. This plugin enables seamless integration between your task manager and your note-taking workflow, with bidirectional completion tracking.</p>
+
+        <h2>Key Features</h2>
+        <ul>
+            <li><strong>Daily Task Synchronization</strong> - Automatically pulls work-area tasks into your Obsidian daily notes</li>
+            <li><strong>Bidirectional Completion Tracking</strong> - Mark tasks complete in either Things 3 or Obsidian, and the status syncs both ways</li>
+            <li><strong>Automatic Project Note Generation</strong> - Creates dedicated notes for each Things 3 project with full task history</li>
+            <li><strong>Deep Linking</strong> - Quick navigation between Things 3 and Obsidian using deep links</li>
+            <li><strong>Obsidian Bases Integration</strong> - Visual database queries using frontmatter properties (v1.9.0+)</li>
+            <li><strong>Auto-Sync</strong> - Optional automatic synchronization every 3 hours</li>
+        </ul>
+
+        <h2>Requirements</h2>
+        <div class="warning">
+            <strong>Platform Requirements:</strong>
+            <ul style="margin-top: 10px; margin-bottom: 0;">
+                <li>macOS (Things 3 is macOS/iOS only)</li>
+                <li>Things 3 app installed</li>
+                <li>Obsidian 0.15.0 or later</li>
+            </ul>
+        </div>
+
+        <h2>How It Works</h2>
+        <p>The plugin uses a read-only approach to Things 3's SQLite database for safe data retrieval. When you need to mark tasks as complete, it uses the official Things 3 URL scheme to ensure data integrity and avoid direct database modifications.</p>
+
+        <h3>Data Organization</h3>
+        <p>The plugin creates structured frontmatter in both daily notes and project files, including:</p>
+        <ul>
+            <li>Task completion statistics and rates</li>
+            <li>Active project counts</li>
+            <li>Task metadata and relationships</li>
+        </ul>
+        <p>This structured data is fully queryable through Obsidian's Bases feature without requiring custom code.</p>
+
+        <h2>Installation</h2>
+        <ol>
+            <li>Open Obsidian Settings</li>
+            <li>Navigate to Community Plugins and disable Safe Mode if needed</li>
+            <li>Click "Browse" and search for "Things 3 Sync"</li>
+            <li>Install and enable the plugin</li>
+            <li>Configure sync settings in the plugin options</li>
+        </ol>
+
+        <h2>Technical Details</h2>
+        <ul>
+            <li><strong>Language:</strong> TypeScript (82.9%)</li>
+            <li><strong>Database Access:</strong> Read-only SQLite queries</li>
+            <li><strong>Completion Updates:</strong> Things 3 URL scheme</li>
+            <li><strong>Safety:</strong> No direct database writes to prevent data corruption</li>
+        </ul>
+
+        <h2>Links</h2>
+        <ul>
+            <li><a href="https://github.com/rynf1t/things-in-obsidian" target="_blank">View on GitHub</a></li>
+            <li><a href="https://github.com/rynf1t/things-in-obsidian/issues" target="_blank">Report Issues</a></li>
+        </ul>
+
+        <div class="back-link">
+            <a href="/tools.html">← Back to Tools</a>
+        </div>
+    </div>
+</body>
+</html>

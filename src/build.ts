@@ -291,11 +291,23 @@ async function build() {
 // Tools Page Generator
 async function generateToolsPage(intro?: string): Promise<string> {
     const toolsDir = 'static/tools';
-    let htmlTools: { name: string; title: string; description: string; url: string }[] = [];
+    let htmlTools: { name: string; title: string; description: string; url: string; codeUrl: string; isExternal?: boolean }[] = [];
+
+    // External tools configuration
+    const externalTools = [
+        {
+            name: 'things-in-obsidian',
+            title: 'Things 3 Sync for Obsidian',
+            description: 'Sync tasks from Things 3 to Obsidian daily notes with bidirectional completion tracking and automatic project note generation',
+            url: '/tools/things-in-obsidian-docs.html',
+            codeUrl: 'https://github.com/rynf1t/things-in-obsidian',
+            isExternal: true
+        }
+    ];
 
     try {
         const files = await readdir(toolsDir);
-        const htmlFiles = files.filter(f => f.endsWith('.html'));
+        const htmlFiles = files.filter(f => f.endsWith('.html') && !f.includes('-docs'));
 
         for (const file of htmlFiles) {
             const name = file.replace('.html', '');
@@ -310,18 +322,27 @@ async function generateToolsPage(intro?: string): Promise<string> {
             const descMatch = content.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i);
             const description = descMatch ? descMatch[1].trim() : '';
 
-            htmlTools.push({ name, title, description, url: `/tools/${file}` });
+            htmlTools.push({
+                name,
+                title,
+                description,
+                url: `/tools/${file}`,
+                codeUrl: `https://github.com/rynf1t/site/blob/main/static/tools/${name}.html`
+            });
         }
     } catch (e) {
         // No tools directory yet
     }
 
-    const toolsList = htmlTools.length > 0
-        ? htmlTools.map(tool => `
+    // Merge external tools with HTML tools
+    const allTools = [...htmlTools, ...externalTools];
+
+    const toolsList = allTools.length > 0
+        ? allTools.map(tool => `
             <li class="mb-3 leading-relaxed">
                 <a href="${tool.url}" class="text-link font-bold no-underline hover:underline">${tool.title}</a>
                 ${tool.description ? `<span class="text-text2"> — ${tool.description}</span>` : ''}
-                <a href="https://github.com/rynf1t/site/blob/main/static/tools/${tool.name}.html" class="text-sm ml-2 text-link hover:underline">[code]</a>
+                <a href="${tool.codeUrl}" class="text-sm ml-2 text-link hover:underline">[code]</a>
             </li>
         `).join('')
         : '<p>No tools yet.</p>';
