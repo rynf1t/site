@@ -291,7 +291,7 @@ async function build() {
 // Tools Page Generator
 async function generateToolsPage(intro?: string): Promise<string> {
     const toolsDir = 'static/tools';
-    let htmlTools: { name: string; title: string; description: string; url: string; codeUrl: string; isExternal?: boolean }[] = [];
+    let htmlTools: { name: string; title: string; description: string; url: string; codeUrl: string; isExternal?: boolean; createdDate: string }[] = [];
 
     // External tools configuration
     const externalTools = [
@@ -301,7 +301,8 @@ async function generateToolsPage(intro?: string): Promise<string> {
             description: 'Sync tasks from Things 3 to Obsidian daily notes with bidirectional completion tracking and automatic project note generation',
             url: '/tools/things-in-obsidian-docs.html',
             codeUrl: 'https://github.com/rynf1t/things-in-obsidian',
-            isExternal: true
+            isExternal: true,
+            createdDate: '2025-12-29' // Date added to site
         }
     ];
 
@@ -322,20 +323,36 @@ async function generateToolsPage(intro?: string): Promise<string> {
             const descMatch = content.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i);
             const description = descMatch ? descMatch[1].trim() : '';
 
+            // Get git creation date (when file was first added)
+            let createdDate: string;
+            try {
+                const gitDate = await Bun.$`git log --diff-filter=A --follow --format=%aI -1 -- ${filePath}`.text();
+                createdDate = gitDate.trim() ? gitDate.trim().split('T')[0] : '';
+            } catch (e) {
+                createdDate = '';
+            }
+
+            // Fall back to file mtime if no git date
+            if (!createdDate) {
+                const fileStats = await stat(filePath);
+                createdDate = fileStats.mtime.toISOString().split('T')[0];
+            }
+
             htmlTools.push({
                 name,
                 title,
                 description,
                 url: `/tools/${file}`,
-                codeUrl: `https://github.com/rynf1t/site/blob/main/static/tools/${name}.html`
+                codeUrl: `https://github.com/rynf1t/site/blob/main/static/tools/${name}.html`,
+                createdDate
             });
         }
     } catch (e) {
         // No tools directory yet
     }
 
-    // Merge external tools with HTML tools
-    const allTools = [...htmlTools, ...externalTools];
+    // Merge external tools with HTML tools and sort by creation date (newest first)
+    const allTools = [...htmlTools, ...externalTools].sort((a, b) => b.createdDate.localeCompare(a.createdDate));
 
     const toolsList = allTools.length > 0
         ? allTools.map(tool => `
