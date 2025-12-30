@@ -2,7 +2,7 @@
 title: Notting Hill
 type: film
 date: 2025-12-28
-cover: https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1631246461i/58210933.jpg
+cover: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVOrXs9eITqTDmyyHIOYhkCqR0xtWJTeb2HMtGXyVSEX5O0wN86GaaoZqYeAITYHtCDJod_gGinYsXLfWb17_VJvz80yTo0or1ZnOfx6axyA&s=10
 rating: 4
 author: Roger Michell
 year: 1999
