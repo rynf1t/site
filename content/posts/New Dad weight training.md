@@ -1,12 +1,12 @@
 When my daughter was born I had two 60-minute windows per week to train. [^1]
 
-This 2-day program kept me strong through the broken sleep and routine. 
+I needed a baseline 2-day program for the gym amidst broken sleep and routine. 
 
 ## The Logic
 
 Only the last 5 reps before failure drive adaptation. Everything else accumulates fatigue. With 120 minutes per week, I couldn’t afford sets that didn’t count. [^2]
 
-Every set was to 0-1 reps from failure. Add more volume if you won’t push that hard. The corollary and trade-off is that more volume = more time in the gym.
+With 2-days per week and limited time, your weapon is intensity. So, every set was to 0-1 reps from failure. One can add more volume if not used to or willing to [truly] push that hard. The corollary and trade-off is that more sets = more time in the gym.
 
 ## The Split
 
@@ -40,7 +40,7 @@ Swap exercises based on your gear. Just watch rest-pause and myo-reps on anythin
 
 ## What Mattered
 
-Lower body got straight maintenance work only. You could do more if you wanted. Everything’s a tradeoff, pick your character. For me, this held the line.
+Lower body got straight maintenance work only. You could do more if you wanted. Everything is a tradeoff, pick your character. For me, this held the line.
 
 I aimed for Monday and Thursday. But, life with kids doesn’t follow schedules in the early days. As long as I got 2-4 days between a session, it worked.
 
