@@ -2,7 +2,7 @@
 title: The Ides of March
 type: film
 date: 2026-01-02
-cover: https://www.pinterest.com/ideas/the-ides-of-march/898540871425
+cover: https://en.wikipedia.org/wiki/File:The_Ides_of_March_Poster.jpg
 rating: 4
 author: George Clooney
 year: 2011
