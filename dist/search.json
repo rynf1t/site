@@ -18,6 +18,24 @@
     "date": "2025-12-17"
   },
   {
+    "title": "The Ides of March",
+    "url": "/posts/the-ides-of-march.html",
+    "type": "media",
+    "mediaType": "film",
+    "image": "https://keithandthemovies.com/wp-content/uploads/2013/04/ides-poster.jpg",
+    "author": "George Clooney",
+    "year": 2011
+  },
+  {
+    "title": "Notting Hill",
+    "url": "/posts/notting-hill.html",
+    "type": "media",
+    "mediaType": "film",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVOrXs9eITqTDmyyHIOYhkCqR0xtWJTeb2HMtGXyVSEX5O0wN86GaaoZqYeAITYHtCDJod_gGinYsXLfWb17_VJvz80yTo0or1ZnOfx6axyA&s=10",
+    "author": "Roger Michell",
+    "year": 1999
+  },
+  {
     "title": "Michael Clayton",
     "url": "/posts/michael-clayton.html",
     "type": "media",

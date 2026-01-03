@@ -48,9 +48,21 @@
               "icon": "lucide-file",
               "title": "How this site works"
             }
+          },
+          {
+            "id": "4eef38a0763388e2",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.11.3"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.11.3"
+            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -107,8 +119,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "25e44253846c9970",
@@ -211,8 +222,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "391f1359580c198f",
+  "active": "4eef38a0763388e2",
   "lastOpenFiles": [
+    "media/The Ides of March.md",
+    "media/Notting Hill.md",
     "posts/New Dad weight training.md",
     "pages/about.md",
     "media/Michael Clayton.md",
@@ -237,8 +250,6 @@
     "templates/film template.md",
     "templates/tv template.md",
     "media/breaking-bad.md",
-    "media/book-of-clouds.md",
-    "media/dune.md",
     "media",
     "templates"
   ]
