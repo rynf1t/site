@@ -1,4 +1,4 @@
-This site is a custom static site generator built with Bun and TypeScript. I wanted to understand every line of code on my site ... well, nearly everything. [^1]  Most frameworks are black boxes. I saw [Justin Duke's setup](https://www.jmduke.com/posts/2026.html) and thought: I can do that.
+This site is a custom static site generator built with Bun and TypeScript. I wanted to understand every line of code on my site ... well, nearly everything. [^1]  Most frameworks are black boxes and annoying. I saw [Justin Duke's setup](https://www.jmduke.com/posts/2026.html) and thought: I can do that.
 
 ## Stack
 
@@ -38,4 +38,4 @@ I edit a file, run build, it's done. No webpack. No dev server. [^2]
 
 [^2]: Most of the time, I don't even run a build as I use Obsidian with a Git plugin, so commits happen automatically when I save.
 
-[^1]: Well, nearly everything. I'm not a SWE by trade. With the advent of LLMs, I'm able to adopt Robin Sloan's ["Home cooked app"](https://www.robinsloan.com/notes/home-cooked-app/) ethos
+[^1]: I'm not a SWE by trade. With the advent of LLMs, I'm able to adopt Robin Sloan's ["Home cooked app"](https://www.robinsloan.com/notes/home-cooked-app/) ethos
