@@ -18,6 +18,33 @@
     "date": "2025-12-17"
   },
   {
+    "title": "A Most Wanted Man",
+    "url": "/posts/a-most-wanted-man.html",
+    "type": "media",
+    "mediaType": "film",
+    "image": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTS_7DN0eeWdPUNG5F9ISudfMDlsxOmMO0FMZM-JsmC84r_NKs9",
+    "author": "Anton Corbijn",
+    "year": 2014
+  },
+  {
+    "title": "Zombieland",
+    "url": "/posts/zombieland.html",
+    "type": "media",
+    "mediaType": "film",
+    "image": "https://media.themoviedb.org/t/p/w220_and_h330_face/dUkAmAyPVqubSBNRjRqCgHggZcK.jpg",
+    "author": "Ruben Fleischer",
+    "year": 2009
+  },
+  {
+    "title": "28 Years Later",
+    "url": "/posts/28-years-later.html",
+    "type": "media",
+    "mediaType": "film",
+    "image": "https://media.themoviedb.org/t/p/w220_and_h330_face/mIg1qCkVxnAlM2TK3RUF0tdEXlE.jpg",
+    "author": "Danny Boyle",
+    "year": 2025
+  },
+  {
     "title": "The Departed",
     "url": "/posts/the-departed.html",
     "type": "media",

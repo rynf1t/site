@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>How this site works | Ryan's Blog</title>
+  <title>A Most Wanted Man | Ryan's Blog</title>
   <meta name="description" content="Essays and media reviews.">
   <link rel="preconnect" href="https://m.media-amazon.com" crossorigin>
   <link rel="stylesheet" href="/style.css">
@@ -54,57 +54,39 @@
       <!-- Content -->
       <main>
         
-    <article class="prose prose-stone prose-lg max-w-none">
-      <nav class="mb-6 text-sm not-prose">
+    <article class="max-w-none">
+      <nav class="mb-6 text-sm">
         <a href="/" class="text-text2 hover:text-link">Home</a>
         <span class="text-text2 mx-2">→</span>
-        <a href="/writing.html" class="text-text2 hover:text-link">Writing</a>
+        <a href="/media.html" class="text-text2 hover:text-link">Media</a>
         <span class="text-text2 mx-2">→</span>
-        <span class="text-text2">How this site works</span>
+        <span class="text-text2">A Most Wanted Man</span>
       </nav>
-      <div class="mb-10 not-prose">
-        <h1 class="text-2xl font-bold mb-3">How this site works</h1>
-        <time class="text-text2 text-sm whitespace-nowrap">2025-12-17</time>
+      <!-- Media Header -->
+      <div class="flex gap-6 mb-10">
+        
+        <div class="flex-shrink-0 w-32 md:w-40">
+          <div class="aspect-[2/3] overflow-hidden rounded border border-border">
+            <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTS_7DN0eeWdPUNG5F9ISudfMDlsxOmMO0FMZM-JsmC84r_NKs9" alt="A Most Wanted Man" loading="eager" decoding="async" fetchpriority="high" class="w-full h-full object-cover">
+          </div>
+        </div>
+        
+        <div class="flex-1 min-w-0">
+          <div class="text-xs text-text2 uppercase tracking-wide mb-1">Film</div>
+          <h1 class="text-xl md:text-2xl font-bold mb-2">A Most Wanted Man</h1>
+          <p class="text-text2 mb-1">Anton Corbijn</p>
+          <p class="text-text2 text-sm mb-2">2014</p>
+          <p class="text-lg mb-2">★★</p>
+          <time class="text-text2 text-xs">Added 2026-01-17</time>
+        </div>
       </div>
-      <p>This site is a custom static site generator built with Bun and TypeScript. I wanted to understand every line of code on my site … well, nearly everything. <label for="sn-how-this-site-works-1" class="sidenote-toggle">1</label><input type="checkbox" id="sn-how-this-site-works-1" class="sidenote-toggle-checkbox"><span class="sidenote">I’m not a SWE by trade. With the advent of LLMs, I’m able to adopt Robin Sloan’s <a href="https://www.robinsloan.com/notes/home-cooked-app/">“Home cooked app”</a> ethos</span><label for="sn-how-this-site-works-1" class="sidenote-backdrop"></label>  Most frameworks are black boxes and annoying. I saw <a href="https://www.jmduke.com/posts/2026.html">Justin Duke’s setup</a> and thought: I can do that.</p>
-<h2>Stack</h2>
-<ul>
-<li><strong><a href="https://bun.sh/">Bun</a></strong>: Replaces Node, npm, and webpack. Fast.</li>
-<li><strong><a href="https://www.typescriptlang.org/">TypeScript</a></strong>: Types keep me honest.</li>
-<li><strong><a href="https://tailwindcss.com/">Tailwind CSS</a></strong>: For styling. Gets out of the way.</li>
-<li><strong><a href="https://github.com/markdown-it/markdown-it">Markdown-It</a></strong>: Markdown → HTML.</li>
-</ul>
-<p>No React. No hydration. No 500kb JavaScript bundles. Just HTML and CSS.</p>
-<h2>Build</h2>
-<p>Everything happens in <code>src/build.ts</code>. One file, top to bottom:</p>
-<ol>
-<li>Read markdown files from <code>content/</code></li>
-<li>Extract frontmatter (title, date, ratings)</li>
-<li>Process markdown with custom rules:
-<ul>
-<li><strong>Wikilinks</strong>: <code>[[Page Name]]</code> becomes internal links<label for="sn-how-this-site-works-1" class="sidenote-toggle">1</label><input type="checkbox" id="sn-how-this-site-works-1" class="sidenote-toggle-checkbox"><span class="sidenote">I’m not a SWE by trade. With the advent of LLMs, I’m able to adopt Robin Sloan’s <a href="https://www.robinsloan.com/notes/home-cooked-app/">“Home cooked app”</a> ethos</span><label for="sn-how-this-site-works-1" class="sidenote-backdrop"></label></li>
-<li><strong>Footnotes</strong>:  becomes expandable inline notes</li>
-</ul>
-</li>
-<li>Find backlinks by scanning who links to whom</li>
-<li>Generate HTML using template strings</li>
-<li>Write to <code>dist/</code></li>
-</ol>
-<p>That’s it. No bundler, no magic.</p>
-<h2>Speed</h2>
-<p>The whole site builds in under a second:</p>
-<pre><code class="language-bash">$ bun run build
-📍 Building Ryan's Blog...
-✅ Build Complete!
-</code></pre>
-<p>I edit a file, run build, it’s done. No webpack. No dev server. <label for="sn-how-this-site-works-2" class="sidenote-toggle">2</label><input type="checkbox" id="sn-how-this-site-works-2" class="sidenote-toggle-checkbox"><span class="sidenote">Most of the time, I don’t even run a build as I use Obsidian with a Git plugin, so commits happen automatically when I save.</span><label for="sn-how-this-site-works-2" class="sidenote-backdrop"></label></p>
 
-      
-    <nav class="mt-16 pt-10 border-t border-border flex justify-between items-center gap-4">
-      <a href="/posts/claude.html" class="text-link hover:underline">← claude</a>
-      <span></span>
-    </nav>
-  
+      <!-- Content -->
+      <div class="prose prose-stone max-w-none">
+        <p>I wanted to like this. But, it was just … boring.</p>
+
+      </div>
+
       
     </article>
   
