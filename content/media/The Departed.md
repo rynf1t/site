@@ -9,4 +9,4 @@ year: 2006
 
 ---
 
-I love everything about this film. 
+I love everything about this film. Scorsese operating at full tilt. DiCaprio and Damon are essentially playing the same guy on opposite sides of the law and neither of them can breathe the whole time. Nicholson just does whatever he wants and somehow it works. The last act is pure chaos. I've seen this maybe four times now and it still holds up. 

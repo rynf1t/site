@@ -8,4 +8,4 @@ author: Anton Corbijn
 year: 2014
 ---
 
-I wanted to like this. But, it was just ... boring. 
+I wanted to like this. Hoffman's last leading role, you'd think that would carry it. But it just plods along. Spy thrillers need some tension and this one seems to have forgotten that. The ending does land, I'll give it that, but by then I'd already checked out. Not a rewatch. 
